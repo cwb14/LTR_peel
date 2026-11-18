@@ -50,6 +50,8 @@ files, directly inside the run folder, and never anything passed with `--protect
 - `recipe/meta.yaml`: the conda recipe. `Dockerfile`, `bin/entrypoint.sh`,
   `bin/ltrquest-container`: the image and its launcher.
 - `benchmarks/`: the benchmark pages and the code to rerun them.
+- `docs/images/`: the README figures. `workflow_alt.png` (one genome, step by step) is a spare version of the
+  workflow figure, not shown in the README.
 
 ## A note on Kmer2LTR boundaries
 

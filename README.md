@@ -6,13 +6,12 @@
 
 **Find LTR retrotransposons in a genome assembly, including old ones and ones that other elements have inserted into.**
 
-![LTRquest scans the genome, masks what it found and scans again](docs/images/workflow.png)
+![LTRquest in four steps: find, peel nests, clean up, describe](docs/images/workflow.png)
 
-One real nest on *A. thaliana* chromosome 4. Round 1 finds the innermost element and masks it (N). Round 2 searches
-again near it, finds the element it sat in and masks that too (R), and round 3 finds the outermost one. The search
-stops when a round finds fewer than 100 new elements (bars, whole genome). The clean-up then removes false calls and
-fixes ends and strand. A TSD (target-site duplication) is the short stretch of genome, usually 4-6 bp, copied on both
-sides of an insertion.
+The four steps as a cartoon (ages and family numbers are examples). Arcs join the two LTRs of an element, squares are
+its target-site duplications (TSDs, the few bases of genome copied on both sides of an insertion), black bars are
+protein domains, and N marks an element masked before the genome is searched again. Family names are shared by all
+genomes in one run.
 
 ## What it does
 
@@ -91,7 +90,7 @@ extension (`.fa`, `.fasta`, `.fa.gz`, ...), plus `_LTRs` (here `Athal_tair10_chr
 
 ![Three nested elements as the depth FASTA files hold them](docs/images/nesting_depth.png)
 
-The three elements of the top figure's nest as the depth FASTA files hold them, each with the elements inside
+Three nested elements on *A. thaliana* chromosome 4 as the depth FASTA files hold them, each with the elements inside
 it masked by letters (A), the same records after deleting those letters (B), and the bases of the depth2 record before
 and after (C).
 
