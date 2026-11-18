@@ -144,9 +144,8 @@ before clustering starts.
 and `gff3`. Like `cluster`/`flag-fp`, it cannot run one sample at a time, because an
 element's templates (the calls whose ends carry an exact TSD) come from every sample.
 It needs BLAST+ (`blastn`, `makeblastdb`). Its outputs, the re-bounded `_clean_`
-depth tables and each sample's `<prefix>_reboundary.tsv`, publish to one shared
-`results/reboundary/` directory: the one place this pipeline's output layout is not
-per sample. `gff3` and `plots` still publish to `results/<sample>/`. See
+depth tables and each sample's `<prefix>_reboundary.tsv`, publish to
+`results/<sample>/` like everything else, routed by the prefix in their names. See
 [outputs.md](outputs.md#8-re-boundarying).
 
 ### The round chain

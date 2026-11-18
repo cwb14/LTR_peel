@@ -282,6 +282,10 @@ the old one's, which forces the schema, flag and stage changes below.
 
 ### Fixed
 
+- Nextflow: `--reboundary false` and `--strand_recovery_ppt false` did not switch those steps off on Nextflow 26.10,
+  which passes `false` from the command line as text; every on/off setting now reads the same on 24.04 and 26.10.
+- Nextflow: the re-boundaried depth tables and `<prefix>_reboundary.tsv` publish to `results/<sample>/` with the
+  rest of that sample's results, not to a shared `results/reboundary/`.
 - Re-boundarying no longer writes `<genome>.fai` beside the input genome.
 - TEsorter2's pass-2 index (`temp_ltr_2pass_lib_*.fa.fxi`) no longer ends up in the run folder.
 

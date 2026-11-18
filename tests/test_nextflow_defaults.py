@@ -58,7 +58,10 @@ def test_detect_passes_sdust_unless_skipped():
 
 def test_off_turns_strand_recovery_off_everywhere():
     wf = (REPO_ROOT / "workflows/ltrquest.nf").read_text()
-    assert "strand_recovery != 'off'" in wf
+    assert "strand_recovery.toString() in ['off', 'false']" in wf
+    # Nextflow 26.10 passes `--reboundary false` as the String "false" (truthy)
+    assert "params.reboundary.toString().toBoolean()" in wf
+    assert "if (params.reboundary)" not in wf
     assert "if (params.strand_recovery)" not in wf
     assert "strand_recovery_ppt && !" not in wf          # default-on ppt must not trip the check
     mc = (REPO_ROOT / "conf/modules.config").read_text()

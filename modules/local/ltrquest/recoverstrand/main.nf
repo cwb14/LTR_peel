@@ -28,7 +28,7 @@ process LTRQUEST_RECOVERSTRAND_ALIGN {
 
     script:
     def args = task.ext.args ?: ''
-    def ppt  = params.strand_recovery_ppt ? '--ppt' : ''
+    def ppt  = params.strand_recovery_ppt.toString().toBoolean() ? '--ppt' : ''
     prefix   = task.ext.prefix ?: "${meta.id}"
 
     // Read-only: this phase writes the sidecar and nothing else, so the tables

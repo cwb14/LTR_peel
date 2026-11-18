@@ -8,10 +8,11 @@
 
 ![LTRquest scans the genome, masks what it found and scans again](docs/images/workflow.png)
 
-A real pair on *A. thaliana* chromosome 2: round 1 finds the younger element (the tenant) and masks it (N), then
-round 2 finds the older element it had split (the host). K2P is the divergence between an element's two long terminal
-repeats (LTRs), which grows with age; a TSD (target-site duplication) is the short stretch of genome, usually 4-6 bp,
-copied on both sides of an insertion.
+One real nest on *A. thaliana* chromosome 4. Round 1 finds the innermost element and masks it (N). Round 2 searches
+again near it, finds the element it sat in and masks that too (R), and round 3 finds the outermost one. The search
+stops when a round finds fewer than 100 new elements (bars, whole genome). The clean-up then removes false calls and
+fixes ends and strand. A TSD (target-site duplication) is the short stretch of genome, usually 4-6 bp, copied on both
+sides of an insertion.
 
 ## What it does
 
@@ -90,7 +91,7 @@ extension (`.fa`, `.fasta`, `.fa.gz`, ...), plus `_LTRs` (here `Athal_tair10_chr
 
 ![Three nested elements as the depth FASTA files hold them](docs/images/nesting_depth.png)
 
-Three nested elements on *A. thaliana* chromosome 4 as the depth FASTA files hold them, each with the elements inside
+The three elements of the top figure's nest as the depth FASTA files hold them, each with the elements inside
 it masked by letters (A), the same records after deleting those letters (B), and the bases of the depth2 record before
 and after (C).
 

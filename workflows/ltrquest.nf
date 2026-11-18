@@ -27,7 +27,13 @@ workflow LTRQUEST {
     // the same at ltrquest.sh's argument validation.
     // null, false and 'off' all mean no strand recovery. The PPT fallback is on
     // by default, so with recovery off it is simply unused rather than an error.
-    def strand_on = params.strand_recovery && params.strand_recovery != 'off'
+    // Switches are read through toString().toBoolean(): Nextflow 24.x turns
+    // `--reboundary false` into the Boolean false, but newer releases pass the String
+    // "false" (seen on 26.10), which Groovy counts as true, so the off switch
+    // would be ignored.
+    def strand_on = params.strand_recovery
+        && !(params.strand_recovery.toString() in ['off', 'false'])
+    def reboundary_on = params.reboundary.toString().toBoolean()
     if (strand_on
             && !(params.strand_recovery in ['conservative', 'balanced', 'sensitive'])) {
         error "--strand_recovery must be conservative, balanced, sensitive or off " +
@@ -101,7 +107,7 @@ workflow LTRQUEST {
     // so it needs every sample's genome, not just the first. Sorted by name so
     // the task hash, and with it -resume, does not depend on arrival order.
     // Off, an empty list flows in its place and stages nothing.
-    ch_tandem_genomes = params.skip_tandem_filter
+    ch_tandem_genomes = params.skip_tandem_filter.toString().toBoolean()
         ? Channel.value([])
         : ch_samples.map { _meta, genome, _proteins -> genome }
             .toSortedList { a, b -> a.name <=> b.name }
@@ -204,7 +210,7 @@ workflow LTRQUEST {
     // Re-boundarying, when asked for: one pooled task over every sample, between
     // the annotated tables and the GFF3. Off, an empty map flows in its place.
     ch_meta_by_id = ch_bundle.map { meta, _t, _f, _w, _g, _c -> [ meta.id, meta ] }
-    if (params.reboundary) {
+    if (reboundary_on) {
         // Kept so a sample the pooled process returns nothing for can fall
         // through unchanged below: every one of its _clean_ tables was purged
         // as a false positive, so it had nothing to re-boundary. This mirrors
@@ -277,7 +283,7 @@ workflow LTRQUEST {
     //
     // Phase 5 - plots.
     //
-    if (!params.skip_plots) {
+    if (!params.skip_plots.toString().toBoolean()) {
         LTRQUEST_PLOTS(
             ch_annotated.map { meta, tables, fastas, workdirs, genome, cluster ->
                 [ meta, tables, fastas, workdirs, genome, cluster ]

@@ -649,12 +649,10 @@ Kmer2LTR is refused before anything changes: `ltrquest-reboundary` exits 3 and
 `ltrquest` stops.
 
 > When run through the Nextflow pipeline (on by default there too; `--reboundary false`
-> skips it), the re-bounded `_clean_`
-> depth tables and `<prefix>_reboundary.tsv` are published to one pooled
-> `${params.outdir}/reboundary/`, not into each sample's own results
-> directory — an element's templates are drawn from every sample, so the task
-> that writes them is pooled too. The GFF3s and plots still publish per
-> sample. See [nextflow.md](nextflow.md#what-the-pipeline-does).
+> skips it), the task that writes the re-bounded `_clean_` depth tables and
+> `<prefix>_reboundary.tsv` is pooled, because an element's templates are drawn
+> from every sample, but each file is still published to its own sample's
+> `${params.outdir}/<sample>/`. See [nextflow.md](nextflow.md#what-the-pipeline-does).
 
 ### 8.1 `<prefix>_reboundary.tsv`
 
