@@ -23,7 +23,7 @@ Every flag below is listed by `ltrquest --help-all`.
 
 ## 1. What runs by default and how to turn it off
 
-Five things run unless you switch them off. Each was chosen because it removes
+Three things run unless you switch them off. Each was chosen because it removes
 false calls or recovers real ones on most genomes; the switches are for a genome
 where one of them hurts, or a machine that lacks a tool.
 
@@ -31,12 +31,14 @@ where one of them hurts, or a machine that lacks a tool.
 |---|---|---|
 | Per-chunk caller cap, 300 s | Each caller may spend 300 s on one 500 kb chunk, so a satellite or rDNA array cannot stall the run. See [section 3](#3-capped-chunks-and-fastltr). | `--ltr-timeout 0` (no cap) or another number of seconds |
 | sdust low-complexity filter | Drops candidates made mostly of low-complexity sequence (poly-A, simple repeats) early. Together with `--max-dust-frac` (default 0.55; raise toward 0.80 for AT-rich or fungal genomes) and `--sdust-args` (default `-w 64 -t 15`). | `--no-sdust` |
-| Strand recovery, `sensitive` | Gives a strand to elements the usual steps leave at `.`. [Section 7](#7-strand-recovery---strand-recovery). Needs BLAST+ and minimap2. Slow on large genomes: half to one and a half times the detection time in our runs (e.g. 4.8 h after 6.8 h of detection on 5.1 Gb at 140 threads). | `--strand-recovery off`, or a milder `conservative` / `balanced` |
-| Strand recovery, polypurine-tract fallback | For loci homology cannot reach, reads the strand from the polypurine tract next to the 3' LTR. | `--no-strand-recovery-ppt` |
 | Re-boundarying | Moves the ends of truncated calls onto the ends that carry a target-site duplication. [Section 8](#8-re-boundarying). Needs BLAST+. | `--no-reboundary` |
 
-On a machine without BLAST+ or minimap2 the run stops at startup, naming the
-two stages; `--strand-recovery off --no-reboundary` runs without them.
+Strand recovery is off by default: on large genomes it takes about as long as
+detection and reaches few elements ([section 7](#7-strand-recovery---strand-recovery));
+`--strand-recovery sensitive` turns it on.
+
+On a machine without BLAST+ the run stops at startup; `--no-reboundary` runs
+without it.
 
 The cap is wall-clock time, not work done. A borderline chunk that finishes in
 280 s on an idle machine can be capped on a loaded one, so two runs of the same
@@ -238,7 +240,7 @@ below). LTRquest appends the last five — `strand`, `family`, `confidence`,
 | 27 | `tsd` | Target-site duplication at the called boundary. `.` = searched and absent; `NA` = could not be searched. On TG..CA ends it is the exact 4–6 bp duplication at those ends |
 | 28 | `tsd_offset` | `d5,d3` — how far each boundary had to move for `tsd` to appear, positive meaning *into* the element. `0,0` on canonical ends. `NA` whenever `tsd` carries no sequence, whether that is `.` or `NA` |
 | 29 | `tsd_input` | The same measurement at the record's termini as originally supplied, before re-bounding |
-| 30 | `strand` | The element's biological orientation, resolved by LTRquest from classification, domain order and pass-2 homology, and from strand recovery (on by default): `+`, `-`, or `.` if none of those resolved it |
+| 30 | `strand` | The element's biological orientation, resolved by LTRquest from classification, domain order and pass-2 homology, and from strand recovery when it is on: `+`, `-`, or `.` if none of those resolved it |
 | 31 | `family` | Family id from the pooled consensus-LTR clustering, `<prefix>_fam00001` … — see [section 5](#5-multiple-genomes-shared-family-names) |
 | 32 | `confidence` | Hallmarks of an insertion at the reported ends: `high` = TG..CA termini and an exact TSD (`tsd` with `tsd_offset` `0,0`), `medium` = one of the two, `low` = neither — see below |
 | 33 | `domains` | Protein domains with genomic coordinates: `GENE\|clade@start-end;...`, or `.` |
@@ -504,7 +506,10 @@ Notes:
 
 ## 7. Strand recovery (`--strand-recovery`)
 
-On by default (`sensitive`, with the polypurine-tract fallback); `--strand-recovery off` turns it off. A meaningful fraction of elements come out of the strand
+Off by default; `--strand-recovery sensitive` (or `balanced`, `conservative`) turns it on, with the
+polypurine-tract fallback. It is slow on large genomes and reaches few elements: on three grass genomes it
+took about as long as detection and gave a strand to 10-22% of the elements still unstranded, because most
+of them sit in families with no stranded member to copy from. A meaningful fraction of elements come out of the strand
 cascade at `.`, most often because TEsorter2 could not classify them and they
 carry too few protein domains to read an order off. Recovery transfers
 orientation onto those from the elements that already carry a strand: the
@@ -529,7 +534,7 @@ five Brassicaceae genomes and 3616 labeled elements. Disagreement tracks how
 well LTRquest could label the element in the first place: 0.37% where five or
 more protein domains support the label, 2.54% where only one does.
 
-The polypurine-tract fallback, on by default (`--no-strand-recovery-ppt` turns it
+The polypurine-tract fallback, on whenever strand recovery runs (`--no-strand-recovery-ppt` turns it
 off), covers loci homology cannot reach. It scores both strand hypotheses on the
 two windows flanking the internal region and calls only when one wins by a margin
 and clears an absolute floor. Measured at 93% on real genomes, which is lower than

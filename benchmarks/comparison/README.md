@@ -30,8 +30,8 @@ LTRquest is built for sensitivity. In these tests it found more nested, old and 
 eight callers, except that DANTE_LTR found as many elements at the oldest simulated age and more of those with protein
 domains at the two oldest ages (Fig. 1C). In simulations, where the truth is known, LTRquest was also the most accurate
 overall (highest F1). On real genomes it calls many elements that curated libraries do not annotate, so for building a
-library to mask repeats, HiTE, LTR_retriever and DANTE_LTR are the better choice, and the libraries HiTE and HiRepEat
-build themselves scored best of all ([test 3](#3-masking-with-curated-libraries)).
+library to mask repeats, HiTE, LTR_retriever and DANTE_LTR are the better choice, and the best library in every genome
+was one that HiTE or HiRepEat builds itself ([test 3](#3-masking-with-curated-libraries)).
 
 The other tools have clear strengths. LTR_retriever and LTR_Finder place element ends most exactly, DANTE_LTR loses
 old elements most slowly, HiRepEat comes second for nested elements and for real insertions, Look4LTRs is the fastest

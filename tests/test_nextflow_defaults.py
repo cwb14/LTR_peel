@@ -1,7 +1,7 @@
 """The Nextflow pipeline follows the command line's defaults.
 
-Capped callers, sdust, sensitive strand recovery with the PPT fallback, and
-re-boundarying are on unless the user turns them off.
+Capped callers, sdust and re-boundarying are on unless the user turns them off;
+strand recovery is off unless the user picks a preset.
 """
 
 import json
@@ -30,7 +30,7 @@ def _schema_props():
 def test_config_declares_the_cli_defaults():
     assert _param("ltr_timeout") == "300"
     assert _param("skip_sdust") == "false"
-    assert _param("strand_recovery") == "'sensitive'"
+    assert _param("strand_recovery") == "'off'"
     assert _param("strand_recovery_ppt") == "true"
     assert _param("reboundary") == "true"
 
@@ -39,7 +39,7 @@ def test_schema_lists_the_same_defaults():
     props = _schema_props()
     assert props["ltr_timeout"]["default"] == 300
     assert props["skip_sdust"] == {**props["skip_sdust"], "type": "boolean", "default": False}
-    assert props["strand_recovery"]["default"] == "sensitive"
+    assert props["strand_recovery"]["default"] == "off"
     assert "off" in props["strand_recovery"]["enum"]
     assert props["strand_recovery_ppt"]["default"] is True
     assert props["reboundary"]["default"] is True

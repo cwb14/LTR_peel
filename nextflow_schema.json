@@ -126,9 +126,9 @@
                 "strand_recovery": {
                     "type": "string",
                     "enum": ["conservative", "balanced", "sensitive", "off"],
-                    "default": "sensitive",
+                    "default": "off",
                     "description": "Recover strand for the LTR-RTs the annotator's cascade leaves unstranded.",
-                    "help_text": "On at the sensitive preset; 'off' turns it off. Orientation is transferred onto an unstranded element from the elements that already carry a strand, using dc-megablast and minimap2 views of the whole element and of the internal region between the LTRs; disagreement between views vetoes the locus. Measured against LTRquest's own tesorter strand over 3616 elements, conservative recovers 58% at 0.19% disagreement, balanced 79% at 0.70%, sensitive 84% at 1.06%. Recovered elements read strand_source=homology in the GFF3, and their depth-FASTA records are stored in coding sense like TEsorter2-called ones.",
+                    "help_text": "Off by default; a preset turns it on. Slow on large genomes (about as long as detection). Orientation is transferred onto an unstranded element from the elements that already carry a strand, using dc-megablast and minimap2 views of the whole element and of the internal region between the LTRs; disagreement between views vetoes the locus. Measured against LTRquest's own tesorter strand over 3616 elements, conservative recovers 58% at 0.19% disagreement, balanced 79% at 0.70%, sensitive 84% at 1.06%. Recovered elements read strand_source=homology in the GFF3, and their depth-FASTA records are stored in coding sense like TEsorter2-called ones.",
                     "fa_icon": "fas fa-compass"
                 },
                 "strand_recovery_ppt": {

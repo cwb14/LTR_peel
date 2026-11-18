@@ -188,8 +188,9 @@ KEEP_WEAK_HMM_PASS2=false
 PASS2_ALIGNER="minimap2"
 RUN_PLOTS=true
 
-# Strand recovery (post-processing; --strand-recovery off, i.e. empty, turns it off)
-STRAND_RECOVERY="sensitive"
+# Strand recovery (post-processing). Off by default (empty): on large genomes it takes
+# about as long as detection and reaches few elements. --strand-recovery MODE turns it on.
+STRAND_RECOVERY=""
 STRAND_RECOVERY_PPT=true
 
 # Family-guided re-boundarying of truncated calls (post-processing)
@@ -305,8 +306,7 @@ Results, in the current folder:
   <prefix>_plots/                      open *_TEGV.html in a web browser
 
 Time at 16 threads: ~25 min for 100-400 Mb; 2.6 h for 1.1 Gb; 7 h for 2 Gb.
-On large genomes strand recovery adds about as much again, plots up to a
-fifth (--strand-recovery off and --no-plots skip them).
+Plots add up to a fifth (--no-plots skips them).
 
 All options:  ltrquest --help-all
 Guide:        https://github.com/cwb14/LTRquest
@@ -399,11 +399,12 @@ Finishing
         ltrquest-reboundary --posthoc.
   --strand-recovery MODE
         Give a strand to elements the usual steps leave unstranded. MODE:
-        conservative, balanced, sensitive (default) or off. Needs blast+;
-        balanced and sensitive also need minimap2.
+        conservative, balanced, sensitive or off (default). Slow on large
+        genomes (about as long as detection). Needs blast+; balanced and
+        sensitive also need minimap2.
   --no-strand-recovery-ppt
-        Skip the polypurine-tract fallback for loci homology cannot reach
-        (default: on).
+        With --strand-recovery, skip the polypurine-tract fallback for loci
+        homology cannot reach (default: on).
 
 Output extras
   --no-plots
@@ -1575,11 +1576,11 @@ if [[ -n "$STRAND_RECOVERY" ]]; then
   esac
 fi
 
-# Strand recovery (every preset uses dc-megablast) and re-boundarying (templates
-# found with BLAST) both need BLAST+; one message names both, since both are on by default.
+# Re-boundarying (templates found with BLAST; on by default) and strand recovery (every
+# preset uses dc-megablast; off by default) both need BLAST+.
 if [[ -n "$STRAND_RECOVERY" || "$REBOUNDARY" == true ]]; then
   { command -v blastn && command -v makeblastdb; } >/dev/null 2>&1 \
-    || die "strand recovery and re-boundarying (both on by default) need blastn and makeblastdb on PATH: install BLAST+ (it is in environment.yml), or turn these off with --strand-recovery off --no-reboundary"
+    || die "re-boundarying (on by default) and strand recovery need blastn and makeblastdb on PATH: install BLAST+ (it is in environment.yml), or turn them off with --no-reboundary --strand-recovery off"
 fi
 
 if [[ -n "$STRAND_RECOVERY" && "$STRAND_RECOVERY" != conservative ]]; then

@@ -139,7 +139,7 @@ the old one's, which forces the schema, flag and stage changes below.
   reused, and families are rebuilt over all genomes. A mismatch stops the run;
   `--redetect` ignores the records. Genomes are now pooled in name order, so
   families no longer depend on the order `--genome` lists them.
-- `--strand-recovery conservative|balanced|sensitive` (default `sensitive`, `off` turns it off), which
+- `--strand-recovery conservative|balanced|sensitive` (off by default; a preset turns it on), which
   recovers strand for the LTR-RTs the strand cascade leaves at `.`. The
   unstranded element, in genome-forward orientation, is aligned against the
   elements that already carry a strand, held in coding sense, so the
@@ -150,7 +150,7 @@ the old one's, which forces the schema, flag and stage changes below.
   LTRquest's own tesorter strand over 3616 elements: 58% recovered at 0.19%
   disagreement (conservative), 79% at 0.70% (balanced), 84% at 1.06%
   (sensitive). `--strand-recovery-ppt` adds a polypurine-tract fallback for
-  loci homology cannot reach, measured at 93% (on by default; `--no-strand-recovery-ppt`).
+  loci homology cannot reach, measured at 93% (on whenever strand recovery runs; `--no-strand-recovery-ppt`).
 
   The calls land in a new `<prefix>_strand_recovery.tsv`, which
   `ltrquest-annotate` reads as a fourth cascade tier via `--recovered-strands`
@@ -172,9 +172,9 @@ the old one's, which forces the schema, flag and stage changes below.
 
 - Defaults: per-chunk caller cap of 300 s (`--ltr-timeout`; 0 = none; wall-clock, so
   a borderline chunk can be capped on a loaded machine and not on an idle one),
-  sdust filter on, strand recovery `sensitive` with the polypurine-tract fallback, and
-  re-boundarying on. BLAST+ and minimap2 are now required (in `environment.yml` and
-  the image). A genome detected under other settings stops a reuse; use `--redetect`.
+  sdust filter on, and re-boundarying on. BLAST+ is now required (in `environment.yml`
+  and the image). Strand recovery stays off: on three grass genomes it took about as
+  long as detection and gave a strand to 3-7% of all elements. A genome detected under other settings stops a reuse; use `--redetect`.
   The old switches `--run-sdust`, `--reboundary`, `--strand-recovery-ppt` and
   `--run-trf` still work and restate the default, so old command lines still run.
 - A successful run keeps only `<prefix>_all_depth_LTR_cleaned.gff3`,

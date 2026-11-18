@@ -126,7 +126,8 @@ per genome ─┬─ ROUND_01: detect ──► mask ─┐
               gff3 ──► plots
 ```
 
-The two `recoverstrand` steps run unless `--strand_recovery off`. The first
+The two `recoverstrand` steps run only when a preset turns strand recovery on
+(the default is `--strand_recovery off`). The first
 calls strand for the elements the annotator's cascade cannot reach and writes
 `<prefix>_strand_recovery.tsv`; the annotator reads that as a fourth tier; the
 second brings the `_clean_` depth FASTAs into line with the strand column it wrote
@@ -183,16 +184,15 @@ grep 'FP fraction' results/families/*_fpcheck.log
 ```
 
 The defaults match the CLI's: a 300 s cap per chunk per LTR caller, the sdust
-low-complexity filter, strand recovery at the `sensitive` preset with the
-polypurine-tract fallback, and re-boundarying. Each turns off from the command
-line:
+low-complexity filter and re-boundarying are on; strand recovery is off. Each
+changes from the command line:
 
-| Stage | Default | Turn off |
+| Stage | Default | Change with |
 |---|---|---|
 | Per-chunk caller cap | `--ltr_timeout 300` | `--ltr_timeout 0` |
 | sdust low-complexity filter | on | `--skip_sdust` |
-| Strand recovery | `--strand_recovery sensitive` | `--strand_recovery off` |
-| PPT fallback | `--strand_recovery_ppt true` | `--strand_recovery_ppt false` |
+| Strand recovery | `--strand_recovery off` | `--strand_recovery sensitive` |
+| PPT fallback (with strand recovery) | `--strand_recovery_ppt true` | `--strand_recovery_ppt false` |
 | Re-boundarying | `--reboundary true` | `--reboundary false` |
 
 Everything else — the rounds, the reconciliation, the pooled family basis, the

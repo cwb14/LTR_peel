@@ -15,10 +15,10 @@ ltrquest (driver, src/ltrquest/scripts/ltrquest.sh)
   |-- ltrquest.reconcile                pool rounds, resolve containment -> depth buckets
   |-- Kmer2LTR + ltrquest.flag_fp       cluster into families, purge false-positive families
   |                                     and tandem-array calls (rDNA, satellites)
-  |-- ltrquest.recover_strand           give strand to unstranded elements   (on by default)
+  |-- ltrquest.recover_strand           give strand to unstranded elements   (off by default)
   |-- ltrquest.annotate                 add strand + family columns
   |-- ltrquest.gff3                     pooled GFF3
-  |-- ltrquest.recover_strand           re-orient the _clean_ FASTAs to match (on by default)
+  |-- ltrquest.recover_strand           re-orient the _clean_ FASTAs to match (off by default)
   |-- ltrquest.reboundary               re-bound calls that lack a TSD       (on by default)
   |-- ltrquest-plots                    structure PDFs, summary PDF, TEGV browser
   +-- ltrquest.cleanup                  remove working files (unless --keep-intermediates)

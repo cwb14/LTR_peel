@@ -14,7 +14,7 @@ def run(*args, **kw):
 
 def test_defaults_block(driver):
     text = driver.read_text()
-    for line in ("RUN_SDUST=true", 'STRAND_RECOVERY="sensitive"', "STRAND_RECOVERY_PPT=true",
+    for line in ("RUN_SDUST=true", 'STRAND_RECOVERY=""', "STRAND_RECOVERY_PPT=true",
                  "REBOUNDARY=true", "LTR_TIMEOUT=300"):
         assert any(raw.startswith(line) for raw in text.splitlines()), line
 

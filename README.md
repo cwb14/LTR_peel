@@ -73,8 +73,8 @@ ltrquest --genome your_genome.fa --proteins related_species.pep.fa --threads 20
 | `--threads` | CPU threads (default 20). |
 | `--mutation-rate` | Substitutions per site per year, used only to turn LTR divergence into years (`k2p_time`). Default 3e-8, a plant rate; 7e-9 suits *A. thaliana*. Use your species' rate. |
 
-The defaults are the settings benchmarked below; the benchmark runs only left out the plots and strand recovery,
-neither of which changes the elements found. Every option: `ltrquest --help-all`.
+The defaults are the settings benchmarked below; the benchmark runs only left out the plots, which do not change the
+elements found. Every option: `ltrquest --help-all`.
 
 ## Outputs
 
@@ -158,7 +158,7 @@ PrinTE, which shares an author with LTRquest, and LTRquest was tuned on PrinTE s
 **When to use another tool:**
 
 - **A repeat library**, for example to mask a genome: HiTE, LTR_retriever (as in EDTA) and DANTE_LTR gave cleaner
-  libraries from their elements, and the libraries HiTE and HiRepEat build themselves scored best of all.
+  libraries from their elements, and the best library in every genome was one that HiTE or HiRepEat builds itself.
 - **The oldest elements with protein domains**: DANTE_LTR, the only other tool that keeps finding old elements.
 - **Exact element ends**: LTR_retriever and LTR_Finder place them most exactly.
 - **Speed or memory**: Look4LTRs was the fastest on most genomes, and LTR_Finder needed the least memory.
@@ -168,8 +168,7 @@ Every command, dataset, limit and conflict of interest, and how to rerun it all:
 
 ## How long
 
-Benchmark runs at 16 threads, made without plots (they add up to a fifth) or strand recovery, so a default run takes
-longer:
+Benchmark runs at 16 threads, made without plots, which add up to a fifth:
 
 | Genome | Size | Time | Peak memory |
 |---|---|---|---|
@@ -186,7 +185,9 @@ of its 16 threads busy, so more threads may help. Gorilla, the largest genome, w
 of its first-pass calls were false positives, so LTRquest masked them and searched the whole genome again
 (`--fp-mask-threshold`).
 
-Strand recovery, on by default, is slow on large genomes: in our runs on grass genomes it took half to one and a half times as long as detection (for example 4.8 h after 6.8 h of detection on 5.1 Gb at 140 threads). Skip it with `--strand-recovery off` if you can do without the extra strands it recovers.
+Strand recovery is off by default. The usual steps give a strand to most elements (65-72% in three grass genomes);
+`--strand-recovery sensitive` gave a strand to 10-22% of the rest (3-7% of all elements) but took half to one and a
+half times as long as detection (for example 4.8 h after 6.8 h of detection on 5.1 Gb at 140 threads).
 
 ## More
 
