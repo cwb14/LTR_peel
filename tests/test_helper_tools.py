@@ -10,13 +10,17 @@ tests pin the order so it cannot regress.
 from __future__ import annotations
 
 import stat
+import subprocess
 from pathlib import Path
 
 import pytest
 
-from ltrquest.detect import _resolve_helper
+from ltrquest import detect, fastltr, helper_tools, kmer2ltr
+from ltrquest.detect import _resolve_helper, ensure_sdust, ensure_tebinsorter, ensure_trfmod
 
 URL = "https://example.invalid/never-cloned"
+OFFLINE = ("Offline? Run once with internet using --tools-dir DIR, then pass the same "
+           "--tools-dir; or use the container.")
 
 
 def fake_binary(path: Path) -> Path:
@@ -85,5 +89,69 @@ class TestErrorsAreActionable:
         monkeypatch.setattr("shutil.which", lambda n: "/usr/bin/git" if n == "git" else None)
         monkeypatch.setattr("ltrquest.detect.run", lambda *a, **k: type("R", (), {"returncode": 1})())
         (tmp_path / "miniprot").mkdir()
-        with pytest.raises(RuntimeError, match="miniprot build failed"):
+        with pytest.raises(RuntimeError, match="miniprot build failed") as excinfo:
             _resolve_helper("miniprot", tmp_path, URL, never_usable)
+        assert "Offline?" not in str(excinfo.value)      # a compiler problem, not a network one
+
+    @pytest.mark.parametrize("git", [None, "/usr/bin/git"], ids=["no-git", "failed-build"])
+    def test_an_sdust_failure_names_its_off_switch(self, tmp_path, monkeypatch, git):
+        # sdust runs by default, so the way around a failure is its off switch, as
+        # TRF-mod's names --no-trf and FastLTR's --no-fastltr.
+        monkeypatch.setattr("shutil.which", lambda n: git if n == "git" else None)
+        monkeypatch.setattr("ltrquest.detect.run", lambda *a, **k: type("R", (), {"returncode": 1})())
+        if git:
+            (tmp_path / "sdust").mkdir()                 # cloned; the build then fails
+        with pytest.raises(RuntimeError) as excinfo:
+            ensure_sdust(tmp_path)
+        assert "--no-sdust" in str(excinfo.value)
+
+    @pytest.mark.parametrize("fetch", [
+        lambda d: _resolve_helper("miniprot", d, URL, never_usable),
+        ensure_tebinsorter,
+        ensure_trfmod,
+        ensure_sdust,
+    ], ids=["minimap2-miniprot", "TEsorter2", "TRF-mod", "sdust"])
+    def test_a_failed_clone_says_what_to_do_offline(self, tmp_path, monkeypatch, fetch):
+        # A compute node with no internet: git is there, every clone fails.
+        def clone_fails(cmd, cwd=None, check=False, **kw):
+            result = type("R", (), {"returncode": 128, "stdout": "",
+                                    "stderr": "fatal: unable to access"})()
+            if check and cmd[:2] == ["git", "clone"]:
+                raise RuntimeError(f"Command failed (128): {' '.join(cmd)}\n"
+                                   f"STDERR:\n{result.stderr}")
+            return result
+
+        monkeypatch.setattr("shutil.which", lambda n: "/usr/bin/git" if n == "git" else None)
+        monkeypatch.setattr("ltrquest.detect.run", clone_fails)
+        monkeypatch.delenv("TESORTER2_SRC", raising=False)
+        monkeypatch.delenv("TEBINSORTER_SRC", raising=False)
+        with pytest.raises(RuntimeError) as excinfo:
+            fetch(tmp_path)
+        assert str(excinfo.value).endswith(OFFLINE)
+
+
+def _no_internet(cmd, *args, **kwargs):
+    """subprocess.run on a compute node with no internet: every git clone fails."""
+    if list(cmd[:2]) == ["git", "clone"]:
+        raise subprocess.CalledProcessError(128, cmd)
+    return subprocess.CompletedProcess(cmd, 1, "", "")
+
+
+class TestOfflineBeyondDetect:
+    """FastLTR's FASTAN and Kmer2LTR are fetched outside detect's helpers."""
+
+    def test_a_failed_fastan_clone_says_what_to_do_offline(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("shutil.which", lambda n: "/usr/bin/git" if n == "git" else None)
+        monkeypatch.setattr(fastltr.subprocess, "run", _no_internet)
+        with pytest.raises(RuntimeError) as excinfo:
+            fastltr.ensure(tmp_path)
+        assert str(excinfo.value).endswith(OFFLINE)
+
+    def test_a_failed_kmer2ltr_clone_says_what_to_do_offline(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(kmer2ltr.subprocess, "run", _no_internet)
+        with pytest.raises(RuntimeError) as excinfo:
+            kmer2ltr._clone(tmp_path)
+        assert str(excinfo.value).endswith(OFFLINE)
+
+    def test_every_fetcher_says_the_same_sentence(self):
+        assert helper_tools.OFFLINE_HINT == OFFLINE == detect.OFFLINE_HINT

@@ -48,6 +48,9 @@ process LTRQUEST_DETECT {
     def round_char = iupac[round_n - 1]
     def require    = round_n > 1 ? iupac[0..(round_n - 2)].join(',') : ''
 
+    // detect.py's sdust defaults (-w 64 -t 15, max dust fraction 0.55) are the
+    // CLI's, so only the switch is passed.
+    def sdust_opt   = params.skip_sdust ? '' : '--sdust'
     def protein_opt = proteins ? "--proteins ${proteins}" : ''
     def pass2_opt   = round_n > 1
         ? "--pass2-classified-fasta pass2_lib.fa --require-run-chars ${require} --exclude-run-char V"
@@ -83,6 +86,7 @@ process LTRQUEST_DETECT {
         --mutation-rate ${params.mutation_rate} \\
         --fastltr ${params.fastltr} \\
         --ltr-timeout ${params.ltr_timeout} \\
+        ${sdust_opt} \\
         ${pass2_opt} \\
         ${args}
 

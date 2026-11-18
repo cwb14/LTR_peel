@@ -1,0 +1,58 @@
+item	value	source
+A supported copy curated hit ATLANTYS1_LTR identity (%)	97	mask/arab/curated/arab.fa.out (100 - perc div. 3.1); 16626037-16626555
+A supported copy curated hit ATLANTYS1_I identity (%)	96	mask/arab/curated/arab.fa.out (100 - perc div. 3.7); 16626556-16630468
+A supported copy curated hit ATLANTYS1_I identity (%)	96	mask/arab/curated/arab.fa.out (100 - perc div. 3.6); 16630465-16636715
+A supported copy curated hit ATLANTYS1_LTR identity (%)	97	mask/arab/curated/arab.fa.out (100 - perc div. 2.9); 16636716-16637234
+A unsupported copy curated hit TAT1_ATH identity (%)	66	mask/arab/curated/arab.fa.out (100 - perc div. 34.2); 11528312-11528903
+A unsupported copy curated hit ATLANTYS1_I identity (%)	64	mask/arab/curated/arab.fa.out (100 - perc div. 35.6); 11529398-11529781
+A unsupported copy curated hit ATLANTYS1_I identity (%)	68	mask/arab/curated/arab.fa.out (100 - perc div. 31.9); 11530105-11531784
+A unsupported copy curated hit ATLANTYS1_I identity (%)	67	mask/arab/curated/arab.fa.out (100 - perc div. 32.8); 11532284-11533140
+A supported copy K2P (LTR-LTR, substitutions per site)	0.02974	eval/adj/arab/ltrquest.calls.tsv k2p (Kmer2LTR)
+A supported copy curated LTR coverage of the span	1.0	computed from mask/arab/curated/arab.fa.out (proxies.ref_ltr rule)
+A supported copy length (bp)	11196	eval/adj/arab/ltrquest.calls.tsv len
+A supported copy TSD (open boxes)	GATG	calls/arab/ltrquest.ids.tsv tsd; checked against data/arab/genome.fa
+A unsupported copy K2P (LTR-LTR, substitutions per site)	0.04761	eval/adj/arab/ltrquest.calls.tsv k2p (Kmer2LTR)
+A unsupported copy curated LTR coverage of the span	0.32	computed from mask/arab/curated/arab.fa.out (proxies.ref_ltr rule)
+A unsupported copy length (bp)	10964	eval/adj/arab/ltrquest.calls.tsv len
+A unsupported copy TSD (open boxes)	GAGAC	calls/arab/ltrquest.ids.tsv tsd; checked against data/arab/genome.fa
+B rice protein-confirmed loci drawn (K2P measured)	6901	report/tables/library_age_bias.tsv n_loci (sum of the four bins); rows rebuilt from eval/adj
+B rice mean curated coverage along loci, K2P class <0.01 (mean over bins)	0.986	computed from eval/adj + mask/<ds>/curated (tmp cache)
+B rice mean curated coverage along loci, K2P class >=0.1 (mean over bins)	0.774	computed from eval/adj + mask/<ds>/curated (tmp cache)
+B rice mean curated coverage along moved loci (mean over bins)	0.351	computed from eval/adj null_shift + mask/<ds>/curated
+B rice loci in K2P class <0.01	1888	report/tables/library_age_bias.tsv n_loci
+B rice loci in K2P class 0.01-0.03	1556	report/tables/library_age_bias.tsv n_loci
+B rice loci in K2P class 0.03-0.1	2584	report/tables/library_age_bias.tsv n_loci
+B rice loci in K2P class >=0.1	873	report/tables/library_age_bias.tsv n_loci
+B finch protein-confirmed loci drawn (K2P measured)	2738	report/tables/library_age_bias.tsv n_loci (sum of the four bins); rows rebuilt from eval/adj
+B finch mean curated coverage along loci, K2P class <0.01 (mean over bins)	0.835	computed from eval/adj + mask/<ds>/curated (tmp cache)
+B finch mean curated coverage along loci, K2P class >=0.1 (mean over bins)	0.649	computed from eval/adj + mask/<ds>/curated (tmp cache)
+B finch mean curated coverage along moved loci (mean over bins)	0.407	computed from eval/adj null_shift + mask/<ds>/curated
+B finch loci in K2P class <0.01	487	report/tables/library_age_bias.tsv n_loci
+B finch loci in K2P class 0.01-0.03	572	report/tables/library_age_bias.tsv n_loci
+B finch loci in K2P class 0.03-0.1	1042	report/tables/library_age_bias.tsv n_loci
+B finch loci in K2P class >=0.1	637	report/tables/library_age_bias.tsv n_loci
+B maize protein-confirmed loci drawn (K2P measured)	178193	report/tables/library_age_bias.tsv n_loci (sum of the four bins); rows rebuilt from eval/adj
+B maize mean curated coverage along loci, K2P class <0.01 (mean over bins)	0.972	computed from eval/adj + mask/<ds>/curated (tmp cache)
+B maize mean curated coverage along loci, K2P class >=0.1 (mean over bins)	0.916	computed from eval/adj + mask/<ds>/curated (tmp cache)
+B maize mean curated coverage along moved loci (mean over bins)	0.733	computed from eval/adj null_shift + mask/<ds>/curated
+B maize loci in K2P class <0.01	47264	report/tables/library_age_bias.tsv n_loci
+B maize loci in K2P class 0.01-0.03	49101	report/tables/library_age_bias.tsv n_loci
+B maize loci in K2P class 0.03-0.1	55642	report/tables/library_age_bias.tsv n_loci
+B maize loci in K2P class >=0.1	26186	report/tables/library_age_bias.tsv n_loci
+B gorilla protein-confirmed loci drawn (K2P measured)	2333	report/tables/library_age_bias.tsv n_loci (sum of the four bins); rows rebuilt from eval/adj
+B gorilla mean curated coverage along loci, K2P class <0.01 (mean over bins)	0.984	computed from eval/adj + mask/<ds>/curated (tmp cache)
+B gorilla mean curated coverage along loci, K2P class >=0.1 (mean over bins)	0.862	computed from eval/adj + mask/<ds>/curated (tmp cache)
+B gorilla mean curated coverage along moved loci (mean over bins)	0.12	computed from eval/adj null_shift + mask/<ds>/curated
+B gorilla loci in K2P class <0.01	63	report/tables/library_age_bias.tsv n_loci
+B gorilla loci in K2P class 0.01-0.03	271	report/tables/library_age_bias.tsv n_loci
+B gorilla loci in K2P class 0.03-0.1	1120	report/tables/library_age_bias.tsv n_loci
+B gorilla loci in K2P class >=0.1	879	report/tables/library_age_bias.tsv n_loci
+B A. thaliana panel	in fig_benchmark G (main figure, Fig. 1G), not redrawn here	figures/pub/SPEC.md; coordinator brief
+legend supported share, youngest class, range over the four genomes of B	0.75-0.98	report/tables/library_age_bias.tsv supported_share <0.01 (rice, finch, maize, gorilla)
+legend supported share, oldest class, range over the four genomes of B	0.31-0.81	report/tables/library_age_bias.tsv supported_share >=0.1 (rice, finch, maize, gorilla)
+legend rule: moved-locus shift (kb)	20-200	memo.md 'Approach 4' local null
+legend rule: library-supported = annotated share of the span (%)	80	memo.md 'Approach 4' (proxies.py)
+legend genomes (B here + A. thaliana in Fig. 1G)	5	report/tables/library_age_bias.tsv
+legend unsupported copy hit identity range (%)	64-68	mask/arab/curated/arab.fa.out
+legend supported copy hit identity range (%)	96-97	mask/arab/curated/arab.fa.out
+legend unsupported copy annotated share (%)	32	computed (proxies.ref_ltr rule)

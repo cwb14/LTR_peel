@@ -102,6 +102,10 @@ class Genomes:
     `workdir`, `index` expands each gzipped genome into it once and `paths` names the
     copy from then on, so workers built from `paths` open the copy; `discard_copies`
     removes them. Without a `workdir`, a gzipped genome is refused at `index`.
+
+    Every .fai goes in the `workdir` too, never beside the genome: that is the user's
+    own input, routinely on a read-only reference mount. Only without a `workdir` does
+    pyfaidx put it beside the FASTA.
     """
 
     def __init__(self, paths: Dict[str, str], workdir: Optional[str] = None):
@@ -117,28 +121,37 @@ class Genomes:
         self.workdir = state.get("workdir")
         self._open = {}
 
+    def _fai(self, prefix: str) -> Optional[str]:
+        """Where `prefix`'s index lives; None leaves it to pyfaidx (beside the FASTA)."""
+        if self.workdir is None:
+            return None
+        return os.path.join(self.workdir, f"{prefix}.fa.fai")
+
     def index(self) -> None:
         """Expand any gzipped genome, then build any missing or stale .fai now, in this
         one process.
 
         Call before a pool starts. Workers open genomes lazily and all at once,
         and pyfaidx locks per process: left to them, every worker rebuilds the
-        same .fai, and some read it while another has it truncated.
+        same .fai, and some read it while another has it truncated. Build the
+        workers' Genomes with this `workdir` as well, or they look for the .fai
+        beside the genome and build it there.
         """
+        if self.workdir is not None:
+            os.makedirs(self.workdir, exist_ok=True)
         for prefix, path in list(self.paths.items()):
             if is_gzip(path):
                 if self.workdir is None:
                     raise ValueError(f"{path} is gzipped; random access needs it expanded "
                                      f"into a work directory, and none was given")
-                os.makedirs(self.workdir, exist_ok=True)
                 plain = os.path.join(self.workdir, f"{prefix}.fa")
                 with gzip.open(path, "rb") as fin, open(plain, "wb") as fout:
                     shutil.copyfileobj(fin, fout, 1 << 20)
                 self.paths[prefix] = plain
-            pyfaidx.Fasta(self.paths[prefix]).close()
+            pyfaidx.Fasta(self.paths[prefix], indexname=self._fai(prefix)).close()
 
     def discard_copies(self) -> None:
-        """Close every handle and remove the expanded copies `index` made."""
+        """Close every handle and remove the expanded copies and indexes `index` made."""
         for fa in self._open.values():
             fa.close()
         self._open = {}
@@ -148,7 +161,7 @@ class Genomes:
     def _fasta(self, prefix: str) -> pyfaidx.Fasta:
         fa = self._open.get(prefix)
         if fa is None:
-            fa = pyfaidx.Fasta(self.paths[prefix], as_raw=True,
+            fa = pyfaidx.Fasta(self.paths[prefix], indexname=self._fai(prefix), as_raw=True,
                                sequence_always_upper=True)
             self._open[prefix] = fa
         return fa

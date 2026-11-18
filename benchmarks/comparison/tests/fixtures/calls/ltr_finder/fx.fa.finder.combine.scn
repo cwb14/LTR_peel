@@ -1,0 +1,3 @@
+index	SeqID	Location	LTR len	Inserted element len	TSR	PBS	PPT	RT	IN (core)	IN (c-term)	RH	Strand	Score	Sharpness	Similarity
+[NA]	c0001	16330-24007	1318,1318	7678	ACGCA	N-N	17697-17711	N-N	N-N	N-N	N-N	-	6	0.514,0.414	0.997
+[NA]	c0001	42164-49787	1287,1287	7624	GTTTT	N-N	43500-43514	N-N	N-N	N-N	N-N	-	6	0.529,0.586	0.999

@@ -1,0 +1,746 @@
+panel	dataset	tool	quantity	value	source
+E	finch	ltr_retriever	drawn as 'tool failed'	timeout	report/tables/resources.tsv (status)
+E	finch	dante_ltr	drawn as 'tool failed'	failed	report/tables/resources.tsv (status)
+E	gorilla	ltr_retriever	drawn as 'tool failed'	timeout	report/tables/resources.tsv (status)
+E	gorilla	ltrharvest	drawn as 'tool failed'	timeout	report/tables/resources.tsv (status)
+E	gorilla	look4ltrs	drawn as 'tool failed'	mem_guard	report/tables/resources.tsv (status)
+E	gorilla	ltrpred	drawn as 'tool failed'	timeout	report/tables/resources.tsv (status)
+E	gorilla	dante_ltr	drawn as 'tool failed'	failed	report/tables/resources.tsv (status)
+E	maize	ltr_retriever	drawn as 'tool failed'	timeout	report/tables/resources.tsv (status)
+legend/C	S1+S2	hirepeat	protein-less elements < 2 kb found / present (shortest found, bp)	0 / 1704 (None)	sim_elements.tsv (hit, len)
+legend/C	S1+S2	hirepeat	coding elements < 2 kb found / present (shortest found, bp)	0 / 263 (None)	sim_elements.tsv (hit, len)
+legend/C	S1+S2	hite	protein-less elements < 2 kb found / present (shortest found, bp)	15 / 1704 (1457)	sim_elements.tsv (hit, len)
+legend/C	S1+S2	hite	coding elements < 2 kb found / present (shortest found, bp)	0 / 263 (None)	sim_elements.tsv (hit, len)
+legend/C	S1+S2	ltrpred	protein-less elements < 4 kb found / present (shortest found, bp)	0 / 4519 (None)	sim_elements.tsv (hit, len)
+legend/C	S1+S2	ltrpred	coding elements < 4 kb found / present (shortest found, bp)	0 / 4483 (None)	sim_elements.tsv (hit, len)
+legend/C	S1+S2	dante_ltr	protein-less elements < 4 kb found / present (shortest found, bp)	0 / 4519 (None)	sim_elements.tsv (hit, len)
+legend/C	S1+S2	dante_ltr	coding elements < 4 kb found / present (shortest found, bp)	0 / 4483 (None)	sim_elements.tsv (hit, len)
+legend/D (basis)	S2_1		elements counted by D (n_truth summed over classes) = truth.tsv rows	16913	experiments/figpub/sim_class_prf_joint.tsv; sims/truth/S2_1.truth.tsv
+legend/D (basis)	S2_2		elements counted by D (n_truth summed over classes) = truth.tsv rows	16235	experiments/figpub/sim_class_prf_joint.tsv; sims/truth/S2_2.truth.tsv
+legend/D (basis)	S2_3		elements counted by D (n_truth summed over classes) = truth.tsv rows	16708	experiments/figpub/sim_class_prf_joint.tsv; sims/truth/S2_3.truth.tsv
+legend/D (basis)	S2		copies of library families without annotated LTRs (has_ltr != 1), 3 genomes; B counts none of them	2196	experiments/nonauto/lib/lib_class.tsv; sims/truth/S2_*.truth.tsv
+legend/D (basis)	S2		elements B counts (std == 1 copies of entries with annotated LTRs, all classes)	41876	sim_elements.tsv; sims/truth/S2_*.truth.tsv
+legend/D (basis)	S2	ltrquest	recall on copies of families without annotated LTRs (found / copies)	0.4954 (1088 / 2196)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	ltrquest	recall on the elements B counts (found / elements)	0.9928 (41574 / 41876)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	ltr_retriever	recall on copies of families without annotated LTRs (found / copies)	0.0023 (5 / 2196)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	ltr_retriever	recall on the elements B counts (found / elements)	0.5674 (23761 / 41876)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	ltrharvest	recall on copies of families without annotated LTRs (found / copies)	0.1571 (345 / 2196)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	ltrharvest	recall on the elements B counts (found / elements)	0.8240 (34507 / 41876)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	ltr_finder	recall on copies of families without annotated LTRs (found / copies)	0.0383 (84 / 2196)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	ltr_finder	recall on the elements B counts (found / elements)	0.4571 (19143 / 41876)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	look4ltrs	recall on copies of families without annotated LTRs (found / copies)	0.2413 (530 / 2196)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	look4ltrs	recall on the elements B counts (found / elements)	0.7457 (31227 / 41876)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	hirepeat	recall on copies of families without annotated LTRs (found / copies)	0.3001 (659 / 2196)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	hirepeat	recall on the elements B counts (found / elements)	0.8524 (35695 / 41876)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	hite	recall on copies of families without annotated LTRs (found / copies)	0.0533 (117 / 2196)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	hite	recall on the elements B counts (found / elements)	0.8126 (34029 / 41876)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	ltrpred	recall on copies of families without annotated LTRs (found / copies)	0.0601 (132 / 2196)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	ltrpred	recall on the elements B counts (found / elements)	0.5282 (22120 / 41876)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	dante_ltr	recall on copies of families without annotated LTRs (found / copies)	0.1890 (415 / 2196)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	dante_ltr	recall on the elements B counts (found / elements)	0.5423 (22708 / 41876)	calls/S2_*/<tool>.tsv vs sims/truth (score_elements.match, RO >= 0.9, every truth row)
+legend/D (basis)	S2	ltrquest	protein-less recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.9072 vs 0.9870 vs 0.9906	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	ltrquest	coding recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.9757 vs 0.9949 vs 0.9943	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	ltr_retriever	protein-less recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.4118 vs 0.4830 vs 0.4731	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	ltr_retriever	coding recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.5409 vs 0.5964 vs 0.5940	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	ltrharvest	protein-less recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.5857 vs 0.7042 vs 0.6795	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	ltrharvest	coding recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.7813 vs 0.8725 vs 0.8594	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	ltr_finder	protein-less recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.3466 vs 0.3997 vs 0.3943	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	ltr_finder	coding recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.4501 vs 0.4856 vs 0.4844	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	look4ltrs	protein-less recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.6929 vs 0.7532 vs 0.7586	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	look4ltrs	coding recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.7043 vs 0.7179 vs 0.7190	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	hirepeat	protein-less recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.6038 vs 0.6403 vs 0.6515	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	hirepeat	coding recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.8866 vs 0.9227 vs 0.9201	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	hite	protein-less recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.5319 vs 0.5893 vs 0.6043	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	hite	coding recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.8237 vs 0.8848 vs 0.8847	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	ltrpred	protein-less recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.1042 vs 0.1069 vs 0.1100	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	ltrpred	coding recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.5916 vs 0.6665 vs 0.6467	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	dante_ltr	protein-less recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.0010 vs 0.0000 vs 0.0000	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+legend/D (basis)	S2	dante_ltr	coding recall, D (S2) vs B as drawn (S1+S2) vs B's counting in S2	0.6455 vs 0.7149 vs 0.7154	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein); sim_elements.tsv; sim_gap.tsv
+A	rice		Dasheng position, Chr1 1-based start (Mb shown)	2007765	real_locus_table.tsv / calls/rice/ltrquest.tsv (0-based start + 1)
+A	rice		Dasheng length (bp)	6716	calls/rice/ltrquest.tsv
+A	rice		TSD	ATACC	data/rice/genome.fa [s-5, s) and [e, e+5), 0-based
+A	rice		bases between the drawn LTR ends	6692	LTRquest call span - 24
+A	rice		member tools of the locus	hirepeat,look4ltrs,ltrharvest,ltrpred,ltrquest	real_locus_table.tsv (tools)
+B	S1+S2		protein-less simulated elements (3 seeds x 2 regimes)	6139	sim_elements.tsv
+B	S1+S2		protein-less elements shorter than 2 kb	1704	sim_elements.tsv len
+B	S1+S2		protein-less elements shorter than 4 kb	4519	sim_elements.tsv len
+B	S1+S2	ltrquest	protein-less recall (pooled)	0.987	sim_elements.tsv
+B	S1+S2	ltr_retriever	protein-less recall (pooled)	0.483	sim_elements.tsv
+B	S1+S2	ltrharvest	protein-less recall (pooled)	0.704	sim_elements.tsv
+B	S1+S2	ltr_finder	protein-less recall (pooled)	0.4	sim_elements.tsv
+B	S1+S2	look4ltrs	protein-less recall (pooled)	0.753	sim_elements.tsv
+B	S1+S2	hirepeat	protein-less recall (pooled)	0.64	sim_elements.tsv
+B	S1+S2	hite	protein-less recall (pooled)	0.589	sim_elements.tsv
+B	S1+S2	ltrpred	protein-less recall (pooled)	0.107	sim_elements.tsv
+B	S1+S2	dante_ltr	protein-less recall (pooled)	0.0	sim_elements.tsv
+B	S1+S2		coding simulated elements (3 seeds x 2 regimes)	37556	sim_elements.tsv
+B	S1+S2		coding elements shorter than 2 kb	263	sim_elements.tsv len
+B	S1+S2		coding elements shorter than 4 kb	4483	sim_elements.tsv len
+B	S1+S2	ltrquest	coding recall (pooled)	0.995	sim_elements.tsv
+B	S1+S2	ltr_retriever	coding recall (pooled)	0.596	sim_elements.tsv
+B	S1+S2	ltrharvest	coding recall (pooled)	0.873	sim_elements.tsv
+B	S1+S2	ltr_finder	coding recall (pooled)	0.486	sim_elements.tsv
+B	S1+S2	look4ltrs	coding recall (pooled)	0.718	sim_elements.tsv
+B	S1+S2	hirepeat	coding recall (pooled)	0.923	sim_elements.tsv
+B	S1+S2	hite	coding recall (pooled)	0.885	sim_elements.tsv
+B	S1+S2	ltrpred	coding recall (pooled)	0.666	sim_elements.tsv
+B	S1+S2	dante_ltr	coding recall (pooled)	0.715	sim_elements.tsv
+C	S1+S2	ltrquest	protein-less recall 350-1000 bp [0.900, 0.995]	0.969	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrquest	protein-less recall 1000-1414 bp [0.960, 1.000]	0.986	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrquest	protein-less recall 1414-2000 bp [0.984, 0.996]	0.991	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrquest	protein-less recall 2000-2828 bp [0.961, 0.994]	0.981	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrquest	protein-less recall 2828-4000 bp [0.989, 0.999]	0.996	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrquest	protein-less recall 4000-5657 bp [0.946, 0.994]	0.973	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrquest	protein-less recall 5657-8000 bp [0.962, 0.994]	0.98	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrquest	protein-less recall 8000-11314 bp [0.982, 1.000]	0.994	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrquest	protein-less recall 11314-16000 bp [0.975, 1.000]	0.992	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrquest	coding recall 1000-2000 bp [0.988, 1.000]	0.996	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrquest	coding recall 2000-2828 bp [0.990, 0.998]	0.994	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrquest	coding recall 2828-4000 bp [0.992, 0.998]	0.995	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrquest	coding recall 4000-5657 bp [0.994, 0.996]	0.995	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrquest	coding recall 5657-8000 bp [0.992, 0.998]	0.995	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrquest	coding recall 8000-11314 bp [0.986, 0.996]	0.991	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrquest	coding recall 11314-20000 bp [0.991, 0.998]	0.995	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_retriever	protein-less recall 350-1000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_retriever	protein-less recall 1000-1414 bp [0.076, 0.523]	0.293	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_retriever	protein-less recall 1414-2000 bp [0.257, 0.551]	0.435	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_retriever	protein-less recall 2000-2828 bp [0.440, 0.624]	0.549	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_retriever	protein-less recall 2828-4000 bp [0.580, 0.676]	0.635	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_retriever	protein-less recall 4000-5657 bp [0.006, 0.681]	0.361	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_retriever	protein-less recall 5657-8000 bp [0.242, 0.564]	0.424	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_retriever	protein-less recall 8000-11314 bp [0.375, 0.653]	0.513	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_retriever	protein-less recall 11314-16000 bp [0.338, 0.767]	0.54	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_retriever	coding recall 1000-2000 bp [0.529, 0.602]	0.563	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_retriever	coding recall 2000-2828 bp [0.487, 0.679]	0.594	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_retriever	coding recall 2828-4000 bp [0.423, 0.610]	0.523	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_retriever	coding recall 4000-5657 bp [0.592, 0.628]	0.61	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_retriever	coding recall 5657-8000 bp [0.598, 0.686]	0.645	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_retriever	coding recall 8000-11314 bp [0.433, 0.570]	0.501	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_retriever	coding recall 11314-20000 bp [0.481, 0.602]	0.545	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrharvest	protein-less recall 350-1000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrharvest	protein-less recall 1000-1414 bp [0.279, 0.890]	0.659	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrharvest	protein-less recall 1414-2000 bp [0.766, 0.946]	0.866	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrharvest	protein-less recall 2000-2828 bp [0.886, 0.966]	0.936	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrharvest	protein-less recall 2828-4000 bp [0.802, 0.964]	0.904	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrharvest	protein-less recall 4000-5657 bp [0.351, 0.972]	0.698	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrharvest	protein-less recall 5657-8000 bp [0.364, 0.870]	0.639	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrharvest	protein-less recall 8000-11314 bp [0.000, 0.147]	0.065	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrharvest	protein-less recall 11314-16000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrharvest	coding recall 1000-2000 bp [0.880, 0.947]	0.905	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrharvest	coding recall 2000-2828 bp [0.906, 0.946]	0.926	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrharvest	coding recall 2828-4000 bp [0.912, 0.949]	0.931	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrharvest	coding recall 4000-5657 bp [0.923, 0.936]	0.93	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrharvest	coding recall 5657-8000 bp [0.794, 0.905]	0.853	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrharvest	coding recall 8000-11314 bp [0.558, 0.752]	0.656	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrharvest	coding recall 11314-20000 bp [0.219, 0.357]	0.287	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_finder	protein-less recall 350-1000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_finder	protein-less recall 1000-1414 bp [0.000, 0.450]	0.166	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_finder	protein-less recall 1414-2000 bp [0.099, 0.453]	0.294	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_finder	protein-less recall 2000-2828 bp [0.349, 0.572]	0.476	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_finder	protein-less recall 2828-4000 bp [0.482, 0.625]	0.561	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_finder	protein-less recall 4000-5657 bp [0.000, 0.600]	0.318	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_finder	protein-less recall 5657-8000 bp [0.178, 0.513]	0.367	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_finder	protein-less recall 8000-11314 bp [0.248, 0.569]	0.405	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_finder	protein-less recall 11314-16000 bp [0.274, 0.690]	0.471	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_finder	coding recall 1000-2000 bp [0.000, 0.011]	0.004	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_finder	coding recall 2000-2828 bp [0.423, 0.644]	0.541	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_finder	coding recall 2828-4000 bp [0.353, 0.558]	0.46	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_finder	coding recall 4000-5657 bp [0.458, 0.512]	0.484	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_finder	coding recall 5657-8000 bp [0.504, 0.619]	0.563	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_finder	coding recall 8000-11314 bp [0.363, 0.516]	0.438	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltr_finder	coding recall 11314-20000 bp [0.384, 0.538]	0.461	sim_elements.tsv (family bootstrap here)
+C	S1+S2	look4ltrs	protein-less recall 350-1000 bp [0.000, 0.597]	0.219	sim_elements.tsv (family bootstrap here)
+C	S1+S2	look4ltrs	protein-less recall 1000-1414 bp [0.000, 0.358]	0.07	sim_elements.tsv (family bootstrap here)
+C	S1+S2	look4ltrs	protein-less recall 1414-2000 bp [0.243, 0.749]	0.481	sim_elements.tsv (family bootstrap here)
+C	S1+S2	look4ltrs	protein-less recall 2000-2828 bp [0.734, 0.929]	0.845	sim_elements.tsv (family bootstrap here)
+C	S1+S2	look4ltrs	protein-less recall 2828-4000 bp [0.902, 0.963]	0.938	sim_elements.tsv (family bootstrap here)
+C	S1+S2	look4ltrs	protein-less recall 4000-5657 bp [0.926, 0.976]	0.952	sim_elements.tsv (family bootstrap here)
+C	S1+S2	look4ltrs	protein-less recall 5657-8000 bp [0.711, 0.950]	0.857	sim_elements.tsv (family bootstrap here)
+C	S1+S2	look4ltrs	protein-less recall 8000-11314 bp [0.959, 0.990]	0.977	sim_elements.tsv (family bootstrap here)
+C	S1+S2	look4ltrs	protein-less recall 11314-16000 bp [0.948, 0.997]	0.977	sim_elements.tsv (family bootstrap here)
+C	S1+S2	look4ltrs	coding recall 1000-2000 bp [0.000, 0.937]	0.342	sim_elements.tsv (family bootstrap here)
+C	S1+S2	look4ltrs	coding recall 2000-2828 bp [0.353, 0.787]	0.575	sim_elements.tsv (family bootstrap here)
+C	S1+S2	look4ltrs	coding recall 2828-4000 bp [0.523, 0.834]	0.681	sim_elements.tsv (family bootstrap here)
+C	S1+S2	look4ltrs	coding recall 4000-5657 bp [0.626, 0.705]	0.668	sim_elements.tsv (family bootstrap here)
+C	S1+S2	look4ltrs	coding recall 5657-8000 bp [0.828, 0.940]	0.89	sim_elements.tsv (family bootstrap here)
+C	S1+S2	look4ltrs	coding recall 8000-11314 bp [0.924, 0.978]	0.958	sim_elements.tsv (family bootstrap here)
+C	S1+S2	look4ltrs	coding recall 11314-20000 bp [0.902, 0.980]	0.947	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hirepeat	protein-less recall 350-1000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hirepeat	protein-less recall 1000-1414 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hirepeat	protein-less recall 1414-2000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hirepeat	protein-less recall 2000-2828 bp [0.670, 0.945]	0.828	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hirepeat	protein-less recall 2828-4000 bp [0.816, 1.000]	0.928	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hirepeat	protein-less recall 4000-5657 bp [0.986, 1.000]	0.995	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hirepeat	protein-less recall 5657-8000 bp [0.653, 0.962]	0.831	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hirepeat	protein-less recall 8000-11314 bp [0.836, 0.966]	0.91	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hirepeat	protein-less recall 11314-16000 bp [0.701, 0.937]	0.831	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hirepeat	coding recall 1000-2000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hirepeat	coding recall 2000-2828 bp [0.720, 0.994]	0.876	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hirepeat	coding recall 2828-4000 bp [0.959, 0.996]	0.98	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hirepeat	coding recall 4000-5657 bp [0.911, 0.940]	0.927	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hirepeat	coding recall 5657-8000 bp [0.847, 0.960]	0.907	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hirepeat	coding recall 8000-11314 bp [0.907, 0.990]	0.957	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hirepeat	coding recall 11314-20000 bp [0.896, 0.967]	0.936	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hite	protein-less recall 350-1000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hite	protein-less recall 1000-1414 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hite	protein-less recall 1414-2000 bp [0.002, 0.032]	0.015	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hite	protein-less recall 2000-2828 bp [0.609, 0.873]	0.76	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hite	protein-less recall 2828-4000 bp [0.776, 0.948]	0.88	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hite	protein-less recall 4000-5657 bp [0.909, 0.963]	0.933	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hite	protein-less recall 5657-8000 bp [0.723, 0.909]	0.829	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hite	protein-less recall 8000-11314 bp [0.705, 0.892]	0.805	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hite	protein-less recall 11314-16000 bp [0.303, 0.649]	0.471	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hite	coding recall 1000-2000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hite	coding recall 2000-2828 bp [0.604, 0.909]	0.763	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hite	coding recall 2828-4000 bp [0.882, 0.947]	0.919	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hite	coding recall 4000-5657 bp [0.883, 0.909]	0.897	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hite	coding recall 5657-8000 bp [0.855, 0.922]	0.893	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hite	coding recall 8000-11314 bp [0.863, 0.926]	0.898	sim_elements.tsv (family bootstrap here)
+C	S1+S2	hite	coding recall 11314-20000 bp [0.819, 0.900]	0.864	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrpred	protein-less recall 350-1000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrpred	protein-less recall 1000-1414 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrpred	protein-less recall 1414-2000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrpred	protein-less recall 2000-2828 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrpred	protein-less recall 2828-4000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrpred	protein-less recall 4000-5657 bp [0.000, 0.492]	0.187	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrpred	protein-less recall 5657-8000 bp [0.544, 0.757]	0.676	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrpred	protein-less recall 8000-11314 bp [0.312, 0.606]	0.454	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrpred	protein-less recall 11314-16000 bp [0.012, 0.211]	0.1	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrpred	coding recall 1000-2000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrpred	coding recall 2000-2828 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrpred	coding recall 2828-4000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrpred	coding recall 4000-5657 bp [0.762, 0.788]	0.776	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrpred	coding recall 5657-8000 bp [0.784, 0.808]	0.795	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrpred	coding recall 8000-11314 bp [0.655, 0.718]	0.689	sim_elements.tsv (family bootstrap here)
+C	S1+S2	ltrpred	coding recall 11314-20000 bp [0.438, 0.571]	0.507	sim_elements.tsv (family bootstrap here)
+C	S1+S2	dante_ltr	protein-less recall 350-1000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	dante_ltr	protein-less recall 1000-1414 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	dante_ltr	protein-less recall 1414-2000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	dante_ltr	protein-less recall 2000-2828 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	dante_ltr	protein-less recall 2828-4000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	dante_ltr	protein-less recall 4000-5657 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	dante_ltr	protein-less recall 5657-8000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	dante_ltr	protein-less recall 8000-11314 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	dante_ltr	protein-less recall 11314-16000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	dante_ltr	coding recall 1000-2000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	dante_ltr	coding recall 2000-2828 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	dante_ltr	coding recall 2828-4000 bp [0.000, 0.000]	0.0	sim_elements.tsv (family bootstrap here)
+C	S1+S2	dante_ltr	coding recall 4000-5657 bp [0.831, 0.893]	0.864	sim_elements.tsv (family bootstrap here)
+C	S1+S2	dante_ltr	coding recall 5657-8000 bp [0.620, 0.799]	0.71	sim_elements.tsv (family bootstrap here)
+C	S1+S2	dante_ltr	coding recall 8000-11314 bp [0.415, 0.644]	0.533	sim_elements.tsv (family bootstrap here)
+C	S1+S2	dante_ltr	coding recall 11314-20000 bp [0.574, 0.780]	0.681	sim_elements.tsv (family bootstrap here)
+D	S2		coding simulated elements (n_truth summed over 3 genomes)	37895	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2		partly coding simulated elements (n_truth summed over 3 genomes)	5913	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2		protein-less simulated elements (n_truth summed over 3 genomes)	6048	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	HiTE	coding precision: best printed value (bold)	1.00	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	LTRquest	coding recall: best printed value (bold)	0.98	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	LTRquest	coding f1: best printed value (bold)	0.98	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	HiTE	partly coding precision: best printed value (bold)	0.99	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	LTRquest	partly coding recall: best printed value (bold)	0.97	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	LTRquest	partly coding f1: best printed value (bold)	0.95	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	HiTE	protein-less precision: best printed value (bold)	1.00	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	LTRquest	protein-less recall: best printed value (bold)	0.91	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	LTRquest	protein-less f1: best printed value (bold)	0.92	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrquest	coding precision (mean of 3 genomes; summed n_truth 37895, tp_truth 36976, n_calls 38526, tp_calls 37683)	0.9781	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrquest	coding recall (mean of 3 genomes; summed n_truth 37895, tp_truth 36976, n_calls 38526, tp_calls 37683)	0.9757	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrquest	coding f1 (mean of 3 genomes; summed n_truth 37895, tp_truth 36976, n_calls 38526, tp_calls 37683)	0.9769	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrquest	partly coding precision (mean of 3 genomes; summed n_truth 5913, tp_truth 5712, n_calls 5591, tp_calls 5218)	0.9333	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrquest	partly coding recall (mean of 3 genomes; summed n_truth 5913, tp_truth 5712, n_calls 5591, tp_calls 5218)	0.9661	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrquest	partly coding f1 (mean of 3 genomes; summed n_truth 5913, tp_truth 5712, n_calls 5591, tp_calls 5218)	0.9494	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrquest	protein-less precision (mean of 3 genomes; summed n_truth 6048, tp_truth 5486, n_calls 5605, tp_calls 5273)	0.941	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrquest	protein-less recall (mean of 3 genomes; summed n_truth 6048, tp_truth 5486, n_calls 5605, tp_calls 5273)	0.9072	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrquest	protein-less f1 (mean of 3 genomes; summed n_truth 6048, tp_truth 5486, n_calls 5605, tp_calls 5273)	0.9238	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_retriever	coding precision (mean of 3 genomes; summed n_truth 37895, tp_truth 20498, n_calls 20813, tp_calls 20634)	0.9914	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_retriever	coding recall (mean of 3 genomes; summed n_truth 37895, tp_truth 20498, n_calls 20813, tp_calls 20634)	0.5409	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_retriever	coding f1 (mean of 3 genomes; summed n_truth 37895, tp_truth 20498, n_calls 20813, tp_calls 20634)	0.6999	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_retriever	partly coding precision (mean of 3 genomes; summed n_truth 5913, tp_truth 2687, n_calls 2648, tp_calls 2599)	0.9815	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_retriever	partly coding recall (mean of 3 genomes; summed n_truth 5913, tp_truth 2687, n_calls 2648, tp_calls 2599)	0.4544	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_retriever	partly coding f1 (mean of 3 genomes; summed n_truth 5913, tp_truth 2687, n_calls 2648, tp_calls 2599)	0.6212	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_retriever	protein-less precision (mean of 3 genomes; summed n_truth 6048, tp_truth 2491, n_calls 2457, tp_calls 2443)	0.9943	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_retriever	protein-less recall (mean of 3 genomes; summed n_truth 6048, tp_truth 2491, n_calls 2457, tp_calls 2443)	0.4118	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_retriever	protein-less f1 (mean of 3 genomes; summed n_truth 6048, tp_truth 2491, n_calls 2457, tp_calls 2443)	0.5824	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrharvest	coding precision (mean of 3 genomes; summed n_truth 37895, tp_truth 29607, n_calls 30851, tp_calls 29602)	0.9595	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrharvest	coding recall (mean of 3 genomes; summed n_truth 37895, tp_truth 29607, n_calls 30851, tp_calls 29602)	0.7813	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrharvest	coding f1 (mean of 3 genomes; summed n_truth 37895, tp_truth 29607, n_calls 30851, tp_calls 29602)	0.8613	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrharvest	partly coding precision (mean of 3 genomes; summed n_truth 5913, tp_truth 4034, n_calls 4486, tp_calls 4037)	0.8999	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrharvest	partly coding recall (mean of 3 genomes; summed n_truth 5913, tp_truth 4034, n_calls 4486, tp_calls 4037)	0.6822	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrharvest	partly coding f1 (mean of 3 genomes; summed n_truth 5913, tp_truth 4034, n_calls 4486, tp_calls 4037)	0.7761	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrharvest	protein-less precision (mean of 3 genomes; summed n_truth 6048, tp_truth 3543, n_calls 4070, tp_calls 3545)	0.8709	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrharvest	protein-less recall (mean of 3 genomes; summed n_truth 6048, tp_truth 3543, n_calls 4070, tp_calls 3545)	0.5857	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrharvest	protein-less f1 (mean of 3 genomes; summed n_truth 6048, tp_truth 3543, n_calls 4070, tp_calls 3545)	0.7004	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_finder	coding precision (mean of 3 genomes; summed n_truth 37895, tp_truth 17059, n_calls 17385, tp_calls 17172)	0.9877	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_finder	coding recall (mean of 3 genomes; summed n_truth 37895, tp_truth 17059, n_calls 17385, tp_calls 17172)	0.4501	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_finder	coding f1 (mean of 3 genomes; summed n_truth 37895, tp_truth 17059, n_calls 17385, tp_calls 17172)	0.6184	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_finder	partly coding precision (mean of 3 genomes; summed n_truth 5913, tp_truth 1943, n_calls 1932, tp_calls 1881)	0.9736	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_finder	partly coding recall (mean of 3 genomes; summed n_truth 5913, tp_truth 1943, n_calls 1932, tp_calls 1881)	0.3286	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_finder	partly coding f1 (mean of 3 genomes; summed n_truth 5913, tp_truth 1943, n_calls 1932, tp_calls 1881)	0.4914	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_finder	protein-less precision (mean of 3 genomes; summed n_truth 6048, tp_truth 2097, n_calls 2071, tp_calls 2046)	0.988	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_finder	protein-less recall (mean of 3 genomes; summed n_truth 6048, tp_truth 2097, n_calls 2071, tp_calls 2046)	0.3466	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltr_finder	protein-less f1 (mean of 3 genomes; summed n_truth 6048, tp_truth 2097, n_calls 2071, tp_calls 2046)	0.5132	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	look4ltrs	coding precision (mean of 3 genomes; summed n_truth 37895, tp_truth 26692, n_calls 30302, tp_calls 27606)	0.9111	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	look4ltrs	coding recall (mean of 3 genomes; summed n_truth 37895, tp_truth 26692, n_calls 30302, tp_calls 27606)	0.7043	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	look4ltrs	coding f1 (mean of 3 genomes; summed n_truth 37895, tp_truth 26692, n_calls 30302, tp_calls 27606)	0.7945	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	look4ltrs	partly coding precision (mean of 3 genomes; summed n_truth 5913, tp_truth 5130, n_calls 4971, tp_calls 4389)	0.8831	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	look4ltrs	partly coding recall (mean of 3 genomes; summed n_truth 5913, tp_truth 5130, n_calls 4971, tp_calls 4389)	0.8676	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	look4ltrs	partly coding f1 (mean of 3 genomes; summed n_truth 5913, tp_truth 5130, n_calls 4971, tp_calls 4389)	0.8753	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	look4ltrs	protein-less precision (mean of 3 genomes; summed n_truth 6048, tp_truth 4191, n_calls 4485, tp_calls 4018)	0.8958	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	look4ltrs	protein-less recall (mean of 3 genomes; summed n_truth 6048, tp_truth 4191, n_calls 4485, tp_calls 4018)	0.6929	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	look4ltrs	protein-less f1 (mean of 3 genomes; summed n_truth 6048, tp_truth 4191, n_calls 4485, tp_calls 4018)	0.7813	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hirepeat	coding precision (mean of 3 genomes; summed n_truth 37895, tp_truth 33597, n_calls 36964, tp_calls 34285)	0.9275	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hirepeat	coding recall (mean of 3 genomes; summed n_truth 37895, tp_truth 33597, n_calls 36964, tp_calls 34285)	0.8866	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hirepeat	coding f1 (mean of 3 genomes; summed n_truth 37895, tp_truth 33597, n_calls 36964, tp_calls 34285)	0.9066	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hirepeat	partly coding precision (mean of 3 genomes; summed n_truth 5913, tp_truth 3805, n_calls 3971, tp_calls 3304)	0.8323	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hirepeat	partly coding recall (mean of 3 genomes; summed n_truth 5913, tp_truth 3805, n_calls 3971, tp_calls 3304)	0.6436	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hirepeat	partly coding f1 (mean of 3 genomes; summed n_truth 5913, tp_truth 3805, n_calls 3971, tp_calls 3304)	0.7258	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hirepeat	protein-less precision (mean of 3 genomes; summed n_truth 6048, tp_truth 3651, n_calls 4199, tp_calls 3464)	0.8251	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hirepeat	protein-less recall (mean of 3 genomes; summed n_truth 6048, tp_truth 3651, n_calls 4199, tp_calls 3464)	0.6038	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hirepeat	protein-less f1 (mean of 3 genomes; summed n_truth 6048, tp_truth 3651, n_calls 4199, tp_calls 3464)	0.6973	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hite	coding precision (mean of 3 genomes; summed n_truth 37895, tp_truth 31219, n_calls 31762, tp_calls 31672)	0.9972	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hite	coding recall (mean of 3 genomes; summed n_truth 37895, tp_truth 31219, n_calls 31762, tp_calls 31672)	0.8237	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hite	coding f1 (mean of 3 genomes; summed n_truth 37895, tp_truth 31219, n_calls 31762, tp_calls 31672)	0.9022	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hite	partly coding precision (mean of 3 genomes; summed n_truth 5913, tp_truth 3220, n_calls 2862, tp_calls 2847)	0.9947	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hite	partly coding recall (mean of 3 genomes; summed n_truth 5913, tp_truth 3220, n_calls 2862, tp_calls 2847)	0.5445	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hite	partly coding f1 (mean of 3 genomes; summed n_truth 5913, tp_truth 3220, n_calls 2862, tp_calls 2847)	0.7036	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hite	protein-less precision (mean of 3 genomes; summed n_truth 6048, tp_truth 3218, n_calls 3149, tp_calls 3138)	0.9966	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hite	protein-less recall (mean of 3 genomes; summed n_truth 6048, tp_truth 3218, n_calls 3149, tp_calls 3138)	0.5319	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	hite	protein-less f1 (mean of 3 genomes; summed n_truth 6048, tp_truth 3218, n_calls 3149, tp_calls 3138)	0.6934	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrpred	coding precision (mean of 3 genomes; summed n_truth 37895, tp_truth 22411, n_calls 22741, tp_calls 22351)	0.983	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrpred	coding recall (mean of 3 genomes; summed n_truth 37895, tp_truth 22411, n_calls 22741, tp_calls 22351)	0.5916	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrpred	coding f1 (mean of 3 genomes; summed n_truth 37895, tp_truth 22411, n_calls 22741, tp_calls 22351)	0.7352	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrpred	partly coding precision (mean of 3 genomes; summed n_truth 5913, tp_truth 1190, n_calls 1390, tp_calls 1276)	0.9183	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrpred	partly coding recall (mean of 3 genomes; summed n_truth 5913, tp_truth 1190, n_calls 1390, tp_calls 1276)	0.2011	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrpred	partly coding f1 (mean of 3 genomes; summed n_truth 5913, tp_truth 1190, n_calls 1390, tp_calls 1276)	0.3284	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrpred	protein-less precision (mean of 3 genomes; summed n_truth 6048, tp_truth 629, n_calls 735, tp_calls 603)	0.8179	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrpred	protein-less recall (mean of 3 genomes; summed n_truth 6048, tp_truth 629, n_calls 735, tp_calls 603)	0.1042	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	ltrpred	protein-less f1 (mean of 3 genomes; summed n_truth 6048, tp_truth 629, n_calls 735, tp_calls 603)	0.1845	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	dante_ltr	coding precision (mean of 3 genomes; summed n_truth 37895, tp_truth 24461, n_calls 24806, tp_calls 24468)	0.9864	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	dante_ltr	coding recall (mean of 3 genomes; summed n_truth 37895, tp_truth 24461, n_calls 24806, tp_calls 24468)	0.6455	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	dante_ltr	coding f1 (mean of 3 genomes; summed n_truth 37895, tp_truth 24461, n_calls 24806, tp_calls 24468)	0.7803	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	dante_ltr	partly coding precision (mean of 3 genomes; summed n_truth 5913, tp_truth 1, n_calls 0, tp_calls 0)	NA (0 calls)	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	dante_ltr	partly coding recall (mean of 3 genomes; summed n_truth 5913, tp_truth 1, n_calls 0, tp_calls 0)	0.0002	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	dante_ltr	partly coding f1 (mean of 3 genomes; summed n_truth 5913, tp_truth 1, n_calls 0, tp_calls 0)	NA (0 calls)	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	dante_ltr	protein-less precision (mean of 3 genomes; summed n_truth 6048, tp_truth 6, n_calls 0, tp_calls 0)	NA (0 calls)	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	dante_ltr	protein-less recall (mean of 3 genomes; summed n_truth 6048, tp_truth 6, n_calls 0, tp_calls 0)	0.001	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+D	S2	dante_ltr	protein-less f1 (mean of 3 genomes; summed n_truth 6048, tp_truth 6, n_calls 0, tp_calls 0)	NA (0 calls)	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+E	arab	ltrquest	protein-less calls	253	real_calls.tsv (n_calls)
+E	arab	ltrquest	protein-less supported share [0.0663, 0.1224]	0.099	real_calls.tsv
+E	arab	ltrquest	chance (moved spans) [0.052, 0.1582]	0.107	real_calls.tsv (null)
+E	arab	ltrquest	protein-less library-supported calls	25	real_calls.tsv
+E	arab	ltrquest	protein-less supported share / chance	0.93	real_calls.tsv (ratio computed here)
+E	arab	ltrquest	coding calls supported share	0.759	real_calls.tsv
+E	arab	ltr_retriever	protein-less calls	11	real_calls.tsv (n_calls)
+E	arab	ltr_retriever	protein-less supported share [0.0, 0.6667]	0.364	real_calls.tsv
+E	arab	ltr_retriever	chance (moved spans) [0.0, 0.4]	0.182	real_calls.tsv (null)
+E	arab	ltr_retriever	protein-less library-supported calls	4	real_calls.tsv
+E	arab	ltr_retriever	protein-less supported share / chance	2.0	real_calls.tsv (ratio computed here)
+E	arab	ltr_retriever	coding calls supported share	0.879	real_calls.tsv
+E	arab	ltrharvest	protein-less calls	1159	real_calls.tsv (n_calls)
+E	arab	ltrharvest	protein-less supported share [0.0105, 0.0454]	0.028	real_calls.tsv
+E	arab	ltrharvest	chance (moved spans) [0.0127, 0.0596]	0.035	real_calls.tsv (null)
+E	arab	ltrharvest	protein-less library-supported calls	32	real_calls.tsv
+E	arab	ltrharvest	protein-less supported share / chance	0.8	real_calls.tsv (ratio computed here)
+E	arab	ltrharvest	coding calls supported share	0.809	real_calls.tsv
+E	arab	ltr_finder	protein-less calls	31	real_calls.tsv (n_calls)
+E	arab	ltr_finder	protein-less supported share [0.0526, 0.2353]	0.161	real_calls.tsv
+E	arab	ltr_finder	chance (moved spans) [0.0, 0.1692]	0.097	real_calls.tsv (null)
+E	arab	ltr_finder	protein-less library-supported calls	5	real_calls.tsv
+E	arab	ltr_finder	protein-less supported share / chance	1.67	real_calls.tsv (ratio computed here)
+E	arab	ltr_finder	coding calls supported share	0.878	real_calls.tsv
+E	arab	look4ltrs	protein-less calls	1433	real_calls.tsv (n_calls)
+E	arab	look4ltrs	protein-less supported share [0.0119, 0.0428]	0.026	real_calls.tsv
+E	arab	look4ltrs	chance (moved spans) [0.0186, 0.0518]	0.034	real_calls.tsv (null)
+E	arab	look4ltrs	protein-less library-supported calls	37	real_calls.tsv
+E	arab	look4ltrs	protein-less supported share / chance	0.77	real_calls.tsv (ratio computed here)
+E	arab	look4ltrs	coding calls supported share	0.639	real_calls.tsv
+E	arab	hirepeat	protein-less calls	1854	real_calls.tsv (n_calls)
+E	arab	hirepeat	protein-less supported share [0.0089, 0.0426]	0.024	real_calls.tsv
+E	arab	hirepeat	chance (moved spans) [0.0125, 0.0377]	0.024	real_calls.tsv (null)
+E	arab	hirepeat	protein-less library-supported calls	45	real_calls.tsv
+E	arab	hirepeat	protein-less supported share / chance	1.0	real_calls.tsv (ratio computed here)
+E	arab	hirepeat	coding calls supported share	0.794	real_calls.tsv
+E	arab	hite	protein-less calls	3	real_calls.tsv (n_calls)
+E	arab	hite	protein-less supported share [0.0, 1.0]	0.667	real_calls.tsv
+E	arab	hite	chance (moved spans) [0.0, 1.0]	0.667	real_calls.tsv (null)
+E	arab	hite	protein-less library-supported calls	2	real_calls.tsv
+E	arab	hite	protein-less supported share / chance	1.0	real_calls.tsv (ratio computed here)
+E	arab	hite	coding calls supported share	0.912	real_calls.tsv
+E	arab	ltrpred	protein-less calls	153	real_calls.tsv (n_calls)
+E	arab	ltrpred	protein-less supported share [0.0, 0.0319]	0.013	real_calls.tsv
+E	arab	ltrpred	chance (moved spans) [0.0, 0.0588]	0.026	real_calls.tsv (null)
+E	arab	ltrpred	protein-less library-supported calls	2	real_calls.tsv
+E	arab	ltrpred	protein-less supported share / chance	0.5	real_calls.tsv (ratio computed here)
+E	arab	ltrpred	coding calls supported share	0.821	real_calls.tsv
+E	arab	dante_ltr	protein-less calls	0	real_calls.tsv (n_calls)
+E	rice	ltrquest	protein-less calls	1622	real_calls.tsv (n_calls)
+E	rice	ltrquest	protein-less supported share [0.4793, 0.5491]	0.515	real_calls.tsv
+E	rice	ltrquest	chance (moved spans) [0.1709, 0.2318]	0.2	real_calls.tsv (null)
+E	rice	ltrquest	protein-less library-supported calls	835	real_calls.tsv
+E	rice	ltrquest	protein-less supported share / chance	2.57	real_calls.tsv (ratio computed here)
+E	rice	ltrquest	coding calls supported share	0.962	real_calls.tsv
+E	rice	ltr_retriever	protein-less calls	306	real_calls.tsv (n_calls)
+E	rice	ltr_retriever	protein-less supported share [0.9088, 0.9593]	0.935	real_calls.tsv
+E	rice	ltr_retriever	chance (moved spans) [0.1428, 0.2351]	0.19	real_calls.tsv (null)
+E	rice	ltr_retriever	protein-less library-supported calls	286	real_calls.tsv
+E	rice	ltr_retriever	protein-less supported share / chance	4.93	real_calls.tsv (ratio computed here)
+E	rice	ltr_retriever	coding calls supported share	0.997	real_calls.tsv
+E	rice	ltrharvest	protein-less calls	3060	real_calls.tsv (n_calls)
+E	rice	ltrharvest	protein-less supported share [0.2627, 0.3226]	0.294	real_calls.tsv
+E	rice	ltrharvest	chance (moved spans) [0.1186, 0.164]	0.141	real_calls.tsv (null)
+E	rice	ltrharvest	protein-less library-supported calls	899	real_calls.tsv
+E	rice	ltrharvest	protein-less supported share / chance	2.08	real_calls.tsv (ratio computed here)
+E	rice	ltrharvest	coding calls supported share	0.974	real_calls.tsv
+E	rice	ltr_finder	protein-less calls	514	real_calls.tsv (n_calls)
+E	rice	ltr_finder	protein-less supported share [0.8046, 0.8844]	0.846	real_calls.tsv
+E	rice	ltr_finder	chance (moved spans) [0.1471, 0.2419]	0.195	real_calls.tsv (null)
+E	rice	ltr_finder	protein-less library-supported calls	435	real_calls.tsv
+E	rice	ltr_finder	protein-less supported share / chance	4.35	real_calls.tsv (ratio computed here)
+E	rice	ltr_finder	coding calls supported share	0.989	real_calls.tsv
+E	rice	look4ltrs	protein-less calls	4043	real_calls.tsv (n_calls)
+E	rice	look4ltrs	protein-less supported share [0.2312, 0.2951]	0.263	real_calls.tsv
+E	rice	look4ltrs	chance (moved spans) [0.109, 0.1613]	0.134	real_calls.tsv (null)
+E	rice	look4ltrs	protein-less library-supported calls	1063	real_calls.tsv
+E	rice	look4ltrs	protein-less supported share / chance	1.96	real_calls.tsv (ratio computed here)
+E	rice	look4ltrs	coding calls supported share	0.886	real_calls.tsv
+E	rice	hirepeat	protein-less calls	3426	real_calls.tsv (n_calls)
+E	rice	hirepeat	protein-less supported share [0.2859, 0.3691]	0.326	real_calls.tsv
+E	rice	hirepeat	chance (moved spans) [0.1236, 0.1743]	0.147	real_calls.tsv (null)
+E	rice	hirepeat	protein-less library-supported calls	1118	real_calls.tsv
+E	rice	hirepeat	protein-less supported share / chance	2.22	real_calls.tsv (ratio computed here)
+E	rice	hirepeat	coding calls supported share	0.96	real_calls.tsv
+E	rice	hite	protein-less calls	237	real_calls.tsv (n_calls)
+E	rice	hite	protein-less supported share [0.9659, 0.9961]	0.983	real_calls.tsv
+E	rice	hite	chance (moved spans) [0.119, 0.2188]	0.169	real_calls.tsv (null)
+E	rice	hite	protein-less library-supported calls	233	real_calls.tsv
+E	rice	hite	protein-less supported share / chance	5.82	real_calls.tsv (ratio computed here)
+E	rice	hite	coding calls supported share	0.994	real_calls.tsv
+E	rice	ltrpred	protein-less calls	797	real_calls.tsv (n_calls)
+E	rice	ltrpred	protein-less supported share [0.2656, 0.3469]	0.306	real_calls.tsv
+E	rice	ltrpred	chance (moved spans) [0.0871, 0.1458]	0.115	real_calls.tsv (null)
+E	rice	ltrpred	protein-less library-supported calls	244	real_calls.tsv
+E	rice	ltrpred	protein-less supported share / chance	2.65	real_calls.tsv (ratio computed here)
+E	rice	ltrpred	coding calls supported share	0.965	real_calls.tsv
+E	rice	dante_ltr	protein-less calls	0	real_calls.tsv (n_calls)
+E	finch	ltrquest	protein-less calls	2865	real_calls.tsv (n_calls)
+E	finch	ltrquest	protein-less supported share [0.2248, 0.3384]	0.283	real_calls.tsv
+E	finch	ltrquest	chance (moved spans) [0.0367, 0.0883]	0.062	real_calls.tsv (null)
+E	finch	ltrquest	protein-less library-supported calls	811	real_calls.tsv
+E	finch	ltrquest	protein-less supported share / chance	4.58	real_calls.tsv (ratio computed here)
+E	finch	ltrquest	coding calls supported share	0.655	real_calls.tsv
+E	finch	ltrharvest	protein-less calls	7016	real_calls.tsv (n_calls)
+E	finch	ltrharvest	protein-less supported share [0.0718, 0.1258]	0.095	real_calls.tsv
+E	finch	ltrharvest	chance (moved spans) [0.0179, 0.0517]	0.033	real_calls.tsv (null)
+E	finch	ltrharvest	protein-less library-supported calls	669	real_calls.tsv
+E	finch	ltrharvest	protein-less supported share / chance	2.94	real_calls.tsv (ratio computed here)
+E	finch	ltrharvest	coding calls supported share	0.764	real_calls.tsv
+E	finch	ltr_finder	protein-less calls	789	real_calls.tsv (n_calls)
+E	finch	ltr_finder	protein-less supported share [0.3499, 0.5229]	0.437	real_calls.tsv
+E	finch	ltr_finder	chance (moved spans) [0.0262, 0.0936]	0.058	real_calls.tsv (null)
+E	finch	ltr_finder	protein-less library-supported calls	345	real_calls.tsv
+E	finch	ltr_finder	protein-less supported share / chance	7.5	real_calls.tsv (ratio computed here)
+E	finch	ltr_finder	coding calls supported share	0.876	real_calls.tsv
+E	finch	look4ltrs	protein-less calls	6464	real_calls.tsv (n_calls)
+E	finch	look4ltrs	protein-less supported share [0.0864, 0.1473]	0.115	real_calls.tsv
+E	finch	look4ltrs	chance (moved spans) [0.0186, 0.0624]	0.039	real_calls.tsv (null)
+E	finch	look4ltrs	protein-less library-supported calls	746	real_calls.tsv
+E	finch	look4ltrs	protein-less supported share / chance	2.93	real_calls.tsv (ratio computed here)
+E	finch	look4ltrs	coding calls supported share	0.634	real_calls.tsv
+E	finch	hirepeat	protein-less calls	4083	real_calls.tsv (n_calls)
+E	finch	hirepeat	protein-less supported share [0.1417, 0.2308]	0.187	real_calls.tsv
+E	finch	hirepeat	chance (moved spans) [0.0265, 0.0832]	0.054	real_calls.tsv (null)
+E	finch	hirepeat	protein-less library-supported calls	763	real_calls.tsv
+E	finch	hirepeat	protein-less supported share / chance	3.49	real_calls.tsv (ratio computed here)
+E	finch	hirepeat	coding calls supported share	0.702	real_calls.tsv
+E	finch	hite	protein-less calls	387	real_calls.tsv (n_calls)
+E	finch	hite	protein-less supported share [0.7749, 0.8635]	0.822	real_calls.tsv
+E	finch	hite	chance (moved spans) [0.0545, 0.1731]	0.116	real_calls.tsv (null)
+E	finch	hite	protein-less library-supported calls	318	real_calls.tsv
+E	finch	hite	protein-less supported share / chance	7.07	real_calls.tsv (ratio computed here)
+E	finch	hite	coding calls supported share	0.802	real_calls.tsv
+E	finch	ltrpred	protein-less calls	1324	real_calls.tsv (n_calls)
+E	finch	ltrpred	protein-less supported share [0.0692, 0.13]	0.098	real_calls.tsv
+E	finch	ltrpred	chance (moved spans) [0.0108, 0.0446]	0.026	real_calls.tsv (null)
+E	finch	ltrpred	protein-less library-supported calls	130	real_calls.tsv
+E	finch	ltrpred	protein-less supported share / chance	3.82	real_calls.tsv (ratio computed here)
+E	finch	ltrpred	coding calls supported share	0.708	real_calls.tsv
+E	maize	ltrquest	protein-less calls	9354	real_calls.tsv (n_calls)
+E	maize	ltrquest	protein-less supported share [0.4192, 0.4467]	0.433	real_calls.tsv
+E	maize	ltrquest	chance (moved spans) [0.5603, 0.5911]	0.575	real_calls.tsv (null)
+E	maize	ltrquest	protein-less library-supported calls	4051	real_calls.tsv
+E	maize	ltrquest	protein-less supported share / chance	0.75	real_calls.tsv (ratio computed here)
+E	maize	ltrquest	coding calls supported share	0.954	real_calls.tsv
+E	maize	ltrharvest	protein-less calls	13399	real_calls.tsv (n_calls)
+E	maize	ltrharvest	protein-less supported share [0.4133, 0.435]	0.424	real_calls.tsv
+E	maize	ltrharvest	chance (moved spans) [0.593, 0.6184]	0.606	real_calls.tsv (null)
+E	maize	ltrharvest	protein-less library-supported calls	5684	real_calls.tsv
+E	maize	ltrharvest	protein-less supported share / chance	0.7	real_calls.tsv (ratio computed here)
+E	maize	ltrharvest	coding calls supported share	0.973	real_calls.tsv
+E	maize	ltr_finder	protein-less calls	7562	real_calls.tsv (n_calls)
+E	maize	ltr_finder	protein-less supported share [0.3609, 0.4117]	0.384	real_calls.tsv
+E	maize	ltr_finder	chance (moved spans) [0.4997, 0.5387]	0.518	real_calls.tsv (null)
+E	maize	ltr_finder	protein-less library-supported calls	2906	real_calls.tsv
+E	maize	ltr_finder	protein-less supported share / chance	0.74	real_calls.tsv (ratio computed here)
+E	maize	ltr_finder	coding calls supported share	0.974	real_calls.tsv
+E	maize	look4ltrs	protein-less calls	20378	real_calls.tsv (n_calls)
+E	maize	look4ltrs	protein-less supported share [0.3285, 0.36]	0.344	real_calls.tsv
+E	maize	look4ltrs	chance (moved spans) [0.5113, 0.5468]	0.529	real_calls.tsv (null)
+E	maize	look4ltrs	protein-less library-supported calls	7017	real_calls.tsv
+E	maize	look4ltrs	protein-less supported share / chance	0.65	real_calls.tsv (ratio computed here)
+E	maize	look4ltrs	coding calls supported share	0.914	real_calls.tsv
+E	maize	hirepeat	protein-less calls	17502	real_calls.tsv (n_calls)
+E	maize	hirepeat	protein-less supported share [0.4302, 0.4505]	0.441	real_calls.tsv
+E	maize	hirepeat	chance (moved spans) [0.5897, 0.6151]	0.602	real_calls.tsv (null)
+E	maize	hirepeat	protein-less library-supported calls	7715	real_calls.tsv
+E	maize	hirepeat	protein-less supported share / chance	0.73	real_calls.tsv (ratio computed here)
+E	maize	hirepeat	coding calls supported share	0.953	real_calls.tsv
+E	maize	hite	protein-less calls	1619	real_calls.tsv (n_calls)
+E	maize	hite	protein-less supported share [0.7165, 0.7577]	0.738	real_calls.tsv
+E	maize	hite	chance (moved spans) [0.5427, 0.5942]	0.57	real_calls.tsv (null)
+E	maize	hite	protein-less library-supported calls	1194	real_calls.tsv
+E	maize	hite	protein-less supported share / chance	1.29	real_calls.tsv (ratio computed here)
+E	maize	hite	coding calls supported share	0.968	real_calls.tsv
+E	maize	ltrpred	protein-less calls	1523	real_calls.tsv (n_calls)
+E	maize	ltrpred	protein-less supported share [0.4668, 0.5152]	0.491	real_calls.tsv
+E	maize	ltrpred	chance (moved spans) [0.5573, 0.6074]	0.582	real_calls.tsv (null)
+E	maize	ltrpred	protein-less library-supported calls	748	real_calls.tsv
+E	maize	ltrpred	protein-less supported share / chance	0.84	real_calls.tsv (ratio computed here)
+E	maize	ltrpred	coding calls supported share	0.941	real_calls.tsv
+E	maize	dante_ltr	protein-less calls	0	real_calls.tsv (n_calls)
+E	gorilla	ltrquest	protein-less calls	10833	real_calls.tsv (n_calls)
+E	gorilla	ltrquest	protein-less supported share [0.5171, 0.5548]	0.536	real_calls.tsv
+E	gorilla	ltrquest	chance (moved spans) [0.0212, 0.0271]	0.024	real_calls.tsv (null)
+E	gorilla	ltrquest	protein-less library-supported calls	5803	real_calls.tsv
+E	gorilla	ltrquest	protein-less supported share / chance	22.32	real_calls.tsv (ratio computed here)
+E	gorilla	ltrquest	coding calls supported share	0.891	real_calls.tsv
+E	gorilla	ltr_finder	protein-less calls	639	real_calls.tsv (n_calls)
+E	gorilla	ltr_finder	protein-less supported share [0.0618, 0.1195]	0.088	real_calls.tsv
+E	gorilla	ltr_finder	chance (moved spans) [0.003, 0.022]	0.011	real_calls.tsv (null)
+E	gorilla	ltr_finder	protein-less library-supported calls	56	real_calls.tsv
+E	gorilla	ltr_finder	protein-less supported share / chance	7.96	real_calls.tsv (ratio computed here)
+E	gorilla	ltr_finder	coding calls supported share	0.961	real_calls.tsv
+E	gorilla	hirepeat	protein-less calls	41821	real_calls.tsv (n_calls)
+E	gorilla	hirepeat	protein-less supported share [0.0321, 0.0378]	0.035	real_calls.tsv
+E	gorilla	hirepeat	chance (moved spans) [0.0092, 0.0116]	0.01	real_calls.tsv (null)
+E	gorilla	hirepeat	protein-less library-supported calls	1461	real_calls.tsv
+E	gorilla	hirepeat	protein-less supported share / chance	3.36	real_calls.tsv (ratio computed here)
+E	gorilla	hirepeat	coding calls supported share	0.928	real_calls.tsv
+E	gorilla	hite	protein-less calls	57	real_calls.tsv (n_calls)
+E	gorilla	hite	protein-less supported share [0.8571, 0.9851]	0.93	real_calls.tsv
+E	gorilla	hite	chance (moved spans) [0.0, 0.0883]	0.035	real_calls.tsv (null)
+E	gorilla	hite	protein-less library-supported calls	53	real_calls.tsv
+E	gorilla	hite	protein-less supported share / chance	26.49	real_calls.tsv (ratio computed here)
+E	gorilla	hite	coding calls supported share	0.997	real_calls.tsv
+legend/B	S1	ltrquest	coding recall (3 seeds pooled) [0.9969, 0.9991]	0.9981	sim_gap.tsv (family bootstrap CI)
+legend/B	S1	ltrquest	protein-less recall (3 seeds pooled) [0.9545, 0.9841]	0.9711	sim_gap.tsv (family bootstrap CI)
+legend/C	S1	ltrquest	coding recall at protein-less lengths [0.9965, 0.9999]	0.9989	sim_gap.tsv
+legend/B	S1	ltrharvest	coding recall (3 seeds pooled) [0.9331, 0.954]	0.9443	sim_gap.tsv (family bootstrap CI)
+legend/B	S1	ltrharvest	protein-less recall (3 seeds pooled) [0.733, 0.8856]	0.8123	sim_gap.tsv (family bootstrap CI)
+legend/C	S1	ltrharvest	coding recall at protein-less lengths [0.9099, 0.9648]	0.9438	sim_gap.tsv
+legend/B	S1	ltr_finder	coding recall (3 seeds pooled) [0.4648, 0.5204]	0.4924	sim_gap.tsv (family bootstrap CI)
+legend/B	S1	ltr_finder	protein-less recall (3 seeds pooled) [0.3515, 0.4973]	0.4237	sim_gap.tsv (family bootstrap CI)
+legend/C	S1	ltr_finder	coding recall at protein-less lengths [0.2902, 0.5255]	0.3558	sim_gap.tsv
+legend/B	S1	ltr_retriever	coding recall (3 seeds pooled) [0.588, 0.629]	0.6095	sim_gap.tsv (family bootstrap CI)
+legend/B	S1	ltr_retriever	protein-less recall (3 seeds pooled) [0.4585, 0.5853]	0.5263	sim_gap.tsv (family bootstrap CI)
+legend/C	S1	ltr_retriever	coding recall at protein-less lengths [0.5603, 0.6475]	0.6041	sim_gap.tsv
+legend/B	S1	look4ltrs	coding recall (3 seeds pooled) [0.6737, 0.7519]	0.712	sim_gap.tsv (family bootstrap CI)
+legend/B	S1	look4ltrs	protein-less recall (3 seeds pooled) [0.6242, 0.8254]	0.7298	sim_gap.tsv (family bootstrap CI)
+legend/C	S1	look4ltrs	coding recall at protein-less lengths [0.3873, 0.7984]	0.6247	sim_gap.tsv
+legend/B	S1	hirepeat	coding recall (3 seeds pooled) [0.9168, 0.9533]	0.9367	sim_gap.tsv (family bootstrap CI)
+legend/B	S1	hirepeat	protein-less recall (3 seeds pooled) [0.4832, 0.7008]	0.5912	sim_gap.tsv (family bootstrap CI)
+legend/C	S1	hirepeat	coding recall at protein-less lengths [0.5268, 0.9495]	0.635	sim_gap.tsv
+legend/B	S1	hite	coding recall (3 seeds pooled) [0.8665, 0.904]	0.8855	sim_gap.tsv (family bootstrap CI)
+legend/B	S1	hite	protein-less recall (3 seeds pooled) [0.4209, 0.6264]	0.5237	sim_gap.tsv (family bootstrap CI)
+legend/C	S1	hite	coding recall at protein-less lengths [0.4844, 0.8812]	0.5865	sim_gap.tsv
+legend/B	S1	ltrpred	coding recall (3 seeds pooled) [0.7363, 0.8155]	0.7744	sim_gap.tsv (family bootstrap CI)
+legend/B	S1	ltrpred	protein-less recall (3 seeds pooled) [0.0484, 0.1486]	0.093	sim_gap.tsv (family bootstrap CI)
+legend/C	S1	ltrpred	coding recall at protein-less lengths [0.0842, 0.2291]	0.1425	sim_gap.tsv
+legend/B	S1	dante_ltr	coding recall (3 seeds pooled) [0.6706, 0.7575]	0.7117	sim_gap.tsv (family bootstrap CI)
+legend/B	S1	dante_ltr	protein-less recall (3 seeds pooled) [0.0, 0.0]	0.0	sim_gap.tsv (family bootstrap CI)
+legend/C	S1	dante_ltr	coding recall at protein-less lengths [0.0717, 0.1938]	0.1193	sim_gap.tsv
+legend/B	S2	ltrquest	coding recall (3 seeds pooled) [0.9933, 0.9952]	0.9943	sim_gap.tsv (family bootstrap CI)
+legend/B	S2	ltrquest	protein-less recall (3 seeds pooled) [0.9855, 0.9948]	0.9906	sim_gap.tsv (family bootstrap CI)
+legend/C	S2	ltrquest	coding recall at protein-less lengths [0.9911, 0.9966]	0.9942	sim_gap.tsv
+legend/B	S2	ltrharvest	coding recall (3 seeds pooled) [0.8453, 0.8732]	0.8594	sim_gap.tsv (family bootstrap CI)
+legend/B	S2	ltrharvest	protein-less recall (3 seeds pooled) [0.605, 0.7442]	0.6795	sim_gap.tsv (family bootstrap CI)
+legend/C	S2	ltrharvest	coding recall at protein-less lengths [0.8118, 0.8686]	0.8432	sim_gap.tsv
+legend/B	S2	ltr_finder	coding recall (3 seeds pooled) [0.4636, 0.5036]	0.4844	sim_gap.tsv (family bootstrap CI)
+legend/B	S2	ltr_finder	protein-less recall (3 seeds pooled) [0.3354, 0.4491]	0.3943	sim_gap.tsv (family bootstrap CI)
+legend/C	S2	ltr_finder	coding recall at protein-less lengths [0.3049, 0.4907]	0.3595	sim_gap.tsv
+legend/B	S2	ltr_retriever	coding recall (3 seeds pooled) [0.5781, 0.6092]	0.594	sim_gap.tsv (family bootstrap CI)
+legend/B	S2	ltr_retriever	protein-less recall (3 seeds pooled) [0.4201, 0.5219]	0.4731	sim_gap.tsv (family bootstrap CI)
+legend/C	S2	ltr_retriever	coding recall at protein-less lengths [0.5178, 0.5915]	0.5575	sim_gap.tsv
+legend/B	S2	look4ltrs	coding recall (3 seeds pooled) [0.683, 0.7488]	0.719	sim_gap.tsv (family bootstrap CI)
+legend/B	S2	look4ltrs	protein-less recall (3 seeds pooled) [0.6836, 0.8289]	0.7586	sim_gap.tsv (family bootstrap CI)
+legend/C	S2	look4ltrs	coding recall at protein-less lengths [0.4529, 0.7806]	0.5946	sim_gap.tsv
+legend/B	S2	hirepeat	coding recall (3 seeds pooled) [0.9035, 0.934]	0.9201	sim_gap.tsv (family bootstrap CI)
+legend/B	S2	hirepeat	protein-less recall (3 seeds pooled) [0.561, 0.7471]	0.6515	sim_gap.tsv (family bootstrap CI)
+legend/C	S2	hirepeat	coding recall at protein-less lengths [0.5894, 0.9276]	0.6784	sim_gap.tsv
+legend/B	S2	hite	coding recall (3 seeds pooled) [0.87, 0.8971]	0.8847	sim_gap.tsv (family bootstrap CI)
+legend/B	S2	hite	protein-less recall (3 seeds pooled) [0.5172, 0.6883]	0.6043	sim_gap.tsv (family bootstrap CI)
+legend/C	S2	hite	coding recall at protein-less lengths [0.5468, 0.8599]	0.6287	sim_gap.tsv
+legend/B	S2	ltrpred	coding recall (3 seeds pooled) [0.6243, 0.6682]	0.6467	sim_gap.tsv (family bootstrap CI)
+legend/B	S2	ltrpred	protein-less recall (3 seeds pooled) [0.0719, 0.1523]	0.11	sim_gap.tsv (family bootstrap CI)
+legend/C	S2	ltrpred	coding recall at protein-less lengths [0.1423, 0.2736]	0.1946	sim_gap.tsv
+legend/B	S2	dante_ltr	coding recall (3 seeds pooled) [0.6819, 0.7514]	0.7154	sim_gap.tsv (family bootstrap CI)
+legend/B	S2	dante_ltr	protein-less recall (3 seeds pooled) [0.0, 0.0]	0.0	sim_gap.tsv (family bootstrap CI)
+legend/C	S2	dante_ltr	coding recall at protein-less lengths [0.1381, 0.2738]	0.1928	sim_gap.tsv
+legend/D (S1, not drawn)	S1	ltrquest	coding precision (mean of 3 genomes; summed n_truth 6383, n_calls 6404)	0.9939	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrquest	coding recall (mean of 3 genomes; summed n_truth 6383, n_calls 6404)	0.9823	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrquest	coding f1 (mean of 3 genomes; summed n_truth 6383, n_calls 6404)	0.988	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrquest	partly coding precision (mean of 3 genomes; summed n_truth 1251, n_calls 1197)	0.949	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrquest	partly coding recall (mean of 3 genomes; summed n_truth 1251, n_calls 1197)	0.9754	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrquest	partly coding f1 (mean of 3 genomes; summed n_truth 1251, n_calls 1197)	0.962	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrquest	protein-less precision (mean of 3 genomes; summed n_truth 1311, n_calls 1214)	0.9377	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrquest	protein-less recall (mean of 3 genomes; summed n_truth 1311, n_calls 1214)	0.8761	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrquest	protein-less f1 (mean of 3 genomes; summed n_truth 1311, n_calls 1214)	0.9056	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_retriever	coding precision (mean of 3 genomes; summed n_truth 6383, n_calls 3737)	0.9969	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_retriever	coding recall (mean of 3 genomes; summed n_truth 6383, n_calls 3737)	0.5785	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_retriever	coding f1 (mean of 3 genomes; summed n_truth 6383, n_calls 3737)	0.7322	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_retriever	partly coding precision (mean of 3 genomes; summed n_truth 1251, n_calls 618)	0.9899	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_retriever	partly coding recall (mean of 3 genomes; summed n_truth 1251, n_calls 618)	0.51	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_retriever	partly coding f1 (mean of 3 genomes; summed n_truth 1251, n_calls 618)	0.6722	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_retriever	protein-less precision (mean of 3 genomes; summed n_truth 1311, n_calls 603)	1.0	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_retriever	protein-less recall (mean of 3 genomes; summed n_truth 1311, n_calls 603)	0.4626	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_retriever	protein-less f1 (mean of 3 genomes; summed n_truth 1311, n_calls 603)	0.6322	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrharvest	coding precision (mean of 3 genomes; summed n_truth 6383, n_calls 5757)	0.9917	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrharvest	coding recall (mean of 3 genomes; summed n_truth 6383, n_calls 5757)	0.8943	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrharvest	coding f1 (mean of 3 genomes; summed n_truth 6383, n_calls 5757)	0.9405	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrharvest	partly coding precision (mean of 3 genomes; summed n_truth 1251, n_calls 1034)	0.9523	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrharvest	partly coding recall (mean of 3 genomes; summed n_truth 1251, n_calls 1034)	0.7862	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrharvest	partly coding f1 (mean of 3 genomes; summed n_truth 1251, n_calls 1034)	0.861	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrharvest	protein-less precision (mean of 3 genomes; summed n_truth 1311, n_calls 996)	0.9495	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrharvest	protein-less recall (mean of 3 genomes; summed n_truth 1311, n_calls 996)	0.7241	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrharvest	protein-less f1 (mean of 3 genomes; summed n_truth 1311, n_calls 996)	0.8215	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_finder	coding precision (mean of 3 genomes; summed n_truth 6383, n_calls 3054)	0.9967	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_finder	coding recall (mean of 3 genomes; summed n_truth 6383, n_calls 3054)	0.472	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_finder	coding f1 (mean of 3 genomes; summed n_truth 6383, n_calls 3054)	0.6406	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_finder	partly coding precision (mean of 3 genomes; summed n_truth 1251, n_calls 431)	0.9942	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_finder	partly coding recall (mean of 3 genomes; summed n_truth 1251, n_calls 431)	0.3614	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_finder	partly coding f1 (mean of 3 genomes; summed n_truth 1251, n_calls 431)	0.5291	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_finder	protein-less precision (mean of 3 genomes; summed n_truth 1311, n_calls 491)	1.0	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_finder	protein-less recall (mean of 3 genomes; summed n_truth 1311, n_calls 491)	0.3774	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltr_finder	protein-less f1 (mean of 3 genomes; summed n_truth 1311, n_calls 491)	0.5478	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	look4ltrs	coding precision (mean of 3 genomes; summed n_truth 6383, n_calls 4620)	0.9868	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	look4ltrs	coding recall (mean of 3 genomes; summed n_truth 6383, n_calls 4620)	0.691	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	look4ltrs	coding f1 (mean of 3 genomes; summed n_truth 6383, n_calls 4620)	0.8128	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	look4ltrs	partly coding precision (mean of 3 genomes; summed n_truth 1251, n_calls 1020)	0.9464	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	look4ltrs	partly coding recall (mean of 3 genomes; summed n_truth 1251, n_calls 1020)	0.8817	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	look4ltrs	partly coding f1 (mean of 3 genomes; summed n_truth 1251, n_calls 1020)	0.9129	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	look4ltrs	protein-less precision (mean of 3 genomes; summed n_truth 1311, n_calls 916)	0.9327	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	look4ltrs	protein-less recall (mean of 3 genomes; summed n_truth 1311, n_calls 916)	0.6588	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	look4ltrs	protein-less f1 (mean of 3 genomes; summed n_truth 1311, n_calls 916)	0.7721	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hirepeat	coding precision (mean of 3 genomes; summed n_truth 6383, n_calls 5944)	0.9886	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hirepeat	coding recall (mean of 3 genomes; summed n_truth 6383, n_calls 5944)	0.9076	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hirepeat	coding f1 (mean of 3 genomes; summed n_truth 6383, n_calls 5944)	0.9463	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hirepeat	partly coding precision (mean of 3 genomes; summed n_truth 1251, n_calls 728)	0.9285	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hirepeat	partly coding recall (mean of 3 genomes; summed n_truth 1251, n_calls 728)	0.5982	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hirepeat	partly coding f1 (mean of 3 genomes; summed n_truth 1251, n_calls 728)	0.7274	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hirepeat	protein-less precision (mean of 3 genomes; summed n_truth 1311, n_calls 737)	0.9411	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hirepeat	protein-less recall (mean of 3 genomes; summed n_truth 1311, n_calls 737)	0.5379	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hirepeat	protein-less f1 (mean of 3 genomes; summed n_truth 1311, n_calls 737)	0.6844	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hite	coding precision (mean of 3 genomes; summed n_truth 6383, n_calls 5441)	1.0	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hite	coding recall (mean of 3 genomes; summed n_truth 6383, n_calls 5441)	0.8416	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hite	coding f1 (mean of 3 genomes; summed n_truth 6383, n_calls 5441)	0.914	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hite	partly coding precision (mean of 3 genomes; summed n_truth 1251, n_calls 478)	0.998	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hite	partly coding recall (mean of 3 genomes; summed n_truth 1251, n_calls 478)	0.4336	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hite	partly coding f1 (mean of 3 genomes; summed n_truth 1251, n_calls 478)	0.6045	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hite	protein-less precision (mean of 3 genomes; summed n_truth 1311, n_calls 603)	0.9985	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hite	protein-less recall (mean of 3 genomes; summed n_truth 1311, n_calls 603)	0.4635	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	hite	protein-less f1 (mean of 3 genomes; summed n_truth 1311, n_calls 603)	0.633	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrpred	coding precision (mean of 3 genomes; summed n_truth 6383, n_calls 4714)	0.9971	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrpred	coding recall (mean of 3 genomes; summed n_truth 6383, n_calls 4714)	0.7388	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrpred	coding f1 (mean of 3 genomes; summed n_truth 6383, n_calls 4714)	0.8487	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrpred	partly coding precision (mean of 3 genomes; summed n_truth 1251, n_calls 330)	0.975	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrpred	partly coding recall (mean of 3 genomes; summed n_truth 1251, n_calls 330)	0.2438	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrpred	partly coding f1 (mean of 3 genomes; summed n_truth 1251, n_calls 330)	0.3897	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrpred	protein-less precision (mean of 3 genomes; summed n_truth 1311, n_calls 122)	0.9152	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrpred	protein-less recall (mean of 3 genomes; summed n_truth 1311, n_calls 122)	0.0855	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	ltrpred	protein-less f1 (mean of 3 genomes; summed n_truth 1311, n_calls 122)	0.1563	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	dante_ltr	coding precision (mean of 3 genomes; summed n_truth 6383, n_calls 4296)	0.9979	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	dante_ltr	coding recall (mean of 3 genomes; summed n_truth 6383, n_calls 4296)	0.6712	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	dante_ltr	coding f1 (mean of 3 genomes; summed n_truth 6383, n_calls 4296)	0.8026	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	dante_ltr	partly coding precision (mean of 3 genomes; summed n_truth 1251, n_calls 0)	NA (0 calls)	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	dante_ltr	partly coding recall (mean of 3 genomes; summed n_truth 1251, n_calls 0)	0.0	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	dante_ltr	partly coding f1 (mean of 3 genomes; summed n_truth 1251, n_calls 0)	NA (0 calls)	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	dante_ltr	protein-less precision (mean of 3 genomes; summed n_truth 1311, n_calls 0)	NA (0 calls)	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	dante_ltr	protein-less recall (mean of 3 genomes; summed n_truth 1311, n_calls 0)	0.0014	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D (S1, not drawn)	S1	dante_ltr	protein-less f1 (mean of 3 genomes; summed n_truth 1311, n_calls 0)	NA (0 calls)	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S2	ltrquest	coding recall, LTRquest vs next best (HiRepEat)	0.9757 vs 0.8866	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S2	ltrquest	coding f1, LTRquest vs next best (HiRepEat)	0.9769 vs 0.9066	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S2	ltrquest	partly coding recall, LTRquest vs next best (Look4LTRs)	0.9661 vs 0.8676	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S2	ltrquest	partly coding f1, LTRquest vs next best (Look4LTRs)	0.9494 vs 0.8753	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S2	ltrquest	protein-less recall, LTRquest vs next best (Look4LTRs)	0.9072 vs 0.6929	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S2	ltrquest	protein-less f1, LTRquest vs next best (Look4LTRs)	0.9238 vs 0.7813	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S2	dante_ltr	partly coding calls (summed over 3 genomes)	0	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S2	dante_ltr	protein-less calls (summed over 3 genomes)	0	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S2	ltrquest	protein-less precision vs LTR_retriever, LTR_Finder, HiTE	0.9410 vs 0.9943, 0.9880, 0.9966	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S1	ltrquest	coding recall, LTRquest vs next best (HiRepEat)	0.9823 vs 0.9076	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S1	ltrquest	coding f1, LTRquest vs next best (HiRepEat)	0.9880 vs 0.9463	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S1	ltrquest	partly coding recall, LTRquest vs next best (Look4LTRs)	0.9754 vs 0.8817	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S1	ltrquest	partly coding f1, LTRquest vs next best (Look4LTRs)	0.9620 vs 0.9129	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S1	ltrquest	protein-less recall, LTRquest vs next best (LTRharvest)	0.8761 vs 0.7241	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S1	ltrquest	protein-less f1, LTRquest vs next best (LTRharvest)	0.9056 vs 0.8215	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S1	dante_ltr	partly coding calls (summed over 3 genomes)	0	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S1	dante_ltr	protein-less calls (summed over 3 genomes)	0	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S1	ltrquest	protein-less precision vs LTR_retriever, LTR_Finder, HiTE	0.9377 vs 1.0000, 1.0000, 0.9985	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/C (Fig. 1C-D pointer)	div	ltrquest	protein-less d50, K2P [0.1249, 0.1659]	0.1454	experiments/nonauto/div_d50.tsv
+legend/C (Fig. 1C-D pointer)	div	ltrquest	coding d50, K2P [0.3274, 0.3368]	0.3320	experiments/nonauto/div_d50.tsv
+legend/E	rice+finch	permissive	protein-less support / chance, range	1.96-4.58	real_calls.tsv (supported_share / null_supported_share; LTRquest, LTRharvest, Look4LTRs, HiRepEat, LTRpred)
+legend/headline	S1	ltrquest	protein-less minus coding recall, gap [-0.0436, -0.014]	-0.0271	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	ltrquest	protein-less minus coding recall, length_part [-0.0015, 0.0024]	0.0008	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	ltrquest	protein-less minus coding recall, residual_part [-0.0445, -0.0146]	-0.0279	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	ltrharvest	protein-less minus coding recall, gap [-0.2136, -0.0583]	-0.132	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	ltrharvest	protein-less minus coding recall, length_part [-0.0339, 0.019]	-0.0004	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	ltrharvest	protein-less minus coding recall, residual_part [-0.2157, -0.0535]	-0.1316	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	ltr_finder	protein-less minus coding recall, gap [-0.1462, 0.0098]	-0.0688	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	ltr_finder	protein-less minus coding recall, length_part [-0.2011, 0.027]	-0.1366	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	ltr_finder	protein-less minus coding recall, residual_part [-0.1082, 0.1564]	0.0679	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	ltr_retriever	protein-less minus coding recall, gap [-0.1506, -0.0174]	-0.0832	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	ltr_retriever	protein-less minus coding recall, length_part [-0.0435, 0.0321]	-0.0054	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	ltr_retriever	protein-less minus coding recall, residual_part [-0.1578, -0.0033]	-0.0778	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	look4ltrs	protein-less minus coding recall, gap [-0.0895, 0.1176]	0.0178	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	look4ltrs	protein-less minus coding recall, length_part [-0.3152, 0.0916]	-0.0873	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	look4ltrs	protein-less minus coding recall, residual_part [-0.106, 0.3448]	0.1051	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	hirepeat	protein-less minus coding recall, gap [-0.453, -0.2379]	-0.3455	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	hirepeat	protein-less minus coding recall, length_part [-0.4095, -0.001]	-0.3018	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	hirepeat	protein-less minus coding recall, residual_part [-0.3502, 0.0158]	-0.0437	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	hite	protein-less minus coding recall, gap [-0.4652, -0.258]	-0.3618	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	hite	protein-less minus coding recall, length_part [-0.3992, -0.0131]	-0.2989	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	hite	protein-less minus coding recall, residual_part [-0.3556, 0.0042]	-0.0629	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	ltrpred	protein-less minus coding recall, gap [-0.7393, -0.6145]	-0.6814	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	ltrpred	protein-less minus coding recall, length_part [-0.6997, -0.5408]	-0.6319	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	ltrpred	protein-less minus coding recall, residual_part [-0.1232, -0.0169]	-0.0495	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	dante_ltr	protein-less minus coding recall, gap [-0.7575, -0.6706]	-0.7117	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	dante_ltr	protein-less minus coding recall, length_part [-0.655, -0.5133]	-0.5923	sim_gap.tsv (family bootstrap CI)
+legend/headline	S1	dante_ltr	protein-less minus coding recall, residual_part [-0.1938, -0.0717]	-0.1193	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	ltrquest	protein-less minus coding recall, gap [-0.0089, 0.0007]	-0.0037	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	ltrquest	protein-less minus coding recall, length_part [-0.0033, 0.0021]	-0.0001	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	ltrquest	protein-less minus coding recall, residual_part [-0.0095, 0.0019]	-0.0036	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	ltrharvest	protein-less minus coding recall, gap [-0.2521, -0.1122]	-0.1798	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	ltrharvest	protein-less minus coding recall, length_part [-0.0476, 0.0098]	-0.0161	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	ltrharvest	protein-less minus coding recall, residual_part [-0.2246, -0.1038]	-0.1637	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	ltr_finder	protein-less minus coding recall, gap [-0.1507, -0.0288]	-0.0901	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	ltr_finder	protein-less minus coding recall, length_part [-0.1785, 0.0022]	-0.1249	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	ltr_finder	protein-less minus coding recall, residual_part [-0.0861, 0.0954]	0.0348	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	ltr_retriever	protein-less minus coding recall, gap [-0.1765, -0.072]	-0.1209	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	ltr_retriever	protein-less minus coding recall, length_part [-0.0698, -0.0062]	-0.0365	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	ltr_retriever	protein-less minus coding recall, residual_part [-0.1496, -0.0273]	-0.0844	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	look4ltrs	protein-less minus coding recall, gap [-0.037, 0.118]	0.0395	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	look4ltrs	protein-less minus coding recall, length_part [-0.2625, 0.0581]	-0.1245	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	look4ltrs	protein-less minus coding recall, residual_part [-0.0297, 0.306]	0.164	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	hirepeat	protein-less minus coding recall, gap [-0.3605, -0.1707]	-0.2686	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	hirepeat	protein-less minus coding recall, length_part [-0.326, 0.002]	-0.2417	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	hirepeat	protein-less minus coding recall, residual_part [-0.2751, 0.0265]	-0.0269	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	hite	protein-less minus coding recall, gap [-0.3676, -0.1936]	-0.2803	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	hite	protein-less minus coding recall, length_part [-0.337, -0.0303]	-0.2559	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	hite	protein-less minus coding recall, residual_part [-0.2662, 0.0358]	-0.0244	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	ltrpred	protein-less minus coding recall, gap [-0.5807, -0.4882]	-0.5367	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	ltrpred	protein-less minus coding recall, length_part [-0.5076, -0.3732]	-0.452	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	ltrpred	protein-less minus coding recall, residual_part [-0.1572, -0.0515]	-0.0846	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	dante_ltr	protein-less minus coding recall, gap [-0.7514, -0.6819]	-0.7154	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	dante_ltr	protein-less minus coding recall, length_part [-0.5837, -0.438]	-0.5227	sim_gap.tsv (family bootstrap CI)
+legend/headline	S2	dante_ltr	protein-less minus coding recall, residual_part [-0.2738, -0.1381]	-0.1928	sim_gap.tsv (family bootstrap CI)
+legend/D	S2		protein-less precision, LTR_retriever / LTR_Finder / HiTE range (2 decimals)	0.99 to 1.00	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/D	S2	ltrquest	protein-less precision (2 decimals)	0.94	experiments/figpub/sim_class_prf_joint_summary.tsv (system protein)
+legend/E	gorilla		protein-less share of library-supported loci (%)	69	real_loci.tsv (n_loci)
+legend/E	gorilla	ltrquest	supported protein-less calls	5803	real_calls.tsv
+legend/E	gorilla	hirepeat	supported protein-less calls of all protein-less calls	1461 of 41821	real_calls.tsv

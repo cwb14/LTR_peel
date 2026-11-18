@@ -1,0 +1,296 @@
+# Evaluation workflow of the ltrkin_geno benchmark (genotyping of real insertion polymorphisms with ltrkin).
+#
+# Tool runs go through the tool queue (runs/jobs.tsv). This workflow evaluates whatever has finished: OK[ds] = the
+# tools with runs/<ds>/<tool>/.done when the DAG is built (ltrquest_hc with ltrquest), so rerun it as runs complete.
+# The score tables are a target only once every tool run has ended (.done or .failed): a DNF is a row of its own.
+#   cd $LG && TMPDIR=$LG/tmp/eval nice -n 10 $SMK -s workflow/Snakefile -d $LG --cores 32 \
+#       --resources mem_mb=64000 --keep-going --rerun-incomplete
+# Config `pending` (comma list of ds:tool, e.g. --config pending=camara_hap2:look4ltrs): primary-tool runs the evaluation
+# goes ahead without. Those still lacking .done/.failed at DAG build are LATE: counted as ended, scored as "DNF (running)".
+# Always -d $LG: never the main benchmark's directory (its .snakemake/ and lock belong to the main loop).
+# Paths of data are relative to the working directory ($LG); code is under $LG/scripts, interpreters are resolved
+# from the conda base.
+
+import os
+import sys
+
+sys.dont_write_bytecode = True                 # importing our config writes no __pycache__
+LG = os.path.join(os.environ["BENCH_ROOT"], "ltrkin_geno")   # data root and code (scripts/) of this benchmark
+sys.path.append(f"{LG}/scripts")               # appended: never shadows a module snakemake imports
+from lg_config import (ALL_TOOLS, BENCH, DATASETS, LTRKIN_THREADS, SECONDARY, TOOLS,  # noqa: E402
+                       TRUTH_THREADS)
+from lg_io import final_calls_path  # noqa: E402
+
+B = str(BENCH)                                 # main benchmark: only its scripts/ are used, read-only
+CONDA_BASE_BIN = "$(conda info --base)/envs"   # interpreters of the conda envs, resolved by the shell
+PY = f"{CONDA_BASE_BIN}/ltrkin_geno/bin/python -B"      # env ltrkin_geno
+BPY = f"{CONDA_BASE_BIN}/bench_tools/bin/python -B -I"  # env bench_tools, for the main benchmark's scripts
+BENCH_BIN = f"{CONDA_BASE_BIN}/bench_tools/bin"
+LTRKIN = f"{CONDA_BASE_BIN}/ltrkin_geno/bin/ltrkin"      # ltrkin 0.2.1
+HAP_TRUTH = f"{LG}/vendor/ltrkin-0.2.1/benchmark/hap_truth.py"
+S = f"{LG}/scripts"
+CONDA_SH = '"$(conda info --base)/etc/profile.d/conda.sh"'
+K2P_THREADS = 16
+K2P_MAX_LEN = 100000                           # fallback only: spans longer than this skip Kmer2LTR (as approach 4)
+SRC = {"ltrquest_hc": "ltrquest"}              # derived call set -> the run it is read from
+DS = list(DATASETS)                            # camara_hap2 (primary), camara_hap1 (replicate)
+TABLES = ["recall", "boundaries", "ltrkin_yield", "false_e", "by_length", "solo", "pool"]
+
+wildcard_constraints:                          # fixed names, none with a "/"
+    ds="|".join(DS),
+    tool="|".join(ALL_TOOLS),
+    mode="ltrkin|truth",
+
+
+def rundir(ds, tool):
+    return f"runs/{ds}/{SRC.get(tool, tool)}"
+
+
+def ended(ds, tool):
+    return os.path.exists(f"{rundir(ds, tool)}/.done") or os.path.exists(f"{rundir(ds, tool)}/.failed")
+
+
+OK = {}
+for _ds in DS:
+    _done = [t for t in TOOLS if os.path.exists(f"runs/{_ds}/{t}/.done")]
+    OK[_ds] = _done + [t for t in SECONDARY if SRC[t] in _done]
+PENDING = [x for x in str(config.get("pending") or "").split(",") if x]
+for _x in PENDING:
+    _d, _sep, _t = _x.partition(":")
+    if not _sep or _d not in DS or _t not in TOOLS:
+        raise ValueError(f"ltrkin_geno: bad pending item {_x!r}: expected DS:TOOL with DS in {DS} and TOOL in {TOOLS}")
+LATE = [x for x in PENDING if not ended(*x.split(":"))]
+for _x in PENDING:
+    if _x not in LATE:
+        print(f"ltrkin_geno: pending run {_x} has ended; included", file=sys.stderr)
+ALL_ENDED = all(ended(d, t) or f"{d}:{t}" in LATE for d in DS for t in TOOLS)
+
+
+def primary_ok(ds):
+    return [t for t in OK[ds] if t in TOOLS]
+
+
+def native_gff(ds):
+    return f"runs/{ds}/ltrquest/{ds}_LTRs_all_depth_LTR_cleaned.gff3"
+
+
+NATIVE = [d for d in DS if "ltrquest" in OK[d] and os.path.exists(native_gff(d))]
+for _ds in DS:
+    print(f"ltrkin_geno: {_ds}: {len(OK[_ds])} call sets ready: {' '.join(OK[_ds]) or 'none'}", file=sys.stderr)
+    if "ltrquest" in OK[_ds] and _ds not in NATIVE:
+        print(f"warning: {native_gff(_ds)} not found; native check of {_ds} skipped", file=sys.stderr)
+for _x in LATE:
+    print(f"ltrkin_geno: going ahead without {_x} (still running)", file=sys.stderr)
+if not ALL_ENDED:
+    print("ltrkin_geno: not every tool run has ended; the score tables are not a target yet", file=sys.stderr)
+
+
+def ltrkin_logs():
+    logs = [f"{run}/{d}/{t}.log" for d in DS for t in OK[d] for run in ("ltrkin", "control")]
+    return logs + [f"check/{d}/ltrquest_native.log" for d in NATIVE]
+
+
+def targets():
+    out = [f"check/{d}/native.tsv" for d in NATIVE]
+    if ltrkin_logs():
+        out.append("report/tables/ltrkin_params.tsv")
+    if ALL_ENDED:
+        out += [f"report/tables/{t}.tsv" for t in TABLES]
+    return out
+
+
+def dsfile(key, suffix=""):
+    return lambda w: str(DATASETS[w.ds][key]) + suffix
+
+
+def score_inputs(w):
+    f = []
+    for d in DS:
+        f += [f"pool/{d}/pool.tsv", str(DATASETS[d]["ref"]) + ".fai"]
+        f += [f"runs/{d}/{t}/resources.json" for t in TOOLS if f"{d}:{t}" not in LATE]
+        for t in OK[d]:
+            f += [final_calls_path(f"calls/{d}", t), f"truth/{d}/{t}.tsv", f"ltrkin/{d}/{t}.genotypes.tsv",
+                  f"control/{d}/{t}.genotypes.tsv"]
+    return f
+
+
+rule all:
+    input: targets()
+
+
+rule calls:  # a tool's intact calls, original sequence names (the main benchmark's converter, read-only)
+    input: lambda w: f"{rundir(w.ds, w.tool)}/.done"
+    output: "calls/{ds}/{tool}.tsv"
+    log: "logs/calls/{ds}/{tool}.log"
+    benchmark: "logs/bench/calls/{ds}/{tool}.tsv"
+    params: rd=lambda w: rundir(w.ds, w.tool)
+    shell: "{BPY} {B}/scripts/calls_to_bed.py {wildcards.tool} {params.rd} data/{wildcards.ds} {output} 2> {log}"
+
+
+rule calls_ids:  # HiRepEat calls with normalized names (c0001..), the Kmer2LTR input
+    input: "runs/{ds}/hirepeat/.done"
+    output: "calls/{ds}/hirepeat.ids.tsv"
+    log: "logs/calls/{ds}/hirepeat.ids.log"
+    benchmark: "logs/bench/calls_ids/{ds}.tsv"
+    shell: "{BPY} {B}/scripts/calls_to_bed.py --keep-ids hirepeat runs/{wildcards.ds}/hirepeat data/{wildcards.ds} "
+           "{output} 2> {log}"
+
+
+rule k2p:  # Kmer2LTR LTR pairs of the HiRepEat spans, as the main Snakefile's k2p_inputs
+    input: calls="calls/{ds}/hirepeat.ids.tsv", genome="data/{ds}/genome.fa"
+    output: "calls/{ds}/hirepeat.k2p/annot.tsv"
+    log: "logs/k2p/{ds}.log"
+    benchmark: "logs/bench/k2p/{ds}.tsv"
+    threads: K2P_THREADS
+    resources: mem_mb=26000                    # pilot (camara_hap1): 24 GB PSS over the 16 Kmer2LTR workers
+    params: od="calls/{ds}/hirepeat.k2p"
+    shell:
+        "source {CONDA_SH}; conda activate kmer2ltr; export PATH={BENCH_BIN}:$PATH; "
+        "{BPY} {B}/scripts/phase_inputs.py --calls {input.calls} --genome {input.genome} --outdir {params.od} "
+        "-t {K2P_THREADS} > {log} 2>&1 || {{ "
+        "echo 'k2p {wildcards.ds}: phase_inputs.py failed; rerun once with --max-len {K2P_MAX_LEN}' | tee -a {log} >&2; "
+        "{BPY} {B}/scripts/phase_inputs.py --calls {input.calls} --genome {input.genome} --outdir {params.od} "
+        "-t {K2P_THREADS} --max-len {K2P_MAX_LEN} >> {log} 2>&1; }}; "
+        "rm -f {params.od}/elements.fa {params.od}/elements.k.fa"
+
+
+rule hirepeat_ltrs:  # HiRepEat's own outer ends + Kmer2LTR inner LTR edges; unpaired calls keep no LTRs
+    input: calls="calls/{ds}/hirepeat.tsv", annot="calls/{ds}/hirepeat.k2p/annot.tsv"
+    output: "calls/{ds}/hirepeat.ltr.tsv"
+    log: "logs/hirepeat_ltrs/{ds}.log"
+    benchmark: "logs/bench/hirepeat_ltrs/{ds}.tsv"
+    shell: "{PY} {S}/hirepeat_ltrs.py --calls {input.calls} --annot {input.annot} --names data/{wildcards.ds} "
+           "--out {output} -v 2> {log}"
+
+
+rule gff:  # the one converter for every tool; final calls = hirepeat.ltr.tsv for hirepeat, else <tool>.tsv
+    input: lambda w: final_calls_path(f"calls/{w.ds}", w.tool)
+    output: "gff/{ds}/{tool}.{mode}.gff3"
+    log: "logs/gff/{ds}/{tool}.{mode}.log"
+    benchmark: "logs/bench/gff/{ds}/{tool}.{mode}.tsv"
+    shell: "{PY} {S}/calls_to_gff.py --calls {input} --tool {wildcards.tool} --mode {wildcards.mode} --out {output} "
+           "-v 2> {log}"
+
+
+rule truth:  # read-independent truth per call from the haplotype pair: WGA lift, flank remapping, junctions
+    input: gff="gff/{ds}/{tool}.truth.gff3", paf=dsfile("paf"), ref=dsfile("ref"), other=dsfile("other")
+    output: "truth/{ds}/{tool}.tsv"
+    log: "logs/truth/{ds}/{tool}.log"
+    benchmark: "logs/bench/truth/{ds}/{tool}.tsv"
+    threads: TRUTH_THREADS
+    resources: mem_mb=3000                     # pilot peak 2.1 GB RSS (mappy index of the other haplotype)
+    shell: "{PY} {HAP_TRUTH} --paf {input.paf} --gff {input.gff} --ref-fasta {input.ref} "
+           "--other-fasta {input.other} -t {TRUTH_THREADS} -o {output} 2> {log}"
+
+
+rule candidates:  # nominate calls of the primary tools that finished; merge them into candidate loci
+    input: lambda w: expand("truth/{ds}/{tool}.tsv", ds=w.ds, tool=primary_ok(w.ds))
+    output: "pool/{ds}/candidates.tsv"
+    log: "logs/pool/{ds}/candidates.log"
+    benchmark: "logs/bench/candidates/{ds}.tsv"
+    shell: "{PY} {S}/pool.py candidates --ds {wildcards.ds} --truth-dir truth/{wildcards.ds} --out {output} "
+           "-v 2> {log}"
+
+
+rule true_ends:  # tool-independent true ends per locus (segment realignment) and the true elements as GFF3
+    input: cand="pool/{ds}/candidates.tsv", ref=dsfile("ref"), other=dsfile("other")
+    output: tsv="pool/{ds}/candidates_te.tsv", gff="pool/{ds}/true_elements.gff3"
+    log: "logs/pool/{ds}/true_ends.log"
+    benchmark: "logs/bench/true_ends/{ds}.tsv"
+    resources: mem_mb=8000                     # real-data smoke (1103 loci, camara_hap1): peak 5.4 GB; ~7 GB worst case
+    shell: "{PY} {S}/pool.py true-ends --ds {wildcards.ds} --candidates {input.cand} --ref {input.ref} "
+           "--other {input.other} --out-tsv {output.tsv} --out-gff {output.gff} -v 2> {log}"
+
+
+rule true_truth:  # confirmation of the true elements at their true ends (hap_truth.py, as in rule truth)
+    input: gff="pool/{ds}/true_elements.gff3", paf=dsfile("paf"), ref=dsfile("ref"), other=dsfile("other")
+    output: "pool/{ds}/true_truth.tsv"
+    log: "logs/pool/{ds}/true_truth.log"
+    benchmark: "logs/bench/true_truth/{ds}.tsv"
+    threads: TRUTH_THREADS
+    resources: mem_mb=3000                     # as rule truth (smoke on true elements: 1.9 GB)
+    shell: "{PY} {HAP_TRUTH} --paf {input.paf} --gff {input.gff} --ref-fasta {input.ref} "
+           "--other-fasta {input.other} -t {TRUTH_THREADS} -o {output} 2> {log}"
+
+
+rule pool:  # pool = loci whose true element is confirmed E (without true ends: a member confirmed E)
+    input: te="pool/{ds}/candidates_te.tsv", tt="pool/{ds}/true_truth.tsv",
+           truth=lambda w: expand("truth/{ds}/{tool}.tsv", ds=w.ds, tool=primary_ok(w.ds))
+    output: "pool/{ds}/pool.tsv"
+    log: "logs/pool/{ds}/final.log"
+    benchmark: "logs/bench/pool/{ds}.tsv"
+    shell: "{PY} {S}/pool.py final --candidates-te {input.te} --true-truth {input.tt} "
+           "--truth-dir truth/{wildcards.ds} --out {output} -v 2> {log}"
+
+
+rule ltrkin:  # end-to-end: genotype a tool's full call set from the 20x HiFi reads (ltrkin defaults, -t 8 -v)
+    input: gff="gff/{ds}/{tool}.ltrkin.gff3", ref=dsfile("ref"), bam=dsfile("bam"), bai=dsfile("bam", ".bai")
+    output: tsv="ltrkin/{ds}/{tool}.genotypes.tsv", vcf="ltrkin/{ds}/{tool}.vcf.gz"
+    log: "ltrkin/{ds}/{tool}.log"              # ltrkin_params.py labels a run by this path
+    benchmark: "logs/bench/ltrkin/{ds}/{tool}.tsv"
+    threads: LTRKIN_THREADS
+    shell: "{LTRKIN} genotype -r {input.ref} -a {input.gff} -o ltrkin/{wildcards.ds}/{wildcards.tool} "
+           "-t {LTRKIN_THREADS} -v {input.bam} 2> {log}"
+
+
+rule background:  # background set B: primary tools' calls away from every candidate locus (true spans included)
+    input: calls=lambda w: [final_calls_path(f"calls/{w.ds}", t) for t in primary_ok(w.ds)],
+           te="pool/{ds}/candidates_te.tsv"
+    output: "control/{ds}/background.tsv"
+    log: "logs/control/{ds}/background.log"
+    benchmark: "logs/bench/background/{ds}.tsv"
+    shell: "{PY} {S}/background.py build --ds {wildcards.ds} --calls-dir calls/{wildcards.ds} "
+           "--candidates {input.te} --out {output} -v 2> {log}"
+
+
+rule control_gff:  # control annotation of a tool: B + the tool's calls at pooled loci
+    input: bg="control/{ds}/background.tsv", calls=lambda w: final_calls_path(f"calls/{w.ds}", w.tool),
+           pool="pool/{ds}/pool.tsv"
+    output: "control/{ds}/{tool}.gff3"
+    log: "logs/control/{ds}/{tool}.log"
+    benchmark: "logs/bench/control_gff/{ds}/{tool}.tsv"
+    shell: "{PY} {S}/background.py control --background {input.bg} --calls {input.calls} --tool {wildcards.tool} "
+           "--pool {input.pool} --out {output} -v 2> {log}"
+
+
+rule ltrkin_control:  # common-background control run
+    input: gff="control/{ds}/{tool}.gff3", ref=dsfile("ref"), bam=dsfile("bam"), bai=dsfile("bam", ".bai")
+    output: tsv="control/{ds}/{tool}.genotypes.tsv", vcf="control/{ds}/{tool}.vcf.gz"
+    log: "control/{ds}/{tool}.log"             # ltrkin_params.py labels a run by this path
+    benchmark: "logs/bench/ltrkin_control/{ds}/{tool}.tsv"
+    threads: LTRKIN_THREADS
+    shell: "{LTRKIN} genotype -r {input.ref} -a {input.gff} -o control/{wildcards.ds}/{wildcards.tool} "
+           "-t {LTRKIN_THREADS} -v {input.bam} 2> {log}"
+
+
+rule native:  # LTRquest's own GFF3 (normalized names renamed) must give the converter's genotypes
+    input: gff=lambda w: native_gff(w.ds), done="runs/{ds}/ltrquest/.done", a="ltrkin/{ds}/ltrquest.genotypes.tsv",
+           ref=dsfile("ref"), bam=dsfile("bam"), bai=dsfile("bam", ".bai")
+    output: tsv="check/{ds}/native.tsv", diffs="check/{ds}/native.tsv.diffs.tsv",
+            gff="check/{ds}/ltrquest_native.gff3", gt="check/{ds}/ltrquest_native.genotypes.tsv",
+            vcf="check/{ds}/ltrquest_native.vcf.gz"
+    log: ltrkin="check/{ds}/ltrquest_native.log", steps="logs/check/{ds}/native.log"
+    benchmark: "logs/bench/native/{ds}.tsv"
+    threads: LTRKIN_THREADS
+    shell:
+        "{PY} {S}/native_check.py rename --gff {input.gff} --datadir data/{wildcards.ds} --out {output.gff} "
+        "2> {log.steps} && "
+        "{LTRKIN} genotype -r {input.ref} -a {output.gff} -o check/{wildcards.ds}/ltrquest_native "
+        "-t {LTRKIN_THREADS} -v {input.bam} 2> {log.ltrkin} && "
+        "{PY} {S}/native_check.py compare --a {input.a} --b {output.gt} --out {output.tsv} 2>> {log.steps}"
+
+
+rule params:  # what ltrkin learned from each annotation, from the -v logs
+    input: ltrkin_logs()
+    output: "report/tables/ltrkin_params.tsv"
+    log: "logs/report/params.log"
+    shell: "{PY} {S}/ltrkin_params.py --logs {input} --out {output} 2> {log}"
+
+
+rule score:  # every metric, block bootstrap and report table (DNF rows from runs/<ds>/<tool>/resources.json)
+    input: score_inputs
+    output: [f"report/tables/{t}.tsv" for t in TABLES]
+    log: "logs/report/score.log"
+    benchmark: "logs/bench/score.tsv"
+    params: ds=" ".join(DS), running=" ".join(f"--running {x}" for x in LATE)
+    shell: "{PY} {S}/score.py --ds {params.ds} {params.running} -v 2> {log}"

@@ -98,6 +98,8 @@ markers = [
 line-length = 100
 target-version = "py39"
 src = ["src", "tests"]
+# The benchmark scripts are kept as they ran.
+extend-exclude = ["benchmarks/comparison"]
 
 [tool.ruff.lint]
 # Real defects, import hygiene, and the bug-prone-pattern rules. The pyupgrade

@@ -10,8 +10,8 @@ def run(*args, **kw):
 
 
 def test_help_documents_the_flag(driver):
-    result = run("bash", str(driver), "--help")
-    assert "--reboundary" in result.stdout + result.stderr
+    result = run("bash", str(driver), "--help-all")
+    assert "--no-reboundary" in result.stdout + result.stderr
 
 
 def test_the_flag_parses(driver):
@@ -41,8 +41,29 @@ def test_an_incompatible_kmer2ltr_stops_the_run_before_detection(driver, toy_gen
                   'exit 0\n')
     py.chmod(0o755)
     result = run("bash", str(driver), "--genome", str(toy_genome), "--reboundary",
+                 "--strand-recovery", "off",
                  env={"PATH": f"{bin_}:/usr/bin:/bin", "LTRQUEST_PYTHON": str(py)}, cwd=tmp_path)
     assert result.returncode == 3 and "force-pairs credited flanks" in result.stderr
+
+
+def test_a_plain_run_names_the_off_switch_when_kmer2ltr_is_too_old(driver, toy_genome,
+                                                                    tmp_path):
+    """Re-boundarying is on by default, so the user who meets this check never typed
+    --reboundary: the error must say how to run without it."""
+    bin_ = tmp_path / "bin"
+    bin_.mkdir()
+    for tool in ("blastn", "makeblastdb", "minimap2"):
+        stub = bin_ / tool
+        stub.write_text("#!/bin/sh\nexit 0\n")
+        stub.chmod(0o755)
+    py = bin_ / "python-stub"
+    py.write_text('#!/bin/sh\ncase "$2" in *IncompatibleKmer2LTR*) '
+                  'echo "force-pairs credited flanks" >&2; exit 3;; esac\n'
+                  'exit 0\n')
+    py.chmod(0o755)
+    result = run("bash", str(driver), "--genome", str(toy_genome),
+                 env={"PATH": f"{bin_}:/usr/bin:/bin", "LTRQUEST_PYTHON": str(py)}, cwd=tmp_path)
+    assert result.returncode == 3 and "--no-reboundary" in result.stderr
 
 
 def test_it_is_not_a_detection_setting(driver):

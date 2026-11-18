@@ -22,6 +22,7 @@ from __future__ import annotations
 import gzip
 import hashlib
 import os
+import re
 import shutil
 import subprocess
 
@@ -85,7 +86,8 @@ def run_dir(tmp_path_factory, toolchain, athal_genome):
          "--threads", _threads(),
          "--max-rounds", str(ROUNDS),
          "--terminate_count", "1",
-         "--no-plots"],
+         "--no-plots",
+         "--keep-intermediates"],      # the round tables are read below
         cwd=work, capture_output=True, text=True,
     )
     if result.returncode != 0:
@@ -237,10 +239,11 @@ def _write_windows(athal_genome, dirs):
 
 
 def _ltrquest(cwd, *genomes, extra=()):
+    # Reuse needs the detection records and the files they name.
     return subprocess.run(
         ["ltrquest", "--genome", *genomes, "--proteins", "prot.fa",
          "--threads", _threads(), "--max-rounds", "1", "--terminate_count", "1",
-         "--no-plots", *extra],
+         "--no-plots", "--keep-intermediates", *extra],
         cwd=cwd, capture_output=True, text=True,
     )
 
@@ -252,11 +255,15 @@ def _require(result):
 
 
 def _detection_digests(work, prefixes):
-    """sha256 of every round table and work-directory file of these genomes."""
+    """sha256 of every round table and work-directory file of these genomes.
+
+    `_r<digit>` only: the re-boundarying sidecar (`_reboundary.tsv`) also starts with
+    `_r`, and it is rebuilt from the pool whenever a genome joins it.
+    """
     return {
         str(path.relative_to(work)): hashlib.sha256(path.read_bytes()).hexdigest()
         for prefix in prefixes
-        for top in sorted(work.glob(f"{prefix}_r*"))
+        for top in sorted(work.glob(f"{prefix}_r[0-9]*"))
         for path in ([top] if top.is_file() else sorted(top.rglob("*")))
         if path.is_file()
     }
@@ -337,3 +344,29 @@ def test_a_changed_detection_setting_is_refused(incremental):
     result = _ltrquest(inc, "a.fa", "b.fa", "c.fa", extra=("--max-rounds", "2"))
     assert result.returncode != 0
     assert "max_rounds: 1 before, 2 now" in result.stderr
+
+
+# ---------------------------------------------------------------------------
+# A run with the default flags keeps only its results
+# ---------------------------------------------------------------------------
+
+
+def test_a_default_run_keeps_only_its_results(tmp_path_factory, toolchain, athal_genome):
+    """No --keep-intermediates and no --no-plots: the run folder ends with the inputs,
+    the GFF3, the _clean_ tables and FASTAs and the plots folder, and nothing else."""
+    work = tmp_path_factory.mktemp("default_run")
+    _write_windows(athal_genome, (work,))
+    inputs = {p.name for p in work.iterdir()}
+    # Two rounds at most, so there is a second round's work to clean up; the round
+    # limits change what is found, not what is kept.
+    _require(subprocess.run(
+        ["ltrquest", "--genome", "b.fa", "--proteins", "prot.fa", "--threads", _threads(),
+         "--max-rounds", "2", "--terminate_count", "1"],
+        cwd=work, capture_output=True, text=True))
+    after = {p.name for p in work.iterdir()}
+    assert inputs <= after, f"inputs removed: {sorted(inputs - after)}"
+    made = after - inputs
+    tables = {n for n in made if re.fullmatch(r"b_LTRs_depth\d+_clean_ltr\.(tsv|fa)", n)}
+    assert {"b_LTRs_depth0_clean_ltr.tsv", "b_LTRs_depth0_clean_ltr.fa"} <= tables
+    assert made == tables | {"b_LTRs_all_depth_LTR_cleaned.gff3", "b_LTRs_plots"}
+    assert (work / "b_LTRs_plots").is_dir()

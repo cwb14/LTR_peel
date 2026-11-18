@@ -123,6 +123,7 @@ class TestDriverGuards:
         # that interpreter cannot import ltrquest it must say so up front rather
         # than failing several minutes into round 1.
         result = run("bash", str(driver), "--genome", str(toy_genome),
+                     "--strand-recovery", "off", "--no-reboundary",
                      env={"PATH": "/usr/bin:/bin", "LTRQUEST_PYTHON": "/nonexistent/python"})
         assert result.returncode != 0
         assert "not importable" in result.stderr

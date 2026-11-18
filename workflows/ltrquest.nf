@@ -25,18 +25,20 @@ workflow LTRQUEST {
     // validateParameters(). Check here so a typo'd preset fails now rather than
     // at the recovery stage, which sits after every expensive one. The CLI does
     // the same at ltrquest.sh's argument validation.
-    if (params.strand_recovery
+    // null, false and 'off' all mean no strand recovery. The PPT fallback is on
+    // by default, so with recovery off it is simply unused rather than an error.
+    def strand_on = params.strand_recovery && params.strand_recovery != 'off'
+    if (strand_on
             && !(params.strand_recovery in ['conservative', 'balanced', 'sensitive'])) {
-        error "--strand_recovery must be conservative, balanced or sensitive " +
+        error "--strand_recovery must be conservative, balanced, sensitive or off " +
               "(got '${params.strand_recovery}')"
-    }
-    if (params.strand_recovery_ppt && !params.strand_recovery) {
-        error "--strand_recovery_ppt has no effect without --strand_recovery"
     }
     if (!(params.fastltr in ['all', 'rescue', 'off'])) {
         error "--fastltr must be all, rescue or off (got '${params.fastltr}')"
     }
-    if (!(params.ltr_timeout instanceof Integer) || params.ltr_timeout < 0) {
+    // Matched on the text: a value given on the command line may arrive as
+    // a Long or a String rather than an Integer, and must still be accepted.
+    if (!(params.ltr_timeout.toString() ==~ /\d+/)) {
         error "--ltr_timeout must be a whole number of seconds, 0 for no cap " +
               "(got '${params.ltr_timeout}')"
     }
@@ -156,12 +158,12 @@ workflow LTRQUEST {
               workdirs, genome, cluster ]
         }
 
-    // Strand recovery, first half. Only when asked for. It calls strand for the
+    // Strand recovery, first half. On unless --strand_recovery off. It calls strand for the
     // elements the annotator's cascade cannot reach and writes the sidecar the
     // annotator reads back as a fourth tier. With recovery off, an empty list
     // flows in its place: it stages nothing and the modules render no flag for
     // it, so the run is exactly what it was before.
-    if (params.strand_recovery) {
+    if (strand_on) {
         LTRQUEST_RECOVERSTRAND_ALIGN(
             ch_bundle.map { meta, tsvs, _fastas, workdirs, genome, _cluster ->
                 [ meta, tsvs, workdirs, genome ]
@@ -180,11 +182,12 @@ workflow LTRQUEST {
     )
     ch_versions = ch_versions.mix(LTRQUEST_ANNOTATE.out.versions)
 
-    // Second half: bring the depth FASTAs into line with the strand column the
-    // annotator just wrote, so a recovered minus element is stored in coding
-    // sense exactly like a TEsorter2-called one. The GFF3 carries no sequence,
+    // Second half: bring the _clean_ depth FASTAs into line with the strand
+    // column the annotator just wrote, so a recovered minus element is stored in
+    // coding sense exactly like a TEsorter2-called one. The unfiltered depth
+    // FASTAs are left as detected. The GFF3 carries no sequence,
     // so it is indifferent to this and could equally have run first.
-    if (params.strand_recovery) {
+    if (strand_on) {
         LTRQUEST_RECOVERSTRAND_APPLY(
             LTRQUEST_ANNOTATE.out.tsv
                 .join(ch_bundle.map { meta, _t, fastas, _w, _g, _c -> [ meta, fastas ] })

@@ -2,7 +2,7 @@
 
 How well `--reboundary` finds the true ends of truncated LTR-RT calls, and how to
 measure it again. How the stage works:
-[docs/outputs.md §8](../../docs/outputs.md#8-re-boundarying---reboundary).
+[docs/outputs.md §8](../../docs/outputs.md#8-re-boundarying).
 
 ## Two independent checks
 

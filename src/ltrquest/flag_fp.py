@@ -1043,7 +1043,8 @@ def run_mmseqs(fp_fasta, out_prefix, threads):
     representative-sequence FASTA path (<out_prefix>_rep_seq.fasta)."""
     if shutil.which("mmseqs") is None:
         die("mmseqs not found on PATH")
-    tmp = tempfile.mkdtemp(prefix="mmseqs.")
+    # beside the outputs, in the run folder: the system temp folder can be small
+    tmp = tempfile.mkdtemp(prefix="mmseqs.", dir=os.path.dirname(os.path.abspath(out_prefix)))
     try:
         run(["mmseqs", "easy-cluster", fp_fasta, out_prefix, tmp,
              "--min-seq-id", str(MMSEQS_MIN_SEQ_ID),
@@ -1086,7 +1087,8 @@ def mask_genome(genome, query, out, pident=80.0, qcov=90.0, threads=None):
         if shutil.which(tool) is None:
             die(f"{tool} not found on PATH")
     threads = threads or os.cpu_count()
-    tmp = tempfile.mkdtemp(prefix="mask_fp.")
+    # a whole-genome BLAST database: beside the output, not in the system temp folder
+    tmp = tempfile.mkdtemp(prefix="mask_fp.", dir=os.path.dirname(os.path.abspath(out)))
     try:
         db = os.path.join(tmp, "db")
         make_blast_db(genome, db)

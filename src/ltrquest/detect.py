@@ -40,6 +40,7 @@ from typing import Dict, Iterable, List, Optional, Set, Tuple, TypeVar
 
 from . import fastltr as fl
 from . import kmer2ltr as k2l
+from .helper_tools import OFFLINE_HINT
 from .table import Columns, as_int, is_missing
 
 # Kmer2LTR's table is the element table: detection appends what it learns on
@@ -1874,6 +1875,14 @@ def _build_advice(name: str, conda_name: Optional[str] = None) -> str:
     return "\n".join(lines)
 
 
+def _git_clone(*args: str) -> None:
+    """`git clone ARGS`, ending a failure with what to do on a machine with no internet."""
+    try:
+        run(["git", "clone", *args], check=True)
+    except RuntimeError as exc:
+        raise RuntimeError(f"{exc}\n{OFFLINE_HINT}") from None
+
+
 def _resolve_helper(name: str, tools_dir: Path, url: str, usable) -> Path:
     """Find a working `name`, in the cheapest order that can succeed.
 
@@ -1903,7 +1912,7 @@ def _resolve_helper(name: str, tools_dir: Path, url: str, usable) -> Path:
                 f"--tools-dir at a directory that already contains {name}/{name}."
             )
         mkdirp(tools_dir)
-        run(["git", "clone", url, str(src)], check=True)
+        _git_clone(url, str(src))
 
     for make_cmd in _make_commands(["make"]):
         r = run(make_cmd, cwd=str(src))
@@ -2020,13 +2029,8 @@ def ensure_tebinsorter(tools_dir: Path, local_path: Optional[str] = None) -> str
 
     if not tool_usable_tebinsorter(tb_dir):
         if not tb_dir.exists():
-            run([
-                "git", "clone",
-                "--branch", "feat/minimap2",
-                "--single-branch",
-                "https://github.com/cwb14/TEsorter2.git",
-                str(tb_dir)
-            ], check=True)
+            _git_clone("--branch", "feat/minimap2", "--single-branch",
+                       "https://github.com/cwb14/TEsorter2.git", str(tb_dir))
 
         if not tool_usable_tebinsorter(tb_dir):
             raise RuntimeError(
@@ -2076,7 +2080,7 @@ def ensure_trfmod(tools_dir: Path) -> str:
                 "trf-mod is not on PATH and cannot be built here: git is not "
                 "installed.\n" + _build_advice("TRF-mod/trf-mod")
             )
-        run(["git", "clone", "https://github.com/lh3/TRF-mod", str(trf_dir)], check=True)
+        _git_clone("https://github.com/lh3/TRF-mod", str(trf_dir))
 
     for make_cmd in _make_commands(["make", "-f", "compile.mak"]):
         run(make_cmd, cwd=str(trf_dir))
@@ -2127,8 +2131,9 @@ def ensure_sdust(tools_dir: Path) -> str:
             raise RuntimeError(
                 "sdust is not on PATH and cannot be built here: git is not "
                 "installed.\n" + _build_advice("sdust", conda_name="sdust")
+                + "\nOr run without the low-complexity filter: --no-sdust"
             )
-        run(["git", "clone", "https://github.com/lh3/sdust.git", str(sd_dir)], check=True)
+        _git_clone("https://github.com/lh3/sdust.git", str(sd_dir))
 
     for make_cmd in _make_commands(["make"]):
         run(make_cmd, cwd=str(sd_dir))
@@ -2138,6 +2143,7 @@ def ensure_sdust(tools_dir: Path) -> str:
     raise RuntimeError(
         f"sdust build failed or binary unusable at: {sd_bin}\n"
         + _build_advice("sdust", conda_name="sdust")
+        + "\nOr run without the low-complexity filter: --no-sdust"
     )
 
 def run_tebinsorter(stitched_fa: str, pipeline_py_path: str, outdir: Path,
@@ -4024,8 +4030,8 @@ def main():
     ap.add_argument(
         "--ltr-timeout",
         type=int,
-        default=0,
-        help="Max seconds per chunk for each LTR caller (0 = no cap). LTRharvest and LTR_FINDER "
+        default=300,
+        help="Max seconds per chunk for each LTR caller (default 300; 0 = no cap). LTRharvest and LTR_FINDER "
              "write their results only when they finish, so a capped call loses that chunk's "
              "candidates; --fastltr rescue (default) searches such chunks with FastLTR, which "
              "keeps the pairs it found before its own cap."

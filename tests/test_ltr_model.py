@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import random
 
 import pytest
@@ -38,6 +39,27 @@ def test_genomes_survive_pickling(fx, g):
     g2 = pickle.loads(pickle.dumps(g))
     assert g2.fetch(fx.prefix, "chrS", 1, 20) == g.fetch(fx.prefix, "chrS",
                                                           1, 20)
+
+
+def test_indexing_writes_nothing_beside_the_genome(tmp_path):
+    # The genome is the user's own input, often on a read-only reference mount: its
+    # index belongs in the stage's work directory, which discard_copies removes.
+    ref = tmp_path / "ref"
+    ref.mkdir()
+    genome = ref / "g.fa"
+    genome.write_text(">chr1\nACGTTGCAACGTTGCA\n")
+    before = sorted(os.listdir(ref))
+    work = tmp_path / "work"
+    os.chmod(ref, 0o555)
+    try:
+        g = lm.Genomes({"p": str(genome)}, workdir=str(work))
+        g.index()
+        assert g.fetch("p", "chr1", 5, 8) == ("TGCA", 5)
+        assert sorted(os.listdir(ref)) == before
+        g.discard_copies()
+        assert not work.exists()
+    finally:
+        os.chmod(ref, 0o755)
 
 
 def test_member_geometry(fam):

@@ -1,0 +1,355 @@
+# Evaluation workflow (P3) for the LTR-RT caller benchmark.
+#
+# Tool runs themselves go through scripts/queue.py (timed, resource-accounted). This workflow evaluates whatever has
+# finished: targets are built from runs/<ds>/<tool>/.done present at invocation, so rerun it as runs complete.
+#   snakemake -s workflow/Snakefile --cores 48 --keep-going --rerun-incomplete
+# Each rule activates its own conda env (see envs/*.yml); no --use-conda.
+
+import glob
+import os
+
+B = os.environ.get("BENCH_ROOT")
+if not B:
+    raise SystemExit("set BENCH_ROOT to the benchmark working directory")
+ROOT = os.path.dirname(B)      # tool clones (EDTA, ltrharvest_phasing10.py) sit next to the working directory
+workdir: B
+
+wildcard_constraints:  # no wildcard spans a "/" (else phase_score also matches the power-curve sub/<k>_<seed> paths)
+    ds="[^/]+", tool="[^/]+", lib="[^/]+", k="[0-9]+", seed="[0-9]+"
+
+SH = 'source "$(conda info --base)/etc/profile.d/conda.sh"; conda activate {env}; '
+PY = "python -I scripts/"
+SIM = ["S1_1", "S1_2", "S1_3", "S2_1", "S2_2", "S2_3"]
+REAL = ["rice", "arab", "maize", "finch", "gorilla"]
+POLY = ["asue", "pann"]
+TOOLS = ["ltrquest", "ltrharvest", "ltr_finder", "ltr_retriever", "look4ltrs", "hirepeat", "hite", "ltrpred",
+         "dante_ltr"]
+NATIVE = {  # tool's own library as shipped (secondary table); primary = every tool's intact call set
+    "ltr_retriever": "runs/{ds}/ltr_retriever/{ds}.fa.mod.LTRlib.fa",
+    "hirepeat": "runs/{ds}/hirepeat/{ds}_ltr_output/final/{ds}_all_rounds_classified_rm.fasta",
+    "hite": "runs/{ds}/hite/out/confident_ltr_cut.fa",
+    "dante_ltr": "runs/{ds}/dante_ltr/dante_ltr_lib/mmseqs2/mmseqs_representative_seq_clean_rm_compatible.fasta",
+}
+DERIVED = {  # post hoc subsets of one tool's calls (developer diagnostics, labeled secondary rows; added
+    # after the primary results were seen): name -> source tool. Evaluated exactly like a tool (all three approaches).
+    "ltrquest_hc": "ltrquest",                     # confidence == high (TG..CA ends + exact TSD)
+}
+SUBS = [500, 1000, 2000, 5000, 10000]
+SEEDS = [1, 2, 3, 4, 5]
+PHASER = f"{ROOT}/ltrharvest_phasing10.py"
+
+
+def done(ds, tool):
+    return os.path.exists(f"{B}/runs/{ds}/{DERIVED.get(tool, tool)}/.done")
+
+
+def ref_done(ds):
+    return os.path.exists(f"{B}/mask/{ds}/curated/.done")
+
+
+INTACT_ID = 0.95  # cd-hit-est identity of the redundancy-only reduction (experiments/libreduce)
+
+
+def libs_for(tool):
+    """Masking inputs: <tool>.intact (primary: the intact call set) and <tool>.native (the tool's own library)."""
+    return [f"{tool}.intact"] + ([f"{tool}.native"] if tool in NATIVE else [])
+
+
+# Evaluation targets left incomplete (not waited for, and no new library rule added to make them feasible); excluded so
+# they do not hold every later pass. Remove an entry to run it here.
+DEFERRED = {
+    "eval/lib/finch/hirepeat.intact.tsv",   # rmfast with this library: ~80 of 19,693 batches/h -> ~10 days
+} | {  # maize intact-call libraries are 0.12-1.49 GB (rice/finch <= 91 MB): dante_ltr and ltrquest_hc measured at
+    # ~36-57 of 37,882 batches/h -> 4-5 weeks each (under the mimalloc THP stall). Re-measured with
+    # MIMALLOC_ALLOW_THP=0: dante_ltr (454 MB) ~146/h -> ~260 h and hite (175 MB) ~593/h -> ~64 h, so they and the
+    # larger libraries stay deferred (libraries still built, size reported). ltrpred (122 MB, ~1,400/h -> ~27 h) runs in
+    # a targeted run with the 36 h cap; deferred here so a stopped mask is not restarted
+    f"eval/lib/maize/{t}.intact.tsv" for t in TOOLS + list(DERIVED)
+} | {  # gorilla HiRepEat intact calls: 43,695 calls, 827 Mb of span, longest 26.8 Mb: larger than maize's
+    # smallest infeasible library (hite, 175 Mb, ~64 h); deferred on size before it starts. Its library build then
+    # stopped at the 36 h cap, so it was never built (NOT_RUN below)
+    "eval/lib/gorilla/hirepeat.intact.tsv",
+} | {  # gorilla LTR_Finder intact library: its mask stopped at the 36 h cap at batch 26,019 of 61,148;
+    # deferred so a stopped mask is not restarted
+    "eval/lib/gorilla/ltr_finder.intact.tsv",
+} | {  # gorilla LTRquest intact libraries (56.2 Mb / 12,655 seqs; ltrquest_hc 8.6 Mb / 2,216): masks stalled in the kernel
+    # (mimalloc THP) and were restarted with MIMALLOC_ALLOW_THP=0 (identical output) in a targeted run; both stop at the
+    # 36 h cap unless done first; deferred so a stopped mask is not restarted (as ltr_finder above).
+    # ltrquest_hc finished; ltrquest stopped at the cap at batch 55,136 of 61,148
+    "eval/lib/gorilla/ltrquest.intact.tsv", "eval/lib/gorilla/ltrquest_hc.intact.tsv",
+}
+# Dropped entirely, library build included: gorilla HiRepEat intact library (cd-hit-est on 43,620 calls up to 1 Mb,
+# single-threaded in a targeted run; stopped at 36 h) and its BM_RM2.
+# Outputs that run makes before the stop are read as usual.
+NOT_RUN = {"libs/gorilla/hirepeat.intact.fa", "eval/rm2/gorilla/hirepeat.intact.tsv"}
+
+
+def targets():
+    t = []
+    for ds in SIM + REAL + POLY:
+        for tool in TOOLS + list(DERIVED):
+            if not done(ds, tool):
+                continue
+            t.append(f"calls/{ds}/{tool}.tsv")
+            if ds in SIM:
+                t += [f"eval/sim/{ds}/{tool}.metrics.tsv", f"eval/sim/{ds}/{tool}.printe.txt"]
+                t += [f"eval/simlib/{ds}/{lib}.tsv" for lib in libs_for(tool)]
+            if ds in REAL:
+                if ref_done(ds):
+                    t.append(f"eval/proxy/{ds}/{tool}.tsv")
+                    t += [f"eval/lib/{ds}/{lib}.tsv" for lib in libs_for(tool)]
+                    t.append(f"eval/adj/{ds}/{tool}.calls.tsv")      # approach 4 (post hoc)
+                    t += [f"eval/rm2/{ds}/{lib}.tsv" for lib in libs_for(tool)]   # BM_RM2
+            if ds in POLY:
+                t.append(f"eval/phase/{ds}/{tool}/score.tsv")
+                if tool == "ltrquest":
+                    t.append(f"eval/phase/{ds}/ltrquest_native/score.tsv")
+    for ds in POLY:                                   # power curve: only once a full-library input exists
+        for tool in TOOLS + list(DERIVED) + ["ltrquest_native"]:
+            n = n_paired(ds, tool)
+            for k in SUBS:
+                if k < n:
+                    t += [f"eval/phase/{ds}/{tool}/sub/{k}_{sd}/score.tsv" for sd in SEEDS]
+    lib_only = {d.replace("eval/lib/", "libs/").replace(".tsv", ".fa") for d in DEFERRED & set(t)}
+    return sorted((set(t) - DEFERRED | lib_only) - NOT_RUN)
+
+
+def n_paired(ds, tool):
+    fa = f"{B}/eval/phase/{ds}/{tool}/inputs/elements.k.fa"
+    if not os.path.exists(fa) or not os.path.exists(f"{B}/eval/phase/{ds}/{tool}/score.tsv"):
+        return 0
+    with open(fa) as f:
+        return sum(1 for line in f if line.startswith(">"))
+
+
+rule all:
+    input: targets()
+
+
+rule calls:
+    input: "runs/{ds}/{tool}/.done"
+    output: ids="calls/{ds}/{tool}.ids.tsv", orig="calls/{ds}/{tool}.tsv"
+    shell:
+        SH.format(env="bench_tools") +
+        PY + "calls_to_bed.py {wildcards.tool} runs/{wildcards.ds}/{wildcards.tool} data/{wildcards.ds} {output.ids} --keep-ids && " +
+        PY + "calls_to_bed.py {wildcards.tool} runs/{wildcards.ds}/{wildcards.tool} data/{wildcards.ds} {output.orig}"
+
+
+ruleorder: calls_derived > calls
+
+
+rule calls_derived:  # a DERIVED subset, parsed from its source tool's run (calls_to_bed.py <name> does the filtering)
+    input: lambda wc: f"runs/{wc.ds}/{DERIVED[wc.tool]}/.done"
+    output: ids="calls/{ds}/{tool}.ids.tsv", orig="calls/{ds}/{tool}.tsv"
+    wildcard_constraints: tool="|".join(DERIVED)
+    params: rd=lambda wc: f"runs/{wc.ds}/{DERIVED[wc.tool]}"
+    shell:
+        SH.format(env="bench_tools") +
+        PY + "calls_to_bed.py {wildcards.tool} {params.rd} data/{wildcards.ds} {output.ids} --keep-ids && " +
+        PY + "calls_to_bed.py {wildcards.tool} {params.rd} data/{wildcards.ds} {output.orig}"
+
+
+rule sim_score:
+    input: calls="calls/{ds}/{tool}.tsv", truth="sims/truth/{ds}.truth.tsv"
+    output: "eval/sim/{ds}/{tool}.metrics.tsv"
+    params: pre="eval/sim/{ds}/{tool}"
+    shell:
+        SH.format(env="bench_tools") +
+        PY + "score_elements.py --calls {input.calls} --truth sims/truth/{wildcards.ds} "
+        "--label {wildcards.ds}/{wildcards.tool} --out {params.pre}"
+
+
+rule sim_printe:  # PrinTE's own evaluator (bedtools.py --printe-intact -r 0.9) on the same calls, for comparability
+    input: calls="calls/{ds}/{tool}.tsv"
+    output: "eval/sim/{ds}/{tool}.printe.txt"
+    shell:
+        SH.format(env="printe_bench") +
+        "awk -F'\\t' 'NR>1{{print $1\":\"$2+1\"-\"$3}}' {input.calls} > {output}.pass; "
+        "if [ -s {output}.pass ]; then python -m printe.util.bedtools -pass_scn {output}.pass "
+        "-bed sims/{wildcards.ds}/gen1000000_final.bed --printe-intact -r 0.9 > {output}; "
+        "else echo 'no calls' > {output}; fi; rm -f {output}.pass"
+
+
+rule proxy:  # element-level proxies on real genomes (sequence-based, uniform)
+    input: calls="calls/{ds}/{tool}.ids.tsv", ref="mask/{ds}/curated/{ds}.fa.out"
+    output: "eval/proxy/{ds}/{tool}.tsv"
+    shell:
+        SH.format(env="bench_tools") +
+        PY + "proxies.py --calls {input.calls} --genome data/{wildcards.ds}/genome.fa "
+        "--ref {input.ref} --label {wildcards.ds}/{wildcards.tool} --out {output}"
+
+
+rule trf_track:  # approach 4 (post hoc): genome-wide tandem-repeat track (TRF at EDTA cleanup_tandem.pl defaults)
+    output: "eval/trf/{ds}/trf.bed"
+    threads: 16
+    shell:
+        SH.format(env="bench_tools") + "export TMPDIR=$PWD/tmp/trf_{wildcards.ds}; mkdir -p $TMPDIR; " +
+        PY + "trf_track.py --genome data/{wildcards.ds}/genome.fa --out {output} -t {threads}"
+
+
+rule k2p_inputs:  # approach 4: uniform LTR K2P of real-genome calls (same Kmer2LTR step as the phasing path)
+    input: "calls/{ds}/{tool}.ids.tsv"
+    output: "eval/k2p/{ds}/{tool}/annot.tsv"
+    threads: 16
+    shell:
+        SH.format(env="kmer2ltr") + "export PATH=$(conda info --base)/envs/bench_tools/bin:$PATH; " +
+        "$(conda info --base)/envs/bench_tools/bin/python -I scripts/phase_inputs.py --calls {input} "
+        "--genome data/{wildcards.ds}/genome.fa --outdir eval/k2p/{wildcards.ds}/{wildcards.tool} -t {threads} && "
+        "rm -f eval/k2p/{wildcards.ds}/{wildcards.tool}/elements.fa eval/k2p/{wildcards.ds}/{wildcards.tool}/elements.k.fa"
+
+
+rule adjudicate:  # approach 4: library support + library-independent evidence per call, with a local null
+    input: calls="calls/{ds}/{tool}.ids.tsv", k2p="eval/k2p/{ds}/{tool}/annot.tsv", trf="eval/trf/{ds}/trf.bed",
+           ref="mask/{ds}/curated/{ds}.fa.out", dante="runs/{ds}/dante_ltr/dante.gff3"
+    output: "eval/adj/{ds}/{tool}.calls.tsv"
+    shell:
+        SH.format(env="bench_tools") +
+        PY + "adjudicate.py --ds {wildcards.ds} --tool {wildcards.tool} --out {output}"
+
+
+rule bm_rm2:  # RepeatModeler2 library benchmark (Flynn et al. 2020), as run by HiTE module/benchmarking.py: the TEST
+    # library masked with the CURATED library (RepeatMasker -nolow defaults; MaskerAide rmfast here), then the vendored
+    # get_family_summary_paper.sh -> perfect / good / present curated families
+    input: lib="libs/{ds}/{lib}.fa", cur="mask/{ds}/curated/lib.fa"
+    output: "eval/rm2/{ds}/{lib}.tsv"
+    threads: 16
+    params: od="eval/rm2/{ds}/{lib}.work"
+    shell:
+        "export RAYON_NUM_THREADS={threads} OMP_NUM_THREADS={threads} MASKERAIDE_HOME={B}/tmp/maskeraide_home "
+        "TMPDIR={B}/tmp/rm2_{wildcards.ds}_{wildcards.lib}; rm -rf {params.od}; mkdir -p $TMPDIR {params.od}/fam; "
+        "cd {params.od}; awk '/^>/{{printf(\">s%07d\\n\", ++i); next}} {{print}}' {B}/{input.lib} > test.fa; "
+        "{B}/build/MaskerAide/target/release/rmfast -pa {threads} -nolow -lib {B}/{input.cur} -dir . test.fa "
+        "> rmfast.log 2>&1; cd fam; PATH=$(conda info --base)/envs/bench_tools/bin:$PATH "
+        "sh {B}/scripts/vendor/get_family_summary_paper.sh ../test.fa.out > rm2.log 2>&1; cd {B}; " +
+        SH.format(env="bench_tools") +
+        PY + "rm2_summary.py --workdir {params.od}/fam --curated {input.cur} --out {output}"
+
+
+rule lib_intact:  # primary masking input: the tool's intact call set as sequences (the same object the simulation and
+    # phasing approaches score); cd-hit-est drops near-identical copies only, for masking speed (replacing the EDTA
+    # 3-step builder: its cleanup_nested.pl lost 3-9 sensitivity points and was not reproducible)
+    input: "calls/{ds}/{tool}.ids.tsv"
+    output: "libs/{ds}/{tool}.intact.fa"
+    params: pre="libs/{ds}/{tool}.intact", c=INTACT_ID
+    threads: 16
+    shell:
+        SH.format(env="ltrr_bench") + "export TMPDIR={B}/tmp/lib_{wildcards.ds}_{wildcards.tool}; mkdir -p $TMPDIR; " +
+        PY + "build_library.py --calls {input} --genome data/{wildcards.ds}/genome.fa --out {params.pre} "
+        "--prefix {wildcards.tool} -t {threads} --intact {params.c}"
+
+
+def native_src(wc):
+    pat = NATIVE[wc.tool].format(ds=wc.ds)
+    hits = glob.glob(f"{B}/{pat}")
+    return hits[0] if hits else pat
+
+
+rule lib_native:
+    input: done="runs/{ds}/{tool}/.done", lib=native_src
+    output: "libs/{ds}/{tool}.native.fa"
+    params: pre="libs/{ds}/{tool}.native"
+    wildcard_constraints: tool="|".join(NATIVE)
+    shell:
+        SH.format(env="bench_tools") +
+        PY + "build_library.py --native {input.lib} --out {params.pre} --prefix {wildcards.tool}"
+
+
+rule mask:
+    input: "libs/{ds}/{lib}.fa"
+    output: "mask/{ds}/{lib}/{ds}.fa.out"
+    threads: 16
+    params: od="mask/{ds}/{lib}"
+    shell:
+        "export RAYON_NUM_THREADS={threads} OMP_NUM_THREADS={threads} MASKERAIDE_HOME={B}/tmp/maskeraide_home "
+        "TMPDIR={B}/tmp/mask_{wildcards.ds}_{wildcards.lib}; mkdir -p $TMPDIR {params.od}; cd {params.od}; "
+        "ln -sf {B}/data/{wildcards.ds}/genome.fa {wildcards.ds}.fa; "
+        "{B}/build/MaskerAide/target/release/rmfast -pa {threads} -q -no_is -norna -nolow -div 40 -cutoff 225 "
+        "-lib {B}/{input} -dir . {wildcards.ds}.fa > rmfast.log 2>&1"
+
+
+rule libtest:
+    input: test="mask/{ds}/{lib}/{ds}.fa.out", ref="mask/{ds}/curated/{ds}.fa.out"
+    output: "eval/lib/{ds}/{lib}.tsv"
+    shell:  # lib-test builds a pyfastx index (.fxi) next to the genome; concurrent first builds corrupt it -> build
+        # it once under a lock (later jobs just load it)
+        SH.format(env="bench_tools") +
+        "flock mask/{wildcards.ds}/curated/.fxi.lock python -I -c 'import pyfastx,sys; "
+        "pyfastx.Fasta(sys.argv[1], full_index=True)' mask/{wildcards.ds}/curated/{wildcards.ds}.fa; "
+        "python {ROOT}/EDTA/lib-test.py --genome mask/{wildcards.ds}/curated/{wildcards.ds}.fa "
+        "--reference {input.ref} --test {input.test} --extended_report > {output}.log 2>&1; "
+        "awk -v l={wildcards.ds}/{wildcards.lib} 'BEGIN{{OFS=\"\\t\"}} /^#Metrics/{{print \"label\",$0}} "
+        "/[.]ltr[.]lib[.]report/{{print l,$0}}' {input.test}.repeatmasker.lib.report > {output}"
+
+
+rule simlib:
+    input: out="mask/{ds}/{lib}/{ds}.fa.out", feats="sims/truth/{ds}.features.bed"
+    output: "eval/simlib/{ds}/{lib}.tsv"
+    shell:
+        SH.format(env="bench_tools") +
+        PY + "score_bases.py --out-file {input.out} --features {input.feats} --names data/{wildcards.ds}/names.tsv "
+        "--label {wildcards.ds}/{wildcards.lib} --out {output}"
+
+
+rule phase_inputs:
+    input: "calls/{ds}/{tool}.ids.tsv"
+    output: fa="eval/phase/{ds}/{tool}/inputs/elements.k.fa", tsv="eval/phase/{ds}/{tool}/inputs/annot.tsv"
+    threads: 16
+    shell:
+        SH.format(env="kmer2ltr") + "export PATH=$(conda info --base)/envs/bench_tools/bin:$PATH; " +
+        "$(conda info --base)/envs/bench_tools/bin/python -I scripts/phase_inputs.py --calls {input} "
+        "--genome data/{wildcards.ds}/genome.fa --outdir eval/phase/{wildcards.ds}/{wildcards.tool}/inputs -t {threads}"
+
+
+rule phase_native_inputs:  # LTRquest's own outputs, as in the v2 polyploid benchmark
+    input: "runs/{ds}/ltrquest/.done"
+    output: fa="eval/phase/{ds}/ltrquest_native/inputs/elements.k.fa",
+            tsv="eval/phase/{ds}/ltrquest_native/inputs/annot.gff3"
+    shell:
+        "cat runs/{wildcards.ds}/ltrquest/{wildcards.ds}_LTRs_depth[0-9]*_clean_ltr.fa > {output.fa}; "
+        "cp runs/{wildcards.ds}/ltrquest/{wildcards.ds}_LTRs_all_depth_LTR_cleaned.gff3 {output.tsv}"
+
+
+def phase_annot(wc):
+    d = f"eval/phase/{wc.ds}/{wc.tool}/inputs"
+    return f"{d}/annot.gff3" if wc.tool == "ltrquest_native" else f"{d}/annot.tsv"
+
+
+rule phase_run:
+    input: fa="eval/phase/{ds}/{tool}/inputs/elements.k.fa", annot=phase_annot
+    output: "eval/phase/{ds}/{tool}/run/summary.json"
+    threads: 16
+    params: od="eval/phase/{ds}/{tool}/run"
+    shell:
+        SH.format(env="longreads") + "export OMP_WAIT_POLICY=PASSIVE KMP_BLOCKTIME=0 NUMBA_NUM_THREADS={threads} "
+        "OMP_NUM_THREADS={threads} TMPDIR={B}/tmp/phase_{wildcards.ds}_{wildcards.tool}; mkdir -p $TMPDIR; "
+        "python {PHASER} --ltr_fasta {input.fa} --annotation {input.annot} --fai data/{wildcards.ds}/genome.fa.fai "
+        "--outdir {params.od} -t {threads} --label {wildcards.ds}_{wildcards.tool} > {params.od}.log 2>&1"
+
+
+rule phase_score:
+    input: "eval/phase/{ds}/{tool}/run/summary.json"
+    output: "eval/phase/{ds}/{tool}/score.tsv"
+    shell:
+        SH.format(env="bench_tools") + "rm -f {output}; " +
+        PY + "phase_score.py eval/phase/{wildcards.ds}/{wildcards.tool}/run "
+        "--truth data/{wildcards.ds}/truth.tsv --label {wildcards.ds}/{wildcards.tool} --out {output}"
+
+
+rule phase_sub:  # power curve: random subset of the paired copies, phasing only (no dating); failures count as wrong
+    input: fa="eval/phase/{ds}/{tool}/inputs/elements.k.fa", full="eval/phase/{ds}/{tool}/score.tsv"
+    output: "eval/phase/{ds}/{tool}/sub/{k}_{seed}/score.tsv"
+    threads: 4
+    params: d="eval/phase/{ds}/{tool}/sub/{k}_{seed}"
+    shell:
+        SH.format(env="longreads") + "export OMP_WAIT_POLICY=PASSIVE KMP_BLOCKTIME=0 NUMBA_NUM_THREADS={threads} "
+        "OMP_NUM_THREADS={threads}; rm -rf {params.d}/inputs {params.d}/run; "
+        "$(conda info --base)/envs/bench_tools/bin/python -I scripts/phase_inputs.py "
+        "--subsample-from eval/phase/{wildcards.ds}/{wildcards.tool}/inputs --subsample {wildcards.k} "
+        "--seed {wildcards.seed} --outdir {params.d}/inputs; "
+        "A=$(ls {params.d}/inputs/annot.* | head -1); "
+        "python {PHASER} --ltr_fasta {params.d}/inputs/elements.k.fa --annotation $A "
+        "--fai data/{wildcards.ds}/genome.fa.fai --outdir {params.d}/run -t {threads} --seed {wildcards.seed} "
+        "--dev_phase_only > {params.d}/run.log 2>&1 || true; "
+        "$(conda info --base)/envs/bench_tools/bin/python -I scripts/phase_score.py {params.d}/run "
+        "--truth data/{wildcards.ds}/truth.tsv --label {wildcards.ds}/{wildcards.tool}/{wildcards.k}/{wildcards.seed} "
+        "--allow-failed --out {output}"

@@ -1,4 +1,4 @@
-"""Template-guided re-boundarying of LTR-RT calls (opt-in stage).
+"""Template-guided re-boundarying of LTR-RT calls.
 
 LTRharvest and LTR_FINDER extend an LTR pair outward from a seed and stop at the
 first obstacle between the element's two LTRs -- an indel, a patch of mutations --
@@ -108,10 +108,11 @@ _G: Optional[Genomes] = None
 _API = None
 
 
-def _init(paths: Dict[str, str], tools_dir: str) -> None:
-    """Worker set-up: genome handles and the Kmer2LTR API, once per process."""
+def _init(paths: Dict[str, str], tools_dir: str, workdir: Optional[str] = None) -> None:
+    """Worker set-up: genome handles and the Kmer2LTR API, once per process. The
+    handles read the index `Genomes.index` built in `workdir`."""
     global _G, _API
-    _G = Genomes(paths)
+    _G = Genomes(paths, workdir)
     _API = k2l.api(tools_dir)
 
 
@@ -394,7 +395,8 @@ def run(indir: str, prefixes: Sequence[str], genomes: Sequence[str], s: Settings
         raise SystemExit(f"reboundary: no _clean_ depth tables for any prefix in {indir}")
     prefixes, genomes = [p for p, _ in kept], [g for _, g in kept]
     tables = {p: tables_by_prefix[p] for p in prefixes}
-    # A gzipped genome is expanded here for the stage and removed after it, however
+    # A gzipped genome is expanded here for the stage, and every genome indexed here
+    # rather than beside the user's file; all of it is removed after the stage, however
     # the stage ends.
     g = Genomes(dict(zip(prefixes, genomes)),
                 workdir=os.path.join(indir, prefixes[0] + GENOME_COPIES_SUFFIX))
@@ -443,7 +445,7 @@ def _rebound(indir: str, prefixes: Sequence[str], tables, g: Genomes, s: Setting
             f"({time.time() - t0:.0f} s)")
         per_target = Counter(len(h) for h in near.values())
         vlog(f"  templates per target: {dict(sorted(per_target.items()))}")
-        with Pool(s.threads, initializer=_init, initargs=(paths, tools_dir)) as pool:
+        with Pool(s.threads, initializer=_init, initargs=(paths, tools_dir, g.workdir)) as pool:
             for u, prop, tsd_new, tsd_null, obst in pool.imap_unordered(place_job, jobs,
                                                                         chunksize=8):
                 if prop is not None:

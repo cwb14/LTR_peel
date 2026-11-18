@@ -7,8 +7,8 @@
 # Usage:
 #   ltrquest --genome genome.fa [genome2.fa ...] [--proteins prot.fa] [--terminate_count 100]
 #       [--max-rounds N] [--threads 20] [--out_prefix PREFIX]
-#       [--run-sdust] [--detect-args "KEY=VALUE ..."] [--detect-args-from-round N "KEY=VALUE ..."]
-#       [--fastltr rescue|all|off]
+#       [--no-sdust] [--detect-args "KEY=VALUE ..."] [--detect-args-from-round N "KEY=VALUE ..."]
+#       [--fastltr rescue|all|off] [--keep-intermediates] [--tools-dir DIR]
 #
 # Notes:
 # - Runs Round 1 on the original genome, then masks the ORIGINAL genome each round to build genome_r{N}.fa for next round.
@@ -16,8 +16,9 @@
 #   (e.g. no LTR-RT candidates found) -- early exits are handled gracefully.
 # - After the loop, ltrquest.reconcile pools all rounds, detects cross-round containment,
 #   and writes depth-bucketed {OUT_PREFIX}_depth{N}_ltr.{tsv,fa} files. The raw per-round
-#   {OUT_PREFIX}_r{N}_ltr.* files are preserved. depth{N} = elements with N layers of
-#   LTR-RT nested inside (depth0 = no inner, i.e. "unnested"; depth1 = single-nested; etc.).
+#   {OUT_PREFIX}_r{N}_ltr.* files stay until the clean-up (see CLEAN-UP). depth{N} =
+#   elements with N layers of LTR-RT nested inside (depth0 = no inner, i.e. "unnested";
+#   depth1 = single-nested; etc.).
 # - Uses IUPAC ambiguity codes for masking letters; excludes 'V' because far-character uses V.
 # - At each next round:
 #     scn-max-ret-len, -maxdistltr, -D  += 15000
@@ -26,15 +27,16 @@
 # - Deletes temp_ltr_2pass_lib.fa at end.
 # - Rounds 2+ automatically add --exclude-run-char V.
 # - LTR callers per 500 kb chunk: LTRharvest and LTR_FINDER, plus FastLTR (--fastltr):
-#   by default only on chunks where --detect-args "ltr-timeout=N" cut the other two short.
-# - --run-sdust (off by default) adds a low-complexity gate to every round: right
-#   after the LTR callers' merge and before TEsorter2, each full-length
-#   candidate is run through sdust and dropped when >= --max-dust-frac of its ACGT
-#   bases come back masked. Nested inners arrive IUPAC-masked in the round genome
-#   and sdust treats any non-ACGT base as a hard break, so neither the numerator
-#   nor the denominator counts them -- the fraction describes the element itself.
-#   Filtering here rather than later spares TEsorter2, the TSD pass, and Kmer2LTR
-#   the work of classifying satellite arrays.
+#   by default only on chunks where --ltr-timeout (default 300 s) cut the other two short.
+# - The sdust filter (on by default; --no-sdust turns it off) adds a low-complexity
+#   gate to every round: right after the LTR callers' merge and before TEsorter2,
+#   each full-length candidate is run through sdust and dropped when
+#   >= --max-dust-frac of its ACGT bases come back masked. Nested inners arrive
+#   IUPAC-masked in the round genome and sdust treats any non-ACGT base as a hard
+#   break, so neither the numerator nor the denominator counts them -- the
+#   fraction describes the element itself. Filtering here rather than later
+#   spares TEsorter2, the TSD pass, and Kmer2LTR the work of classifying
+#   satellite arrays.
 #
 # Extra detection options:
 #   --detect-args "KEY=VALUE [KEY2=VALUE2 ...]"
@@ -78,7 +80,8 @@
 #   (a0) with --strand-recovery, ltrquest.recover_strand --phase align calls
 #        strand for the elements the cascade below cannot reach and writes
 #        {OUT_PREFIX}_strand_recovery.tsv; --phase apply then runs after (b) to
-#        re-orient the depth FASTAs to the strand the annotator wrote.
+#        re-orient the _clean_ depth FASTAs (and tables) to the strand the
+#        annotator wrote; the unfiltered ones stay as detection wrote them.
 #   (a) ltrquest.annotate inserts `strand` and `family` columns into every
 #       {OUT_PREFIX}_depth{N}_ltr.tsv and _depth{N}_clean_ltr.tsv, between `tsd`
 #       and `domains`. Strand is TEsorter2's call, falling back to protein-domain
@@ -112,21 +115,43 @@
 #   Sequence IDs must be unique across genomes -- pooled clustering keys
 #   elements on 'chrom:start-end', so a shared seqid would cross-assign
 #   families and cross-purge real elements. Checked before any work starts.
-#   Adding a genome later: each finished genome gets a {P_g}.detect.json
-#   record (ltrquest.record). Re-running in the same directory with more
-#   genomes reuses every genome whose record still matches -- same genome,
-#   same detection settings -- and detects only the rest; phases (2) and (3)
-#   then re-run over all of them. A record that no longer matches stops the
-#   run; --redetect ignores the records. A reused genome is never FP-masked
-#   or re-detected: its _clean_ tables are rebuilt from the new pooled call.
+#   Adding a genome later: with --keep-intermediates, each finished genome
+#   gets a {P_g}.detect.json record (ltrquest.record). Re-running in the same
+#   directory with more genomes reuses every genome whose record still
+#   matches -- same genome, same detection settings -- and detects only the
+#   rest; phases (2) and (3) then re-run over all of them. A record that no
+#   longer matches stops the run; --redetect ignores the records. A reused
+#   genome is never FP-masked or re-detected: its _clean_ tables are rebuilt
+#   from the new pooled call.
+
+# CLEAN-UP (end of a successful run):
+#   ltrquest.cleanup removes the working files named after each genome's
+#   prefix and the run prefix -- round tables and work dirs, unfiltered depth
+#   tables, pooled cluster tables, FP logs, sidecars, the reuse record -- and
+#   the default tools dir when this run made it and it holds only the helpers
+#   fetched there, leaving per genome the GFF3, the _clean_ depth tables and
+#   FASTAs, and the plots; then it prints where they are. Never removed: the
+#   inputs; a tools dir the user named (--tools-dir or LTRQUEST_TOOLS_DIR) or
+#   one already there; anything after a failure; and anything when a step that
+#   may fail without stopping the run (strand recovery, re-boundarying,
+#   plotting) failed, so it can be redone. --keep-intermediates keeps
+#   everything and writes the reuse records.
 
 set -euo pipefail
 
 # Print the exact command for reproducibility. LTRQUEST_ARGV0 is set by the
 # console script so this echoes `ltrquest ...` rather than the site-packages
 # path of this file.
-echo "Command: ${LTRQUEST_ARGV0:-$0} $*"
-echo ""
+# A help request, or no arguments at all, prints only the help.
+_show_command=true
+(( $# == 0 )) && _show_command=false
+for _a in "$@"; do
+  case "$_a" in -h|--help|--help-all) _show_command=false;; esac
+done
+if [[ "$_show_command" == true ]]; then
+  echo "Command: ${LTRQUEST_ARGV0:-$0} $*"
+  echo ""
+fi
 
 WRAPPER_START=$SECONDS
 
@@ -153,7 +178,8 @@ OUT_PREFIX=""
 RUN_TRF=true
 FASTLTR_MODE=rescue        # --fastltr rescue|all|off: the third LTR caller
 FASTLTR_ARGS=""            # --fastltr-args: passed through; empty = detect's default
-RUN_SDUST=false
+RUN_SDUST=true
+LTR_TIMEOUT=300            # --ltr-timeout: seconds per chunk and LTR caller; 0 = no cap
 SDUST_ARGS="-w 64 -t 15"
 MAX_DUST_FRAC="0.55"
 RUN_TANDEM=true
@@ -162,12 +188,12 @@ KEEP_WEAK_HMM_PASS2=false
 PASS2_ALIGNER="minimap2"
 RUN_PLOTS=true
 
-# Strand recovery (opt-in post-processing; empty = off)
-STRAND_RECOVERY=""
-STRAND_RECOVERY_PPT=false
+# Strand recovery (post-processing; --strand-recovery off, i.e. empty, turns it off)
+STRAND_RECOVERY="sensitive"
+STRAND_RECOVERY_PPT=true
 
-# Family-guided re-boundarying of truncated calls (opt-in post-processing)
-REBOUNDARY=false
+# Family-guided re-boundarying of truncated calls (post-processing)
+REBOUNDARY=true
 
 # FP-family correction (post-detection Kmer2LTR stage)
 FP_MASK_THRESHOLD="0.10"   # user-tunable: FP-element fraction above which the
@@ -179,6 +205,17 @@ MAX_FP_ROUNDS=10           # hidden safety cap on automatic FP-masking re-runs
 # Reuse of genomes an earlier run in this directory already detected
 REDETECT=false             # --redetect: ignore every <prefix>.detect.json
 declare -a FROZEN=()       # per genome: true = reused, not detected by this run
+
+# End-of-run clean-up. Reuse reads the working files, so records are only
+# written when they are kept.
+KEEP_INTERMEDIATES=false   # --keep-intermediates: keep every working file
+# A tools dir the user named (--tools-dir, or LTRQUEST_TOOLS_DIR as the container
+# sets it) is theirs and is never removed; the default one in the run folder is,
+# but only when this run made it.
+USER_TOOLS_DIR=false
+[[ -n "${LTRQUEST_TOOLS_DIR:-}" ]] && USER_TOOLS_DIR=true
+TOOLS_DIR_ARG=""           # --tools-dir as given; resolved after parsing
+FAILED_STEPS=""            # set by the orchestrator: where note_failed_step writes
 
 # Storage for extra ltrquest.detect arg directives
 # Each entry is tab-separated: "FROMROUND\tKEY\tVALUE\tIS_BOOL"
@@ -238,150 +275,151 @@ die_missing_input() {
   exit 1
 }
 
-usage() {
-  cat >&2 <<'USAGE_EOF'
+# Both help pages go to stdout when asked for (so `ltrquest --help | less`
+# works) and to stderr when the user gave no arguments at all.
+usage_short() {
+  cat <<'USAGE_EOF'
+LTRquest: find intact LTR retrotransposons, including old and nested ones.
+
 Usage:
-  ltrquest --genome genome.fa [genome2.fa ...] [--proteins prot.fa]
-      [--terminate_count 100]
-      [--max-rounds N] [--threads 20] [--out_prefix PREFIX]
-      [--run-sdust] [--no-tandem-filter] [--fp-mask-threshold 0.10] [--mutation-rate 3e-8]
-      [--detect-args "KEY=VALUE ..."] [--detect-args-from-round N "KEY=VALUE ..."]
+  ltrquest --genome genome.fa [--proteins related.pep.fa] [--threads 20]
 
-Required:
-  --genome              Genome FASTA (.fa/.fasta, plain or .gz). One or more,
-                        space-separated. With 2+ genomes every genome is
-                        detected separately, then all detected elements are
-                        pooled for a single clustering pass, so the `family`
-                        column means the same thing in every genome's output.
-                        Sequence IDs must be unique across genomes (checked
-                        up front, before any work starts). A genome an earlier
-                        run in this directory detected with the same settings
-                        is reused rather than detected again.
+Main options:
+  --genome FASTA [FASTA ...]  Genome(s), plain or .gz. Several genomes share
+                              one set of family names.
+  --proteins FASTA            Proteins of any related species. Optional but
+                              recommended: keeps genes from being called.
+  --threads N                 CPU threads (default 20).
+  --mutation-rate R           Substitutions/site/year, used for insertion
+                              ages (default 3e-8, a plant rate).
+  --out_prefix NAME           Name for the outputs (default <genome>_LTRs).
+  --keep-intermediates        Keep every working file (needed to add a
+                              genome to this run later).
 
-Optional:
-  --proteins            Protein FASTA for ltrquest.detect. One file, shared by
-                        every genome.
-  --terminate_count     Stop if detected LTR-RTs in latest library < this count (default 100)
-  --max-rounds          Maximum number of rounds to run (default: up to 10, limited by IUPAC codes).
-                        Use 1 for non-nested only, 2 for single-level nesting, etc.
-  --threads             Threads for ltrquest.detect (default 20)
-  --out_prefix          With ONE genome: output prefix (default
-                        <genome_prefix>_LTRs), which also names the families.
-                        With 2+ genomes: names the shared family namespace and
-                        the merged cluster tables (default 'merged'); each
-                        genome always keeps its own <basename>_LTRs prefix.
-  --run-trf             Run TRF tandem-repeat masking (default: on)
-  --no-trf              Disable TRF tandem-repeat masking
-  --fastltr MODE        Third LTR caller next to LTRharvest and LTR_FINDER:
-                        LTRquest's adaptation of FastLTR (FASTAN), built in the
-                        tools directory on first use. It does not stall on
-                        satellite, telomere or rDNA arrays, so with
-                        --detect-args "ltr-timeout=N" a chunk the other two are
-                        cut short on is still searched. MODE: rescue (default;
-                        only chunks where the timeout cut LTRharvest or
-                        LTR_FINDER short, so without a cap it never runs), all
-                        (every chunk: more elements elsewhere too, at lower
-                        precision), off.
-  --no-fastltr          Same as --fastltr off.
-  --fastltr-args        Quoted args for FastLTR (default: '-d100 -D20000 -w8').
-  --run-sdust           Filter LTR-RT candidates through sdust after the
-                        LTR callers' merge and before TEsorter2,
-                        dropping those made mostly of low-complexity sequence
-                        (default: off). Nested inner elements are excluded
-                        from the calculation.
-  --sdust-args          Quoted args for sdust (default: '-w 64 -t 15')
-  --max-dust-frac       Drop a candidate when this fraction or more of its
-                        ACGT bases are sdust-masked (default: 0.55).
-                        Raise toward 0.80 for AT-rich/fungal genomes.
-  --no-tandem-filter    Keep calls cut from tandem arrays (rDNA, satellites,
-                        tandem segmental duplications) in the _clean_ outputs.
-                        By default they are purged with the FP families: a call
-                        whose LTR-pair repeat carries on past both of its ends.
-  --mutation-rate       Neutral substitution rate per site per year, forwarded to
-                        ltrquest.detect and the pooled Kmer2LTR clustering pass;
-                        sets the k2p_time column (default: 3e-8).
+Example (A. thaliana chr2 from the repo's tests/data, 5-7 min):
+  ltrquest --genome Athal_tair10_chr2.fa.gz --proteins Athal.pep.gz
+
+Results, in the current folder:
+  <prefix>_all_depth_LTR_cleaned.gff3  all elements, for a genome browser
+  <prefix>_depth<N>_clean_ltr.tsv/.fa  elements with N layers nested inside
+  <prefix>_plots/                      open *_TEGV.html in a web browser
+
+Time at 16 threads: ~25 min for 100-400 Mb; 2.6 h for 1.1 Gb; 7 h for 2 Gb.
+On large genomes strand recovery adds about as much again, plots up to a
+fifth (--strand-recovery off and --no-plots skip them).
+
+All options:  ltrquest --help-all
+Guide:        https://github.com/cwb14/LTRquest
+USAGE_EOF
+}
+
+usage_all() {
+  cat <<'USAGE_EOF'
+Usage:
+  ltrquest --genome genome.fa [--proteins related.pep.fa] [--threads 20]
+
+Every option is optional except --genome. Defaults are what most users want.
+
+Input and output
+  --genome FASTA [FASTA ...]
+        Genome(s), plain or .gz. With 2+ genomes each is detected on its own,
+        then all elements are pooled so family names match across genomes.
+        Sequence IDs must be unique across genomes (checked first).
+  --proteins FASTA
+        Proteins of any related species, one file shared by all genomes.
+        Keeps genes from being called as elements.
+  --out_prefix NAME
+        One genome: prefix of every output (default <genome>_LTRs), which
+        also names the families. 2+ genomes: name of the shared pool (default
+        'merged'); each genome keeps its own <genome>_LTRs prefix.
+  --threads N
+        CPU threads (default 20).
+  --mutation-rate R
+        Substitutions per site per year, used for insertion ages in the
+        k2p_time column (default 3e-8, a plant rate).
+  --keep-intermediates
+        Keep every working file. Adding a genome to this run later, or
+        re-plotting with ltrquest-plots, needs it. Default: a successful
+        run keeps only the GFF3, the _clean_ tables and FASTAs, the plots.
+  --tools-dir DIR
+        Where helper tools are fetched and built. Reused by later runs and
+        never removed. Default: <genome>_tools in the run folder
+        (merged_tools for several genomes, NAME_tools with --out_prefix
+        NAME), removed at the end only if this run created it. Fill it
+        once with internet for offline use.
+  --redetect
+        Detect every genome again, ignoring records from an earlier run.
+
+Nested search
+  --max-rounds N
+        Most rounds to run (default up to 10). 1 = non-nested only, 2 = one
+        level of nesting, and so on.
+  --terminate_count N
+        Stop when a round finds fewer than N LTR-RTs (default 100).
+
+Finding candidates
+  --ltr-timeout N
+        Seconds each caller may spend on one chunk; 0 = no cap (default 300).
+  --fastltr MODE
+        Third caller, copes with satellite and rDNA arrays. rescue (default)
+        = only chunks the others were cut short on; all = every chunk, more
+        elements, lower precision; off.
+  --no-fastltr
+        Same as --fastltr off.
+  --fastltr-args "ARGS"
+        Arguments for FastLTR (default '-d100 -D20000 -w8').
+  --no-trf
+        Skip TRF tandem-repeat masking (default: on).
+  --no-sdust
+        Keep candidates made mostly of low-complexity sequence (default:
+        sdust drops them).
+  --sdust-args "ARGS"
+        Arguments for sdust (default '-w 64 -t 15').
+  --max-dust-frac F
+        Drop a candidate when this fraction of its bases is low-complexity
+        (default 0.55; raise toward 0.80 for AT-rich or fungal genomes).
+
+Removing false positives
+  --no-tandem-filter
+        Keep calls cut from tandem arrays (rDNA, satellites) in the _clean_
+        outputs. Default: they are removed with the false-positive families.
+  --fp-mask-threshold F
+        If more than this fraction of elements are false positives, mask them
+        and re-run everything on the masked genome (default 0.10).
   --keep-weak-hmm-pass2-matches
-                        Include in cls.lib.fa the pass-2 matches whose target is a weak-HMM
-                        candidate (had HMM hits but no clade -> LTR/unknown/unknown via augment).
-                        By default these matches are dropped. Default: off.
-  --pass2-aligner       TEBinSorter pass-2 aligner: minimap2 (default) or blast.
-  --fp-mask-threshold   False-positive element fraction above which the genome is
-                        hard-masked and the whole pipeline is automatically re-run
-                        on the masked genome (default 0.10; higher tolerates more
-                        false positives before masking/re-running).
-  --no-plots            Skip the post-completion plotting stage (structure
-                        PDFs, summary PDF, TEGV HTML into <out_prefix>_plots/).
-                        Default: run it.
-  --redetect            Detect every genome again, ignoring the
-                        <prefix>.detect.json records an earlier run left here.
-  --strand-recovery     Recover strand for the LTR-RTs the usual cascade leaves
-                        unstranded, by transferring orientation from the elements
-                        that already carry one. Off by default. One of:
-                          conservative  two dc-megablast views; recall 0.58 at
-                                        0.19% disagreement with the cascade
-                          balanced      four views, two must agree; 0.79 / 0.70%
-                          sensitive     four views, one is enough unless another
-                                        contradicts it; 0.84 / 1.06%
-                        Needs blast+, and minimap2 for balanced/sensitive.
-  --strand-recovery-ppt Add the polypurine-tract fallback for loci homology
-                        cannot reach. Measured at 93%, so off by default.
-  --reboundary          Re-bound LTR-RT calls whose ends carry no TSD (an indel
-                        or a mutation-dense patch near an LTR end stops
-                        LTRharvest/LTR_FINDER early; a few calls run a few bases
-                        long). Calls whose ends carry an exact TSD, from every
-                        genome and family, are the templates: where at least two
-                        agree, an end moves out, or in by up to 10 bp, and a
-                        second call of the same element is merged away. Kmer2LTR
-                        re-measures every changed element; bases with no partner
-                        in the other LTR are gaps, so K2P is not inflated.
-                        Rewrites the _clean_ tables and FASTAs and writes
-                        <out_prefix>_reboundary.tsv. Off by default. Needs blastn.
-                        For a finished run use ltrquest-reboundary --posthoc.
+        Keep pass-2 matches whose target has protein hits but no clade
+        (default: dropped).
+  --pass2-aligner minimap2|blast
+        Aligner for the second TEsorter pass (default minimap2).
 
-Post-detection FP-family correction runs automatically: it clusters the detected
-LTR-RTs with Kmer2LTR, purges false-positive families into
-<out_prefix>_depth{N}_clean_ltr.{tsv,fa}, and (when FPs are pervasive) masks the
-genome and re-runs. See the script header for details.
+Finishing
+  --no-reboundary
+        Do not re-bound calls whose ends lack a target-site duplication
+        (default: on; needs blastn). For a finished run use
+        ltrquest-reboundary --posthoc.
+  --strand-recovery MODE
+        Give a strand to elements the usual steps leave unstranded. MODE:
+        conservative, balanced, sensitive (default) or off. Needs blast+;
+        balanced and sensitive also need minimap2.
+  --no-strand-recovery-ppt
+        Skip the polypurine-tract fallback for loci homology cannot reach
+        (default: on).
 
-Annotation add-ons then run automatically: every depth table gains `strand` and
-`family` columns, and the tables are pooled into
-<out_prefix>_all_depth_LTR_cleaned.gff3 (plus
-<out_prefix>_all_depth_protein_LTR_cleaned.gff3 when --proteins was given, which
-also carries the miniprot alignments).
+Output extras
+  --no-plots
+        Skip the plots (default: structure PDFs, summary PDF, TEGV HTML in
+        <prefix>_plots/).
 
-With --strand-recovery, a recovery pass runs either side of the annotator: it
-writes <out_prefix>_strand_recovery.tsv (locus, strand, source, evidence), the
-annotator reads that as a fourth strand tier so `strand_source` reads `homology`
-or `ppt`, and the depth FASTAs are then re-oriented so a recovered minus element
-is stored in coding sense exactly like a TEsorter2-called one.
+Advanced
+  --detect-args "KEY=VALUE ..."
+        Pass extra options to ltrquest.detect in every round, e.g.
+        --detect-args "tesorter-rule=70-70-80".
+  --detect-args-from-round N "KEY=VALUE ..."
+        The same from round N onward, e.g.
+        --detect-args-from-round 3 "tesorter-rule=70-40-80".
 
-Extra detection options:
-  --detect-args "KEY=VALUE [KEY2=VALUE2 ...]"
-      Pass additional options to ltrquest.detect for ALL rounds.
-      KEY is the option name without leading '--'. Use '=' to separate key and value.
-      Boolean flags (no value): KEY=true  (e.g. clean=true, verbose=true)
-      Can be specified multiple times.
-
-  --detect-args-from-round N "KEY=VALUE [...]"
-      Pass additional options to ltrquest.detect starting from round N onward.
-      For the same KEY, the directive with the highest applicable from-round wins.
-      Can be specified multiple times.
-
-  Examples:
-      # Always clean workdirs and be verbose
-      --detect-args "clean=true verbose=true"
-
-      # Clean only from round 2 onward
-      --detect-args-from-round 2 "clean=true"
-
-      # Use a relaxed tesorter-rule for rounds 1-2, stricter from round 3
-      --detect-args-from-round 1 "tesorter-rule=70-70-80"
-      --detect-args-from-round 3 "tesorter-rule=70-40-80"
-
-Notes:
-  - Rounds 2+ automatically receive --exclude-run-char V (no need to specify manually).
-  - If ltrquest.detect exits with an error (e.g. no LTR-RT candidates / Kmer2LTR failure),
-    the run stops gracefully rather than crashing the whole pipeline.
+What each stage does and every output file: docs/outputs.md
+Guide: https://github.com/cwb14/LTRquest
 USAGE_EOF
 }
 
@@ -397,7 +435,7 @@ count_fasta_headers() {
 clean_and_concat_libs() {
   local out="$1"; shift
   local tmpcat
-  tmpcat="$(mktemp)"
+  tmpcat="$(mktemp "./${OUT_PREFIX}.libs.XXXXXX")"
   cat "$@" > "$tmpcat"
   awk '/^>/ {printf("\n%s\n",$0);next;} {printf("%s",$0);} END {printf("\n");}' "$tmpcat" \
     | sed '/^>/! s/[^ATCGatcg]//g' > "$out"
@@ -745,6 +783,17 @@ write_clean_fastas() {
   done
 }
 
+# A step that may fail without stopping the run notes it here, so the end-of-run
+# clean-up keeps the working files that redoing the step needs. A file, not a
+# variable: these steps run in a subshell, whose variables never reach the
+# orchestrator. It sits in the staging dir, which promotion never empties into
+# the results. Never fails itself: a finished run must not die over a note.
+note_failed_step() {
+  if [[ -n "${FAILED_STEPS:-}" ]]; then
+    echo "$1" >> "$FAILED_STEPS" || true
+  fi
+}
+
 # Every genome reads the one pooled cluster table and labels families from
 # RUN_PREFIX, so the family column is directly comparable across species.
 # --prefix still drives everything per-genome: TEsorter tables, PAFs,
@@ -808,6 +857,7 @@ run_annotation_stage() {
         set +x
         echo "WARNING: strand recovery failed for ${p}; continuing with the" >&2
         echo "unrecovered strand cascade. Annotation outputs are unaffected." >&2
+        note_failed_step "strand recovery (${p})"
         # The stage removes its own working directory on a clean exit; a killed
         # one leaves it, and promotion would move it into the user's results.
         rm -f "$sidecar"
@@ -840,7 +890,7 @@ run_annotation_stage() {
       --genome "${p}.input_genome.fa" "${fam_opts[@]}" "${rec_opts[@]}"
     set +x
 
-    # Phase 2: bring the depth FASTAs into line with the strand column the
+    # Phase 2: bring the _clean_ depth FASTAs into line with the strand column the
     # annotator just wrote, so a recovered minus element is stored in coding
     # sense exactly like a TEsorter2-called one.
     if (( ${#rec_opts[@]} > 0 )); then
@@ -877,12 +927,13 @@ reorient_recovered() {
   local p="$1"
   echo ""
   echo "============================================================"
-  echo "Re-orienting ${p} depth FASTAs to the recovered strand..."
+  echo "Re-orienting ${p} _clean_ depth FASTAs to the recovered strand..."
   set -x
   "${RECOVER[@]}" --phase apply --prefix "$p" --indir . || {
     set +x
-    echo "WARNING: could not re-orient the depth FASTAs for ${p}; the tables" >&2
+    echo "WARNING: could not re-orient the _clean_ depth FASTAs for ${p}; the tables" >&2
     echo "and GFF3s still carry the recovered strand." >&2
+    note_failed_step "re-orienting to the recovered strand (${p})"
   }
   set +x
 }
@@ -905,7 +956,7 @@ run_reboundary_stage() {
     genomes+=( "${abs_genomes[$i]:-${p}.input_genome.fa}" )
   done
   if (( ${#prefixes[@]} == 0 )); then
-    echo "WARNING: no _clean_ depth tables; skipping --reboundary." >&2
+    echo "WARNING: no _clean_ depth tables; skipping re-boundarying." >&2
     return 0
   fi
   resolve_merged_tools_dir
@@ -920,9 +971,11 @@ run_reboundary_stage() {
   set +x
   if (( rc == 3 )); then
     # an incompatible Kmer2LTR: loud, not a quiet fallback to the calls as detected
-    die "--reboundary cannot run with the Kmer2LTR in ${TOOLS_DIR} (see the error above)."
+    die "re-boundarying (on by default) cannot run with the Kmer2LTR in ${TOOLS_DIR} (see the error above).
+  Update Kmer2LTR, or run with --no-reboundary."
   elif (( rc != 0 )); then
     echo "WARNING: re-boundarying failed; the calls are kept as detected." >&2
+    note_failed_step "re-boundarying"
     for p in "${prefixes[@]}"; do rm -f "${p}_reboundary.tsv"; done
   fi
 }
@@ -1086,6 +1139,7 @@ detection_settings() {
             --setting "terminate_count=${TERMINATE_COUNT}"
             --setting "trf=${RUN_TRF}"
             --setting "sdust=${RUN_SDUST}"
+            --setting "ltr_timeout=${LTR_TIMEOUT}"
             --setting "mutation_rate=${MUTATION_RATE}"
             --setting "keep_weak_hmm_pass2=${KEEP_WEAK_HMM_PASS2}"
             --setting "pass2_aligner=${PASS2_ALIGNER}"
@@ -1103,7 +1157,7 @@ detection_settings() {
   # Off is how every genome was detected before FastLTR existed, so a record
   # without the key still matches a run that turns it off -- or that asks for
   # rescue without a cap, where FastLTR never runs.
-  if [[ "$FASTLTR_MODE" == all || ( "$FASTLTR_MODE" == rescue && "$directives" == *ltr-timeout* ) ]]; then
+  if [[ "$FASTLTR_MODE" == all || ( "$FASTLTR_MODE" == rescue && ( "$LTR_TIMEOUT" -gt 0 || "$directives" == *ltr-timeout* ) ) ]]; then
     _ds_out+=( --setting "fastltr=${FASTLTR_MODE}"
                --setting "fastltr_args=${FASTLTR_ARGS}" )
   fi
@@ -1207,6 +1261,7 @@ run_fp_orchestrator() {
 
   rm -rf "$staging"                 # defensive: clear a stale/partial staging dir
   mkdir -p "$staging"
+  FAILED_STEPS="${staging}/failed_steps"
 
   while (( attempt <= MAX_FP_ROUNDS )); do
     adir="${staging}/round${attempt}"
@@ -1322,18 +1377,27 @@ run_fp_orchestrator() {
 
   # Records last, once every output they list is in place: a run that dies
   # before here leaves no record, and the genome is simply detected again.
-  local -a record_settings=() record_prot=() record_masked=()
-  detection_settings record_settings
-  [[ -n "${abs_proteins:-}" ]] && record_prot=( --proteins "$abs_proteins" )
-  for i in "${!GENOMES[@]}"; do
-    [[ "${FROZEN[$i]}" == true ]] && continue
-    record_masked=()
-    [[ "${cur_genome[$i]}" != "${abs_genomes[$i]}" ]] && record_masked=( --fp-masked )
-    "${RECORD[@]}" write --indir "$final_dir" --prefix "${OUT_PREFIXES[$i]}" \
-      --genome "${abs_genomes[$i]}" "${record_prot[@]}" "${record_settings[@]}" \
-      "${record_masked[@]}" \
-      || die "Could not write the detection record for ${OUT_PREFIXES[$i]}"
-  done
+  # Only when those outputs are kept: the clean-up below removes them, and a
+  # record naming missing files would stop the next run in this folder.
+  if [[ "$KEEP_INTERMEDIATES" == true ]]; then
+    local -a record_settings=() record_prot=() record_masked=()
+    detection_settings record_settings
+    [[ -n "${abs_proteins:-}" ]] && record_prot=( --proteins "$abs_proteins" )
+    for i in "${!GENOMES[@]}"; do
+      [[ "${FROZEN[$i]}" == true ]] && continue
+      record_masked=()
+      [[ "${cur_genome[$i]}" != "${abs_genomes[$i]}" ]] && record_masked=( --fp-masked )
+      "${RECORD[@]}" write --indir "$final_dir" --prefix "${OUT_PREFIXES[$i]}" \
+        --genome "${abs_genomes[$i]}" "${record_prot[@]}" "${record_settings[@]}" \
+        "${record_masked[@]}" \
+        || die "Could not write the detection record for ${OUT_PREFIXES[$i]}"
+    done
+  fi
+
+  # The steps that failed without stopping the run, noted by note_failed_step in the
+  # staging dir, which goes next.
+  local -a failed_steps=()
+  [[ -s "$FAILED_STEPS" ]] && mapfile -t failed_steps < "$FAILED_STEPS" || true
 
   if [[ "$DEV_KEEP_FP_ROUNDS" == true ]]; then
     echo "[dev] --dev-keep-fp-rounds set: retaining staging dir ${staging}"
@@ -1356,9 +1420,39 @@ run_fp_orchestrator() {
         echo "Plots written to: ${final_dir}/${p}_plots"
       else
         echo "[WARN] plotting stage reported failures for ${p}; annotation outputs are unaffected." >&2
+        # plots.sh reads the cluster table and the round-1 gene track, both working files
+        failed_steps+=( "plotting (${p})" )
       fi
     done
   fi
+
+  # Last, once every result is in place: a run that fails before here keeps all
+  # it wrote. The module also says where the results are, so it runs with
+  # --keep-intermediates too, removing nothing. Relative paths here are read from
+  # this directory, the run folder, as the module runs from it.
+  local -a cleanup_args=( --indir "$final_dir" --prefix "${OUT_PREFIXES[@]}"
+                          --run-prefix "$RUN_PREFIX" --protect "${abs_genomes[@]}" )
+  [[ -n "${abs_proteins:-}" ]] && cleanup_args+=( --protect "$abs_proteins" )
+  # The default tools dir goes only when this run made it (and the module checks it
+  # holds nothing but helpers); one the user named, or one already here, stays.
+  if [[ "$USER_TOOLS_DIR" == true || "$TOOLS_DIR_PREEXISTED" == true ]]; then
+    cleanup_args+=( --protect "$TOOLS_DIR" )
+  else
+    cleanup_args+=( --tools-dir "$TOOLS_DIR" )
+  fi
+  echo ""
+  if [[ "$KEEP_INTERMEDIATES" == true ]]; then
+    cleanup_args+=( --keep )
+  elif (( ${#failed_steps[@]} > 0 )); then
+    cleanup_args+=( --keep )
+    local failed_list
+    printf -v failed_list '%s, ' "${failed_steps[@]}"
+    echo "Keeping the intermediate files so the failed steps can be redone: ${failed_list%, }"
+  else
+    echo "Removing intermediate files (keep them with --keep-intermediates)"
+  fi
+  "${CLEANUP[@]}" "${cleanup_args[@]}" \
+    || echo "WARNING: the end-of-run clean-up failed (see above); the results in ${final_dir} are complete." >&2
 
   echo ""
   echo "Done."
@@ -1367,7 +1461,7 @@ run_fp_orchestrator() {
 # ----------------------------
 # Parse args
 # ----------------------------
-[[ $# -eq 0 ]] && { usage; exit 1; }
+[[ $# -eq 0 ]] && { usage_short >&2; exit 1; }
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -1393,6 +1487,8 @@ while [[ $# -gt 0 ]]; do
     --no-fastltr) FASTLTR_MODE=off; shift;;
     --fastltr-args) FASTLTR_ARGS="${2:-}"; shift 2;;
     --run-sdust) RUN_SDUST=true; shift;;
+    --no-sdust) RUN_SDUST=false; shift;;
+    --ltr-timeout) LTR_TIMEOUT="${2:-}"; shift 2;;
     --sdust-args) SDUST_ARGS="${2:-}"; shift 2;;
     --max-dust-frac) MAX_DUST_FRAC="${2:-}"; shift 2;;
     --no-tandem-filter) RUN_TANDEM=false; shift;;
@@ -1403,13 +1499,21 @@ while [[ $# -gt 0 ]]; do
       STRAND_RECOVERY="${2:-}"
       # An empty value would fall through the -n guard below and silently turn
       # the stage off, which is the opposite of what typing the flag means.
-      [[ -n "$STRAND_RECOVERY" ]] || die "--strand-recovery needs a value: conservative, balanced or sensitive"
+      [[ -n "$STRAND_RECOVERY" ]] || die "--strand-recovery needs a value: conservative, balanced, sensitive or off"
+      [[ "$STRAND_RECOVERY" == off ]] && STRAND_RECOVERY=""
       shift 2;;
     --strand-recovery-ppt) STRAND_RECOVERY_PPT=true; shift;;
+    --no-strand-recovery-ppt) STRAND_RECOVERY_PPT=false; shift;;
     --reboundary) REBOUNDARY=true; shift;;
+    --no-reboundary) REBOUNDARY=false; shift;;
     --fp-mask-threshold) FP_MASK_THRESHOLD="${2:-}"; shift 2;;
     --no-plots) RUN_PLOTS=false; shift;;
     --redetect) REDETECT=true; shift;;
+    --keep-intermediates) KEEP_INTERMEDIATES=true; shift;;
+    --tools-dir)
+      TOOLS_DIR_ARG="${2:-}"
+      [[ -n "$TOOLS_DIR_ARG" ]] || die "--tools-dir needs a directory"
+      shift 2;;
     --dev-keep-fp-rounds) DEV_KEEP_FP_ROUNDS=true; shift;;      # hidden dev flag
     --dev-max-fp-rounds) MAX_FP_ROUNDS="${2:-}"; shift 2;;       # hidden dev flag
     --detect-args)
@@ -1421,7 +1525,8 @@ while [[ $# -gt 0 ]]; do
       [[ "$_from" =~ ^[1-9][0-9]*$ ]] || die "--detect-args-from-round requires a positive integer round number as the next argument"
       parse_kv_string "$_from" "$_kv"
       shift 3;;
-    -h|--help) usage; exit 0;;
+    -h|--help) usage_short; exit 0;;
+    --help-all) usage_all; exit 0;;
     *) die "Unknown argument: $1 (use --help)";;
   esac
 done
@@ -1449,8 +1554,12 @@ awk -v x="$FP_MASK_THRESHOLD" 'BEGIN{exit !(x>=0 && x<=1)}' \
 [[ "$MAX_FP_ROUNDS" =~ ^[1-9][0-9]*$ ]] \
   || die "--dev-max-fp-rounds must be a positive integer (got '$MAX_FP_ROUNDS')"
 
-# Validate the sdust knobs. Checked even when --run-sdust is absent so a typo
-# never sits silently until someone turns the filter on.
+# --ltr-timeout reaches detect as a number of seconds; reject junk before any work.
+[[ "$LTR_TIMEOUT" =~ ^[0-9]+$ ]] \
+  || die "--ltr-timeout must be a non-negative integer of seconds, 0 for no cap (got '$LTR_TIMEOUT')"
+
+# Validate the sdust knobs. Checked even with --no-sdust so a typo never sits
+# silently until someone turns the filter back on.
 [[ "$MAX_DUST_FRAC" =~ ^[0-9]*\.?[0-9]+$ ]] \
   || die "--max-dust-frac must be a number in (0,1] (got '$MAX_DUST_FRAC')"
 awk -v x="$MAX_DUST_FRAC" 'BEGIN{exit !(x>0 && x<=1)}' \
@@ -1462,24 +1571,40 @@ awk -v x="$MAX_DUST_FRAC" 'BEGIN{exit !(x>0 && x<=1)}' \
 if [[ -n "$STRAND_RECOVERY" ]]; then
   case "$STRAND_RECOVERY" in
     conservative|balanced|sensitive) ;;
-    *) die "--strand-recovery must be conservative, balanced or sensitive (got '$STRAND_RECOVERY')";;
+    *) die "--strand-recovery must be conservative, balanced, sensitive or off (got '$STRAND_RECOVERY')";;
   esac
-  for _t in blastn makeblastdb; do
-    command -v "$_t" >/dev/null 2>&1 \
-      || die "--strand-recovery needs ${_t} on PATH (every preset uses dc-megablast); it is in environment.yml"
-  done
-  if [[ "$STRAND_RECOVERY" != conservative ]]; then
-    command -v minimap2 >/dev/null 2>&1 \
-      || die "--strand-recovery ${STRAND_RECOVERY} needs minimap2 on PATH for two of its four views; it is in environment.yml, or use --strand-recovery conservative"
-  fi
-elif [[ "$STRAND_RECOVERY_PPT" == true ]]; then
-  die "--strand-recovery-ppt has no effect without --strand-recovery"
 fi
 
-# --reboundary finds each call's templates with BLAST; fail now, not after detection.
-if [[ "$REBOUNDARY" == true ]]; then
+# Strand recovery (every preset uses dc-megablast) and re-boundarying (templates
+# found with BLAST) both need BLAST+; one message names both, since both are on by default.
+if [[ -n "$STRAND_RECOVERY" || "$REBOUNDARY" == true ]]; then
   { command -v blastn && command -v makeblastdb; } >/dev/null 2>&1 \
-    || die "--reboundary needs blastn and makeblastdb on PATH; they are in environment.yml"
+    || die "strand recovery and re-boundarying (both on by default) need blastn and makeblastdb on PATH: install BLAST+ (it is in environment.yml), or turn these off with --strand-recovery off --no-reboundary"
+fi
+
+if [[ -n "$STRAND_RECOVERY" && "$STRAND_RECOVERY" != conservative ]]; then
+  command -v minimap2 >/dev/null 2>&1 \
+    || die "--strand-recovery ${STRAND_RECOVERY} needs minimap2 on PATH for two of its four views; it is in environment.yml, or use --strand-recovery conservative, or turn it off with --strand-recovery off"
+fi
+
+# --tools-dir is settled once, by the orchestrator, and reaches the workers as
+# LTRQUEST_TOOLS_DIR. A worker replays this argv from inside a staging
+# directory, where a relative path names a different directory, so it ignores
+# the flag's value and keeps the absolute path it inherits.
+if [[ -n "$TOOLS_DIR_ARG" && -z "${_LTRQUEST_WORKER:-}" ]]; then
+  mkdir -p -- "$TOOLS_DIR_ARG" || die "Cannot create --tools-dir ${TOOLS_DIR_ARG}"
+  LTRQUEST_TOOLS_DIR="$(abspath "$TOOLS_DIR_ARG")"
+  export LTRQUEST_TOOLS_DIR
+  USER_TOOLS_DIR=true
+elif [[ -n "${LTRQUEST_TOOLS_DIR:-}" && -z "${_LTRQUEST_WORKER:-}" ]]; then
+  # The same for one set in the environment: workers run in round<N>/ and the
+  # merged stage in its own folder, where a relative path would fetch into (and
+  # promote_fp_outputs could then remove) a folder of that name there.
+  case "$LTRQUEST_TOOLS_DIR" in
+    /*) ;;
+    *) LTRQUEST_TOOLS_DIR="${PWD}/${LTRQUEST_TOOLS_DIR#./}";;
+  esac
+  export LTRQUEST_TOOLS_DIR
 fi
 
 # ----------------------------
@@ -1514,6 +1639,13 @@ else
   OUT_PREFIX="${OUT_PREFIXES[0]}"
   TOOLS_DIR="${LTRQUEST_TOOLS_DIR:-./${RUN_PREFIX}_tools}"
 fi
+
+# Noted before anything can make it (the Kmer2LTR check below may clone into it): a
+# default tools dir already here was left by an earlier run, filled by hand for
+# offline use, or is a folder of the user's that shares the name. Never this run's
+# to remove.
+TOOLS_DIR_PREEXISTED=false
+[[ -e "$TOOLS_DIR" || -L "$TOOLS_DIR" ]] && TOOLS_DIR_PREEXISTED=true
 
 if (( N_GENOMES > 1 )); then
   echo "Genomes:         ${N_GENOMES}"
@@ -1554,6 +1686,7 @@ FLAG_FP=(   "$PY" -m ltrquest.flag_fp   )
 RECOVER=(   "$PY" -m ltrquest.recover_strand )
 RECORD=(    "$PY" -m ltrquest.record    )
 REBOUND=(   "$PY" -m ltrquest.reboundary )
+CLEANUP=(   "$PY" -m ltrquest.cleanup   )
 
 # --reboundary hands Kmer2LTR the pair each element was called with and credits the
 # templates' ends; a Kmer2LTR without that support would inflate every re-bounded
@@ -1565,12 +1698,16 @@ from ltrquest import kmer2ltr
 try:
     kmer2ltr.api(sys.argv[1])
 except kmer2ltr.IncompatibleKmer2LTR as exc:
-    print(f"ERROR: --reboundary: {exc}", file=sys.stderr)
+    print(f"ERROR: re-boundarying (on by default) needs a newer Kmer2LTR: {exc}",
+          file=sys.stderr)
     sys.exit(3)
 except RuntimeError:
     pass                                    # not there yet: the rounds clone it' "$TOOLS_DIR" \
     || rb_rc=$?
-  (( rb_rc == 3 )) && exit 3
+  if (( rb_rc == 3 )); then
+    echo "  Update Kmer2LTR, or run with --no-reboundary." >&2
+    exit 3
+  fi
 fi
 
 # ----------------------------
@@ -1781,6 +1918,7 @@ for (( round=1; round<=MAX_ROUNDS; round++ )); do
     "${pass2_opts[@]}" \
     "${WEAK_HMM_OPTS[@]}" \
     "${PASS2_ALIGNER_OPTS[@]}" \
+    --ltr-timeout "$LTR_TIMEOUT" \
     "${extra_round_args[@]}" \
     || ltrharvest_exit=$?
   set +x
@@ -1896,8 +2034,10 @@ fi
 
 # Cleanup. TOOLS_DIR is deliberately left in place: the merged stage runs in the
 # orchestrator and needs the Kmer2LTR clone that lives inside it. The
-# orchestrator removes every tools dir once the merged stage is done.
-rm -f "$temp_lib" 2>/dev/null || true
+# orchestrator removes every tools dir once the merged stage is done. The
+# pass-2 library goes with the index TEsorter2 builds beside it (pyfastx's .fxi),
+# which would otherwise be promoted into the results.
+rm -f "$temp_lib" "$temp_lib".* 2>/dev/null || true
 
 WRAPPER_ELAPSED=$((SECONDS - WRAPPER_START))
 WRAPPER_H=$((WRAPPER_ELAPSED / 3600))

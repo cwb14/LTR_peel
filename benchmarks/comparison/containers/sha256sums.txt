@@ -1,0 +1,2 @@
+ee1537058c8cdc8aaeff3fe39875d70aab30ca238035ef1ab1b96034b0a81331  containers/hite_3.3.3.sif
+27371a6b45d7f69b6fdb6e9356f3152e4d03d8582a6d9e02dd137b31949ecf95  containers/ltrpred.sif

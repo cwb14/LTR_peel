@@ -235,7 +235,7 @@ def test_run_chunk_passes_the_cap_through(monkeypatch, tmp_path):
 
 class TestDriverWiring:
     def test_help_documents_the_flags(self, driver):
-        out = subprocess.run(["bash", str(driver), "--help"], capture_output=True, text=True)
+        out = subprocess.run(["bash", str(driver), "--help-all"], capture_output=True, text=True)
         text = out.stdout + out.stderr
         for flag in ("--fastltr MODE", "--no-fastltr", "--fastltr-args"):
             assert flag in text
@@ -249,12 +249,12 @@ class TestDriverWiring:
         assert "--fastltr must be all, rescue or off" in out.stdout + out.stderr
 
     def test_the_mode_is_a_detection_setting_only_when_it_can_act(self, driver):
-        # off, or rescue without a cap, detects exactly what a pre-FastLTR run did,
+        # off, or rescue with --ltr-timeout 0 and no directive, detects exactly what a pre-FastLTR run did,
         # so a record made before FastLTR existed must still match
         text = driver.read_text()
         settings = text[text.index("detection_settings() {"):text.index("plan_reuse() {")]
         assert ('if [[ "$FASTLTR_MODE" == all || ( "$FASTLTR_MODE" == rescue && '
-                '"$directives" == *ltr-timeout* ) ]]; then') in settings
+                '( "$LTR_TIMEOUT" -gt 0 || "$directives" == *ltr-timeout* ) ) ]]; then') in settings
         assert '--setting "fastltr=${FASTLTR_MODE}"' in settings
 
     def test_every_round_gets_the_mode(self, driver):

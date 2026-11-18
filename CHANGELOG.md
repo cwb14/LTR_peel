@@ -21,10 +21,17 @@ the old one's, which forces the schema, flag and stage changes below.
 
 ### Added
 
+- `--help-all`: every flag, grouped, beside a short `--help`.
+- `--keep-intermediates` (keep every working file).
+- `--tools-dir DIR` (a reused helper-tools folder, never removed; also `LTRQUEST_TOOLS_DIR`).
+- Off switches `--no-sdust`, `--strand-recovery off`, `--no-strand-recovery-ppt` and
+  `--no-reboundary`; Nextflow `skip_sdust`. (`--ltr-timeout` is under FastLTR below.)
+- `docs/install.md` (every install route, the container launcher, offline clusters)
+  and `docs/developers.md`.
 - **FastLTR, a third LTR caller** (`--fastltr rescue|all|off`, default `rescue`,
   or `--no-fastltr`; `--fastltr-args`; `ltrquest-detect` also takes
   `--fastltr-min-ltr`; Nextflow `--fastltr`, `--ltr_timeout`).
-  `--ltr-timeout` stops an LTRharvest or LTR_FINDER call that runs too long on a
+  `--ltr-timeout` (default 300 s per chunk) stops an LTRharvest or LTR_FINDER call that runs too long on a
   chunk, and neither tool writes anything before it finishes, so a capped 500 kb
   chunk lost every candidate of that caller, not only its satellite's: two CHM13
   chunks capped at 30 s gave 0 candidates from either tool, and a 30 s cap fired
@@ -132,7 +139,7 @@ the old one's, which forces the schema, flag and stage changes below.
   reused, and families are rebuilt over all genomes. A mismatch stops the run;
   `--redetect` ignores the records. Genomes are now pooled in name order, so
   families no longer depend on the order `--genome` lists them.
-- `--strand-recovery conservative|balanced|sensitive`, off by default, which
+- `--strand-recovery conservative|balanced|sensitive` (default `sensitive`, `off` turns it off), which
   recovers strand for the LTR-RTs the strand cascade leaves at `.`. The
   unstranded element, in genome-forward orientation, is aligned against the
   elements that already carry a strand, held in coding sense, so the
@@ -143,14 +150,14 @@ the old one's, which forces the schema, flag and stage changes below.
   LTRquest's own tesorter strand over 3616 elements: 58% recovered at 0.19%
   disagreement (conservative), 79% at 0.70% (balanced), 84% at 1.06%
   (sensitive). `--strand-recovery-ppt` adds a polypurine-tract fallback for
-  loci homology cannot reach, measured at 93% and therefore off by default.
+  loci homology cannot reach, measured at 93% (on by default; `--no-strand-recovery-ppt`).
 
   The calls land in a new `<prefix>_strand_recovery.tsv`, which
   `ltrquest-annotate` reads as a fourth cascade tier via `--recovered-strands`
   — pinned by path, never globbed, so a sidecar left behind by an earlier run
   cannot re-strand a later one. Every primary output follows: `strand` in the
-  depth tables, `strand_source=homology`/`ppt` in both GFF3s, and the depth
-  FASTAs re-oriented so a recovered minus element is stored in coding sense
+  depth tables, `strand_source=homology`/`ppt` in both GFF3s, and the `_clean_` depth
+  FASTAs and tables re-oriented so a recovered minus element is stored in coding sense
   exactly like a TEsorter2-called one, with `orientation` restated to match.
   Available on the Nextflow path as `--strand_recovery` and
   `--strand_recovery_ppt`, and standalone as `ltrquest-recover-strand`.
@@ -162,6 +169,25 @@ the old one's, which forces the schema, flag and stage changes below.
   matches your organism.
 
 ### Changed
+
+- Defaults: per-chunk caller cap of 300 s (`--ltr-timeout`; 0 = none; wall-clock, so
+  a borderline chunk can be capped on a loaded machine and not on an idle one),
+  sdust filter on, strand recovery `sensitive` with the polypurine-tract fallback, and
+  re-boundarying on. BLAST+ and minimap2 are now required (in `environment.yml` and
+  the image). A genome detected under other settings stops a reuse; use `--redetect`.
+  The old switches `--run-sdust`, `--reboundary`, `--strand-recovery-ppt` and
+  `--run-trf` still work and restate the default, so old command lines still run.
+- A successful run keeps only `<prefix>_all_depth_LTR_cleaned.gff3`,
+  `<prefix>_depth<N>_clean_ltr.{tsv,fa}` and `<prefix>_plots/`; everything else is
+  removed unless `--keep-intermediates`, or kept automatically when plotting, strand
+  recovery or re-boundarying failed. Adding a genome later, `ltrquest-plots` and
+  `ltrquest-reboundary --posthoc` need the intermediates. **Breaking** for scripts
+  that read `<prefix>_depth<N>_ltr.*`, `<prefix>_r<N>_ltr.*` or
+  `<prefix>_all_depth_protein_LTR_cleaned.gff3`: add `--keep-intermediates`.
+- `--help` is a short page; the rest is in `--help-all` and `docs/outputs.md`.
+- Strand recovery re-orients only the `_clean_` FASTAs and tables, so adding a genome
+  later gives the same families as a run from scratch. Run folders made with
+  `--strand-recovery` by earlier versions need `--redetect` for that.
 
 - **A round no longer waits while its per-chunk folders are deleted.** Each round
   removes `chunks/` and `ltr_runs/` (a suffix-array index and caller outputs per
@@ -224,6 +250,9 @@ the old one's, which forces the schema, flag and stage changes below.
 
 ### Removed
 
+- `CI.md` (now in `docs/developers.md`) and the install, quick-start and usage
+  sections of `docs/outputs.md` (in the README and `docs/install.md`).
+
 - `ltrquest-detect --dedup-threshold` and the pre-classification purge that used
   the same 80% threshold; see *Overlapping calls follow one rule* above. Dropping
   the purge sends ~18% more candidates through TEsorter2 (about a minute on a
@@ -252,6 +281,9 @@ the old one's, which forces the schema, flag and stage changes below.
   collected those files; the process no longer stages input it never reads.
 
 ### Fixed
+
+- Re-boundarying no longer writes `<genome>.fai` beside the input genome.
+- TEsorter2's pass-2 index (`temp_ltr_2pass_lib_*.fa.fxi`) no longer ends up in the run folder.
 
 - **A host called in the same round as its tenant could pass classification on the
   tenant's protein domains.** A round keeps a candidate only if TEsorter2 classifies
@@ -495,6 +527,13 @@ the old one's, which forces the schema, flag and stage changes below.
   which reads each element's `ltr5_start`/`ltr5_end`/`ltr3_start`/`ltr3_end`
   off its own row, so the key and the bounds it is checked against can no
   longer fall in different frames.
+
+### Docs
+
+- The README's single-simulation comparison with EDTA's LTR module is replaced by the
+  full benchmark of nine callers (`benchmarks/comparison/`).
+- README rewritten for users; a benchmark page (`benchmarks/README.md`); `docs/outputs.md`
+  restructured (what runs by default, run-folder clean-up, capped chunks and FastLTR).
 
 ## [1.0.1] - 2026-08-24
 

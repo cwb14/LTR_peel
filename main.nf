@@ -42,11 +42,17 @@ def helpMessage() {
                               chunks --ltr_timeout cut the other two short on
       --ltr_timeout           Seconds per chunk per LTR caller, 0 = no cap
                               (default: ${params.ltr_timeout})
+      --skip_sdust            Do not drop candidates dominated by low-complexity
+                              sequence (sdust filter is on by default)
       --family_prefix         Names the shared family namespace (default: ${params.family_prefix})
       --strand_recovery       Recover strand for the LTR-RTs the annotator leaves
-                              unstranded: conservative|balanced|sensitive
-                              (off by default)
-      --strand_recovery_ppt   Add the polypurine-tract fallback to it
+                              unstranded: conservative|balanced|sensitive|off
+                              (default: ${params.strand_recovery})
+      --strand_recovery_ppt   Polypurine-tract fallback for strand recovery, true|false
+                              (default: ${params.strand_recovery_ppt})
+      --reboundary            Move call ends that carry no TSD to where calls
+                              with an exact TSD put them, true|false
+                              (default: ${params.reboundary}; needs BLAST+)
       --skip_plots            Skip the plotting stage
 
     Profiles:

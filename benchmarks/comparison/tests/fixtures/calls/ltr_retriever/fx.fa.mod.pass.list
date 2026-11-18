@@ -1,0 +1,3 @@
+#LTR_loc        Category        Motif   TSD     5_TSD 3_TSD       Internal        Identity      Strand  SuperFamily  TE_type     Insertion_Time
+c0001:24007..16330	pass	motif:TGCA	TSD:TGCGT	16325..16329	24008..24012	IN:17648..22689	0.9970	-	Gypsy	LTR	116921
+c0001:31487..36441	pass	motif:TGCA	TSD:GAAAT	31482..31486	36442..36446	IN:33508..34420	0.9925	+	unknown	NA	287002

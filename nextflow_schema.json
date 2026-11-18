@@ -86,11 +86,18 @@
                 },
                 "ltr_timeout": {
                     "type": "integer",
-                    "default": 0,
+                    "default": 300,
                     "minimum": 0,
-                    "description": "Seconds allowed per chunk per LTR caller; 0 = no cap.",
+                    "description": "Seconds allowed per chunk per LTR caller; 0 = no cap. Default 300, as in the CLI.",
                     "help_text": "LTRharvest and LTR_FINDER write nothing until they finish, so a chunk they are cut short on loses all of their candidates. With --fastltr all or rescue, FastLTR still searches it.",
                     "fa_icon": "fas fa-stopwatch"
+                },
+                "skip_sdust": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Do not run the sdust low-complexity filter on full-length LTR-RT candidates.",
+                    "help_text": "By default sdust (-w 64 -t 15) masks each candidate and drops those with 55% or more of their own bases masked, before TEsorter classifies them, which removes satellite and microsatellite arrays that seed spurious calls. Set this for AT-rich genomes where genuine elements are low-complexity (RIP-degraded fungal elements reach 98% masked).",
+                    "fa_icon": "fas fa-filter"
                 },
                 "family_prefix": {
                     "type": "string",
@@ -118,23 +125,24 @@
                 },
                 "strand_recovery": {
                     "type": "string",
-                    "enum": ["conservative", "balanced", "sensitive"],
+                    "enum": ["conservative", "balanced", "sensitive", "off"],
+                    "default": "sensitive",
                     "description": "Recover strand for the LTR-RTs the annotator's cascade leaves unstranded.",
-                    "help_text": "Off unless set. Orientation is transferred onto an unstranded element from the elements that already carry a strand, using dc-megablast and minimap2 views of the whole element and of the internal region between the LTRs; disagreement between views vetoes the locus. Measured against LTRquest's own tesorter strand over 3616 elements, conservative recovers 58% at 0.19% disagreement, balanced 79% at 0.70%, sensitive 84% at 1.06%. Recovered elements read strand_source=homology in the GFF3, and their depth-FASTA records are stored in coding sense like TEsorter2-called ones.",
+                    "help_text": "On at the sensitive preset; 'off' turns it off. Orientation is transferred onto an unstranded element from the elements that already carry a strand, using dc-megablast and minimap2 views of the whole element and of the internal region between the LTRs; disagreement between views vetoes the locus. Measured against LTRquest's own tesorter strand over 3616 elements, conservative recovers 58% at 0.19% disagreement, balanced 79% at 0.70%, sensitive 84% at 1.06%. Recovered elements read strand_source=homology in the GFF3, and their depth-FASTA records are stored in coding sense like TEsorter2-called ones.",
                     "fa_icon": "fas fa-compass"
                 },
                 "strand_recovery_ppt": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "Add the polypurine-tract fallback to strand recovery.",
-                    "help_text": "Covers loci homology cannot reach, at roughly 93% accuracy on real genomes, so it is off by default. No effect unless --strand_recovery is set.",
+                    "help_text": "Covers loci homology cannot reach, at roughly 93% accuracy on real genomes. No effect with --strand_recovery off.",
                     "fa_icon": "fas fa-compass"
                 },
                 "reboundary": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "Move LTR-RT call ends that carry no TSD to where calls with an exact TSD put them.",
-                    "help_text": "Off unless set. LTRharvest and LTR_FINDER stop extending an LTR pair at the first indel or mutation-dense patch near an LTR end, so such calls are short and carry no TSD. Calls whose ends carry an exact TSD, from every sample and family, are the templates: where at least two of an element's nearest templates agree, an end moves out, or in by up to 10 bp, and a second call of the same element is merged away. Kmer2LTR re-measures every changed element; bases with no partner in the other LTR are gaps, so K2P is not inflated. Writes <sample>_reboundary.tsv and marks changed elements boundary_source=templates in the GFF3.",
+                    "help_text": "On by default; --reboundary false turns it off. Needs BLAST+. LTRharvest and LTR_FINDER stop extending an LTR pair at the first indel or mutation-dense patch near an LTR end, so such calls are short and carry no TSD. Calls whose ends carry an exact TSD, from every sample and family, are the templates: where at least two of an element's nearest templates agree, an end moves out, or in by up to 10 bp, and a second call of the same element is merged away. Kmer2LTR re-measures every changed element; bases with no partner in the other LTR are gaps, so K2P is not inflated. Writes <sample>_reboundary.tsv and marks changed elements boundary_source=templates in the GFF3.",
                     "fa_icon": "fas fa-arrows-alt-h"
                 },
                 "skip_plots": {

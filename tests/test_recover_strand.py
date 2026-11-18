@@ -793,46 +793,61 @@ class TestElementsFrom:
 
 
 class TestApplyAcrossSeveralTables:
-    """The raw and clean copies of a depth are judged and rewritten separately.
+    """Only the clean tables' pairs are re-oriented, each judged on its own.
 
-    Pooling the decision would let an interrupted run -- one pair rewritten, the
-    next not -- flip the finished pair a second time on the retry.
+    The unfiltered `_depth<N>_ltr.{tsv,fa}` are detection outputs. A later run that
+    reuses this genome pools that FASTA for family clustering as it stands, while a
+    run from scratch pools it before this phase, so a flip here would give the reused
+    genome different families. Pooling the decision across the clean tables would let
+    an interrupted run -- one pair rewritten, the next not -- flip the finished pair a
+    second time on the retry.
     """
 
     SEQ = "AAAACCCCGGGGTTTTACAC"
 
-    def setup_pair(self, tmp_path, clean_orientation, raw_orientation):
-        for variant, orientation in (("clean_", clean_orientation),
-                                     ("", raw_orientation)):
-            rows = [["chr1:1-2000#LTR/Copia", "1", "300", "1701", "2000",
-                     orientation, "TATA", "-", "fam1", ".", "."]]
-            write_depth_table(tmp_path / f"run_depth0_{variant}ltr.tsv", rows,
-                              ANNOTATED_HEADER)
-            seq = self.SEQ if orientation == "+" else revcomp_record(self.SEQ)
-            (tmp_path / f"run_depth0_{variant}ltr.fa").write_text(
-                f">chr1:1-2000#LTR/Copia\n{seq}\n")
-        write_sidecar(recovery_sidecar_path("run", str(tmp_path)),
-                      ["chr1:1-2000"],
-                      {"chr1:1-2000": ("-", "homology", "4 of 4 views")})
+    def write_pair(self, tmp_path, stem, orientation, key="chr1:1-2000"):
+        rows = [[f"{key}#LTR/Copia", "1", "300", "1701", "2000",
+                 orientation, "TATA", "-", "fam1", ".", "."]]
+        write_depth_table(tmp_path / f"run_{stem}.tsv", rows, ANNOTATED_HEADER)
+        seq = self.SEQ if orientation == "+" else revcomp_record(self.SEQ)
+        (tmp_path / f"run_{stem}.fa").write_text(f">{key}#LTR/Copia\n{seq}\n")
+
+    def recover(self, tmp_path, *keys):
+        write_sidecar(recovery_sidecar_path("run", str(tmp_path)), list(keys),
+                      dict.fromkeys(keys, ("-", "homology", "4 of 4 views")))
 
     def read_seq(self, path):
         return "".join(l.strip() for l in open(path) if not l.startswith(">"))
 
-    def test_both_copies_are_flipped(self, tmp_path):
-        self.setup_pair(tmp_path, "+", "+")
-        apply_recovery("run", str(tmp_path))
-        for variant in ("clean_", ""):
-            assert self.read_seq(tmp_path / f"run_depth0_{variant}ltr.fa") == \
-                revcomp_record(self.SEQ)
+    def test_only_the_clean_copy_is_flipped(self, tmp_path):
+        self.write_pair(tmp_path, "depth0_clean_ltr", "+")
+        self.write_pair(tmp_path, "depth0_ltr", "+")
+        self.recover(tmp_path, "chr1:1-2000")
+        raw = {name: (tmp_path / name).read_bytes()
+               for name in ("run_depth0_ltr.tsv", "run_depth0_ltr.fa")}
+        assert apply_recovery("run", str(tmp_path)) == 0
+        assert self.read_seq(tmp_path / "run_depth0_clean_ltr.fa") == \
+            revcomp_record(self.SEQ)
+        for name, before in raw.items():
+            assert (tmp_path / name).read_bytes() == before, f"{name} was rewritten"
 
     def test_a_half_finished_run_completes_rather_than_double_flipping(self, tmp_path):
-        # Exactly the state an apply killed between the two pairs leaves behind.
-        self.setup_pair(tmp_path, clean_orientation="-", raw_orientation="+")
+        # Exactly the state an apply killed between two depths leaves behind.
+        self.write_pair(tmp_path, "depth0_clean_ltr", "-")
+        self.write_pair(tmp_path, "depth1_clean_ltr", "+", key="chr1:5001-7000")
+        self.recover(tmp_path, "chr1:1-2000", "chr1:5001-7000")
         apply_recovery("run", str(tmp_path))
-        clean = self.read_seq(tmp_path / "run_depth0_clean_ltr.fa")
-        raw = self.read_seq(tmp_path / "run_depth0_ltr.fa")
-        assert clean == revcomp_record(self.SEQ), "the finished copy was flipped again"
-        assert raw == revcomp_record(self.SEQ), "the unfinished copy was not flipped"
+        done = self.read_seq(tmp_path / "run_depth0_clean_ltr.fa")
+        undone = self.read_seq(tmp_path / "run_depth1_clean_ltr.fa")
+        assert done == revcomp_record(self.SEQ), "the finished copy was flipped again"
+        assert undone == revcomp_record(self.SEQ), "the unfinished copy was not flipped"
+
+    def test_without_clean_tables_nothing_is_re_oriented(self, tmp_path):
+        self.write_pair(tmp_path, "depth0_ltr", "+")
+        self.recover(tmp_path, "chr1:1-2000")
+        before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+        assert apply_recovery("run", str(tmp_path)) == 1
+        assert {p.name: p.read_bytes() for p in tmp_path.iterdir()} == before
 
     def test_a_table_without_an_orientation_column_is_declined(self, tmp_path):
         header = ("#name\tltr5_start\tltr5_end\tltr3_start\tltr3_end\t"

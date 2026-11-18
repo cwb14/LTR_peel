@@ -5,6 +5,7 @@ work
 results*
 tests/data
 docs
+benchmarks
 *.md
 !README.md
 __pycache__

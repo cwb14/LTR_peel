@@ -1,0 +1,10 @@
+# Frozen after pilots (S1a/S1b, S2a/S2b) and before any tool was scored. PrinTE 1.0.3 (build/PrinTE).
+# All: default TE library (maize_rice_arab_curated_TE.lib, processed once -> lib_clean.fa via -cl), default ratios.tsv (all TE classes), TAIR10 CDS genes,
+# -m 1.3e-8, -ge 1000000 -st 250000, -t 8. Final genome = gen1000000_final.{fasta,bed}.
+set	seed	args
+S1	1101	-sz 150Mb -cn 5 -P 15 -itp 15 -ftp 10 -ir 2.2e-7 -dr 3e-6
+S1	1102	-sz 150Mb -cn 5 -P 15 -itp 15 -ftp 10 -ir 2.2e-7 -dr 3e-6
+S1	1103	-sz 150Mb -cn 5 -P 15 -itp 15 -ftp 10 -ir 2.2e-7 -dr 3e-6
+S2	2101	-sz 300Mb -cn 6 -P 10 -itp 35 -ftp 20 -tmx 30 -ir 3e-7 -dr 2e-6
+S2	2102	-sz 300Mb -cn 6 -P 10 -itp 35 -ftp 20 -tmx 30 -ir 3e-7 -dr 2e-6
+S2	2103	-sz 300Mb -cn 6 -P 10 -itp 35 -ftp 20 -tmx 30 -ir 3e-7 -dr 2e-6

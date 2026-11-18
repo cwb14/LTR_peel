@@ -1,0 +1,5 @@
+# args=-index smoke.fa -gff3 ltrharvest.gff3
+# predictions are reported in the following way
+# s(ret) e(ret) l(ret) s(lLTR) e(lLTR) l(lLTR) s(rLTR) e(rLTR) l(rLTR) sim(LTRs) seq-nr 
+2080  10521  8442  2080  2243  164  10370  10521  152  90.24  0
+20406  25859  5454  20406  21400  995  24862  25859  998  98.80  0

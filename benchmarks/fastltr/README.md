@@ -2,7 +2,7 @@
 
 Does a FastLTR third caller recover what `--ltr-timeout` throws away, and what
 does it cost elsewhere? How the caller works:
-[docs/outputs.md §3](../../docs/outputs.md#3-usage) ("Capped chunks").
+[docs/outputs.md §3](../../docs/outputs.md#3-capped-chunks-and-fastltr).
 
 ## What a cap costs
 

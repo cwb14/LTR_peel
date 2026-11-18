@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Recover strand for the LTR-RTs ltrquest.annotate's cascade left unstranded.
 
-An opt-in post-processing stage, in two phases around the annotator:
+A post-processing stage that `ltrquest` runs by default (`--strand-recovery off`
+skips it), in two phases around the annotator:
 
     recover_strand --phase align   aligns, writes {prefix}_strand_recovery.tsv
     annotate                       reads that file as its fourth cascade tier
     gff3                           pools the tables, unchanged
-    recover_strand --phase apply   re-orients the depth FASTAs
+    recover_strand --phase apply   re-orients the _clean_ depth FASTAs
 
 Splitting it is what keeps the FASTA and the tables from drifting apart. The
 apply phase flips a record only to match the `strand` column ltrquest.annotate
@@ -544,12 +545,18 @@ def restate_orientation(path: str, header: Optional[List[str]],
 
 
 def apply_recovery(prefix: str, indir: str = ".", verbose: bool = False) -> int:
-    """Re-orient the depth FASTAs so each record matches its final `strand`.
+    """Re-orient the `_clean_` depth FASTAs so each record matches its final `strand`.
 
     Driven by the strand column ltrquest.annotate wrote, not by this stage's own
     calls, so the stored orientation and the table cannot disagree. Loci the
     sidecar never mentions are left entirely alone: their orientation belongs to
     TEsorter2's own flip in detect.bounded_fasta_oriented.
+
+    Only the `_clean_` pairs, the results the user reads. The unfiltered
+    `{prefix}_depth<N>_ltr.{tsv,fa}` are detection outputs and stay as detection
+    wrote them: a later run that reuses this genome pools that FASTA for family
+    clustering as it stands, while a run from scratch pools it before this phase,
+    so a flip there would give the reused genome different families.
 
     Each depth table is judged against its OWN `orientation` column and paired
     with its own FASTA. Pooling the decision across tables would mean that an
@@ -560,9 +567,9 @@ def apply_recovery(prefix: str, indir: str = ".", verbose: bool = False) -> int:
     Idempotent: the `orientation` column is the gate, so a record already stored
     the way its table asks for is skipped and a second run is a no-op.
     """
-    tables = discover_depth_tables(prefix, indir)
+    tables = discover_depth_tables(prefix, indir, variants=("clean",))
     if not tables:
-        print(f"[ltr_recover_strand] ERROR: no {prefix}_depth<N>[_clean]_ltr.tsv "
+        print(f"[ltr_recover_strand] ERROR: no {prefix}_depth<N>_clean_ltr.tsv "
               f"found in {indir}", file=sys.stderr)
         return 1
 
@@ -881,7 +888,8 @@ def align(prefix: str, genome: str, indir: str = ".",
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(
         description="Recover strand for the LTR-RTs ltrquest.annotate's cascade "
-                    "left unstranded, and re-orient the depth FASTAs to match.",
+                    "left unstranded, and re-orient the _clean_ depth FASTAs to "
+                    "match.",
         # argparse %-formats help= strings but not the epilog, so this one
         # carries single percent signs while --ppt's help below doubles them.
         epilog="Presets, measured by leave-one-out against LTRquest's own "
@@ -894,8 +902,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                         help="Wrapper output prefix, e.g. Athal_tair10_chr2_LTRs")
     parser.add_argument("--phase", choices=PHASES, default="align",
                         help="align: call strand and write the sidecar, before "
-                             "ltrquest.annotate. apply: re-orient the depth "
-                             "FASTAs to the strand column, after it. "
+                             "ltrquest.annotate. apply: re-orient the _clean_ "
+                             "depth FASTAs to the strand column, after it; the "
+                             "unfiltered ones stay as detection wrote them. "
                              "(default: align)")
     parser.add_argument("--genome",
                         help="Genome FASTA the elements were called on (plain or "

@@ -64,24 +64,27 @@ def test_mutation_rate_comes_from_the_run_record(tmp_path):
 def test_the_genome_is_indexed_before_any_worker_starts(tmp_path, monkeypatch, blastn):
     # Workers open the genome lazily, all at once, and pyfaidx locks per process: an
     # unindexed genome had its .fai built by every worker, and one read it while
-    # another had truncated it (KeyError on a real chromosome).
+    # another had truncated it (KeyError on a real chromosome). The index goes in the
+    # stage's own work directory, never beside the genome.
     fx = build(tmp_path / "syn_index")
-    fai = f"{fx.genome}.fai"
-    assert not os.path.exists(fai)
+    work = fx.indir / (fx.prefix + rb.GENOME_COPIES_SUFFIX)
     seen = {}
 
     class Started(Exception):
         pass
 
     def pool(*args, **kwargs):
-        seen["fai"] = os.path.isfile(fai) and os.path.getsize(fai) > 0
+        fais = list(work.glob("*.fai"))
+        seen["fai"] = len(fais) == 1 and fais[0].stat().st_size > 0
+        seen["beside"] = os.path.exists(f"{fx.genome}.fai")
         raise Started
 
     monkeypatch.setattr(rb.k2l, "api", lambda *args, **kwargs: None)
     monkeypatch.setattr(rb, "Pool", pool)
     with pytest.raises(Started):
         rb.run(str(fx.indir), [fx.prefix], [str(fx.genome)], rb.Settings(), TOOLS)
-    assert seen == {"fai": True}
+    assert seen == {"fai": True, "beside": False}
+    assert not work.exists()
 
 
 @pytest.mark.parametrize("flag", [
@@ -414,6 +417,27 @@ def test_a_plain_gzip_genome_is_re_boundaried_like_the_plain_one(tmp_path, k2l_a
     assert counts.get("moved", 0) == len(MOVED_KINDS)
     assert not os.path.exists(f"{gz}.fai")
     assert [p for p in os.listdir(fx.indir) if "genome" in p] == [gz.name]
+
+
+def test_a_genome_outside_the_run_folder_gets_nothing_written_beside_it(tmp_path, k2l_api,
+                                                                        blastn):
+    # The driver hands this stage the user's original genome, wherever it lives and
+    # often on a read-only mount. The main process and every worker index it, and read
+    # that index, in the stage's own work directory.
+    fx = build(tmp_path / "syn_ro")
+    ref = tmp_path / "ref"
+    ref.mkdir()
+    genome = ref / fx.genome.name
+    shutil.move(fx.genome, genome)
+    os.chmod(ref, 0o555)
+    try:
+        counts = rb.run(str(fx.indir), [fx.prefix], [str(genome)], rb.Settings(threads=2),
+                        TOOLS)
+        assert os.listdir(ref) == [genome.name]
+    finally:
+        os.chmod(ref, 0o755)
+    assert counts.get("moved", 0) == len(MOVED_KINDS)
+    assert not (fx.indir / (fx.prefix + rb.GENOME_COPIES_SUFFIX)).exists()
 
 
 def test_a_prefix_with_no_clean_tables_is_skipped_not_fatal(tmp_path, k2l_api, blastn):

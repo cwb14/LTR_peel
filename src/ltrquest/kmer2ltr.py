@@ -22,6 +22,7 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, Iterator, NamedTuple, Optional, Sequence
 
+from .helper_tools import OFFLINE_HINT
 from .table import parse_header
 
 REPO_URL = "https://github.com/cwb14/Kmer2LTR.git"
@@ -57,12 +58,11 @@ def _clone(tools_dir: Path) -> None:
                        check=True)
     except subprocess.CalledProcessError as e:
         raise RuntimeError(
-            f"failed to clone {REPO_URL} into {target}: {e}. Compute nodes "
-            f"on this cluster often have no outbound network access -- "
-            f"clone it on a login node instead, or install Kmer2LTR "
-            f"(pip install kmer2ltr) so it is on PATH. If {target} exists "
+            f"failed to clone {REPO_URL} into {target}: {e}. Installing Kmer2LTR "
+            f"(pip install kmer2ltr) puts it on PATH instead. If {target} exists "
             f"from this failed attempt, delete it first: a leftover "
-            f"directory there stops the next run from retrying the clone."
+            f"directory there stops the next run from retrying the clone.\n"
+            f"{OFFLINE_HINT}"
         ) from e
 
 

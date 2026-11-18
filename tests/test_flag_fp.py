@@ -1,3 +1,6 @@
+from contextlib import nullcontext
+from pathlib import Path
+
 import pytest
 
 from ltrquest import flag_fp
@@ -211,3 +214,43 @@ def test_mask_genome_reads_plain_and_gzipped_genomes(tmp_path, blastn, name, gz)
     assert set(masked) == {"chr1 desc kept", "chr2"}
     assert masked["chr1 desc kept"] == chr1[:1000] + "N" * 400 + chr1[1400:]
     assert masked["chr2"] == chr2
+
+
+# Masking's scratch (an mmseqs work folder, a whole-genome BLAST database) goes beside
+# its outputs, in the run folder: the system temp folder is small on many cluster nodes.
+@pytest.mark.parametrize("fails", [False, True], ids=["success", "failure"])
+def test_mmseqs_scratch_is_made_beside_its_outputs_and_removed(tmp_path, monkeypatch, fails):
+    monkeypatch.setattr("shutil.which", lambda name: f"/usr/bin/{name}")
+    made = []
+
+    def mmseqs(cmd, **kw):                      # mmseqs easy-cluster IN OUT TMP ...
+        made.append(Path(cmd[4]))
+        assert made[0].is_dir()
+        if fails:
+            flag_fp.die("command failed")
+        (tmp_path / "x_mmseqs_rep_seq.fasta").write_text(">a\nACGT\n")
+
+    monkeypatch.setattr(flag_fp, "run", mmseqs)
+    with pytest.raises(SystemExit) if fails else nullcontext():
+        flag_fp.run_mmseqs(str(tmp_path / "fp.fa"), str(tmp_path / "x_mmseqs"), 1)
+    assert made[0].parent == tmp_path and not made[0].exists()
+
+
+@pytest.mark.parametrize("fails", [False, True], ids=["success", "failure"])
+def test_mask_genome_scratch_is_made_beside_its_output_and_removed(tmp_path, monkeypatch, fails):
+    monkeypatch.setattr("shutil.which", lambda name: f"/usr/bin/{name}")
+    made = []
+
+    def makeblastdb(genome, db):
+        made.append(Path(db).parent)
+        assert made[0].is_dir()
+        if fails:
+            flag_fp.die("command failed")
+
+    monkeypatch.setattr(flag_fp, "make_blast_db", makeblastdb)
+    genome, query = tmp_path / "g.fa", tmp_path / "fp.fa"
+    genome.write_text(">chr1\nACGT\n")
+    query.write_text("")                        # nothing to BLAST
+    with pytest.raises(SystemExit) if fails else nullcontext():
+        flag_fp.mask_genome(str(genome), str(query), str(tmp_path / "masked.fa"), threads=1)
+    assert made[0].parent == tmp_path and not made[0].exists()

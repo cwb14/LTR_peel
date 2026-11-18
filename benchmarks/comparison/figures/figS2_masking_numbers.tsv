@@ -1,0 +1,263 @@
+panel	dataset	tool	quantity	value	source
+C	.	.	F1 cross-check: cells where eval/lib F1, precision, sensitivity equal masking.tsv	26 of 26	tmp/f1_crosscheck.tsv
+A	rice	ltrquest	window: masked outside curated LTR-RT (kb)	43.3	computed: mask/rice/<tool>.intact/rice.fa.out minus curated LTR-RT hits, in the window
+A	rice	ltrquest	window: curated LTR-RT masked (kb)	46.9	computed (as above)
+A	rice	ltrquest	window: calls drawn (n)	3	calls/rice/<tool>.tsv overlapping the window
+A	rice	ltrquest	window: calls not library-supported (n)	0	eval/adj/rice/<tool>.calls.tsv supported
+A	rice	ltr_retriever	window: masked outside curated LTR-RT (kb)	8.7	computed: mask/rice/<tool>.intact/rice.fa.out minus curated LTR-RT hits, in the window
+A	rice	ltr_retriever	window: curated LTR-RT masked (kb)	45.8	computed (as above)
+A	rice	ltr_retriever	window: calls drawn (n)	0	calls/rice/<tool>.tsv overlapping the window
+A	rice	ltr_retriever	window: calls not library-supported (n)	0	eval/adj/rice/<tool>.calls.tsv supported
+A	rice	ltrharvest	window: masked outside curated LTR-RT (kb)	77.1	computed: mask/rice/<tool>.intact/rice.fa.out minus curated LTR-RT hits, in the window
+A	rice	ltrharvest	window: curated LTR-RT masked (kb)	46.9	computed (as above)
+A	rice	ltrharvest	window: calls drawn (n)	5	calls/rice/<tool>.tsv overlapping the window
+A	rice	ltrharvest	window: calls not library-supported (n)	2	eval/adj/rice/<tool>.calls.tsv supported
+A	rice	ltr_finder	window: masked outside curated LTR-RT (kb)	17.1	computed: mask/rice/<tool>.intact/rice.fa.out minus curated LTR-RT hits, in the window
+A	rice	ltr_finder	window: curated LTR-RT masked (kb)	45.9	computed (as above)
+A	rice	ltr_finder	window: calls drawn (n)	2	calls/rice/<tool>.tsv overlapping the window
+A	rice	ltr_finder	window: calls not library-supported (n)	0	eval/adj/rice/<tool>.calls.tsv supported
+A	rice	look4ltrs	window: masked outside curated LTR-RT (kb)	87.8	computed: mask/rice/<tool>.intact/rice.fa.out minus curated LTR-RT hits, in the window
+A	rice	look4ltrs	window: curated LTR-RT masked (kb)	46.9	computed (as above)
+A	rice	look4ltrs	window: calls drawn (n)	6	calls/rice/<tool>.tsv overlapping the window
+A	rice	look4ltrs	window: calls not library-supported (n)	3	eval/adj/rice/<tool>.calls.tsv supported
+A	rice	hirepeat	window: masked outside curated LTR-RT (kb)	61.3	computed: mask/rice/<tool>.intact/rice.fa.out minus curated LTR-RT hits, in the window
+A	rice	hirepeat	window: curated LTR-RT masked (kb)	46.8	computed (as above)
+A	rice	hirepeat	window: calls drawn (n)	3	calls/rice/<tool>.tsv overlapping the window
+A	rice	hirepeat	window: calls not library-supported (n)	0	eval/adj/rice/<tool>.calls.tsv supported
+A	rice	hite	window: masked outside curated LTR-RT (kb)	8.4	computed: mask/rice/<tool>.intact/rice.fa.out minus curated LTR-RT hits, in the window
+A	rice	hite	window: curated LTR-RT masked (kb)	45.7	computed (as above)
+A	rice	hite	window: calls drawn (n)	2	calls/rice/<tool>.tsv overlapping the window
+A	rice	hite	window: calls not library-supported (n)	0	eval/adj/rice/<tool>.calls.tsv supported
+A	rice	ltrpred	window: masked outside curated LTR-RT (kb)	51.9	computed: mask/rice/<tool>.intact/rice.fa.out minus curated LTR-RT hits, in the window
+A	rice	ltrpred	window: curated LTR-RT masked (kb)	46.4	computed (as above)
+A	rice	ltrpred	window: calls drawn (n)	3	calls/rice/<tool>.tsv overlapping the window
+A	rice	ltrpred	window: calls not library-supported (n)	1	eval/adj/rice/<tool>.calls.tsv supported
+A	rice	dante_ltr	window: masked outside curated LTR-RT (kb)	11.2	computed: mask/rice/<tool>.intact/rice.fa.out minus curated LTR-RT hits, in the window
+A	rice	dante_ltr	window: curated LTR-RT masked (kb)	45.2	computed (as above)
+A	rice	dante_ltr	window: calls drawn (n)	2	calls/rice/<tool>.tsv overlapping the window
+A	rice	dante_ltr	window: calls not library-supported (n)	0	eval/adj/rice/<tool>.calls.tsv supported
+A	rice	.	window	Chr11:6200000-6400000 (0-based)	tmp/rice_window_candidates.tsv
+A	rice	.	window: curated LTR-RT (kb)	47.0	mask/rice/curated/rice.fa.out
+A	rice	.	window: non-transposon genes (n)	21	data/rice/genes/all.gff3
+B	arab	.	curated LTR-RT (Mb)	7.9	eval/lib/<ds>.ci.tsv TP+FN
+B	arab	ltrquest	masked outside curated LTR-RT (Mb)	10.96	report/tables/masking.tsv FP_mb
+B	arab	ltrquest	curated LTR-RT masked (Mb)	7.84	eval/lib/<ds>.ci.tsv TP
+B	arab	ltr_retriever	masked outside curated LTR-RT (Mb)	1.19	report/tables/masking.tsv FP_mb
+B	arab	ltr_retriever	curated LTR-RT masked (Mb)	7.26	eval/lib/<ds>.ci.tsv TP
+B	arab	ltrharvest	masked outside curated LTR-RT (Mb)	24.04	report/tables/masking.tsv FP_mb
+B	arab	ltrharvest	curated LTR-RT masked (Mb)	7.83	eval/lib/<ds>.ci.tsv TP
+B	arab	ltr_finder	masked outside curated LTR-RT (Mb)	3.32	report/tables/masking.tsv FP_mb
+B	arab	ltr_finder	curated LTR-RT masked (Mb)	7.17	eval/lib/<ds>.ci.tsv TP
+B	arab	look4ltrs	masked outside curated LTR-RT (Mb)	27.96	report/tables/masking.tsv FP_mb
+B	arab	look4ltrs	curated LTR-RT masked (Mb)	7.8	eval/lib/<ds>.ci.tsv TP
+B	arab	hirepeat	masked outside curated LTR-RT (Mb)	23.83	report/tables/masking.tsv FP_mb
+B	arab	hirepeat	curated LTR-RT masked (Mb)	7.83	eval/lib/<ds>.ci.tsv TP
+B	arab	hite	masked outside curated LTR-RT (Mb)	1.16	report/tables/masking.tsv FP_mb
+B	arab	hite	curated LTR-RT masked (Mb)	7.33	eval/lib/<ds>.ci.tsv TP
+B	arab	ltrpred	masked outside curated LTR-RT (Mb)	10.35	report/tables/masking.tsv FP_mb
+B	arab	ltrpred	curated LTR-RT masked (Mb)	7.34	eval/lib/<ds>.ci.tsv TP
+B	arab	dante_ltr	masked outside curated LTR-RT (Mb)	1.02	report/tables/masking.tsv FP_mb
+B	arab	dante_ltr	curated LTR-RT masked (Mb)	6.91	eval/lib/<ds>.ci.tsv TP
+B	rice	.	curated LTR-RT (Mb)	87.8	eval/lib/<ds>.ci.tsv TP+FN
+B	rice	ltrquest	masked outside curated LTR-RT (Mb)	80.37	report/tables/masking.tsv FP_mb
+B	rice	ltrquest	curated LTR-RT masked (Mb)	87.26	eval/lib/<ds>.ci.tsv TP
+B	rice	ltr_retriever	masked outside curated LTR-RT (Mb)	20.0	report/tables/masking.tsv FP_mb
+B	rice	ltr_retriever	curated LTR-RT masked (Mb)	85.15	eval/lib/<ds>.ci.tsv TP
+B	rice	ltrharvest	masked outside curated LTR-RT (Mb)	117.27	report/tables/masking.tsv FP_mb
+B	rice	ltrharvest	curated LTR-RT masked (Mb)	87.25	eval/lib/<ds>.ci.tsv TP
+B	rice	ltr_finder	masked outside curated LTR-RT (Mb)	39.22	report/tables/masking.tsv FP_mb
+B	rice	ltr_finder	curated LTR-RT masked (Mb)	85.38	eval/lib/<ds>.ci.tsv TP
+B	rice	look4ltrs	masked outside curated LTR-RT (Mb)	137.08	report/tables/masking.tsv FP_mb
+B	rice	look4ltrs	curated LTR-RT masked (Mb)	87.46	eval/lib/<ds>.ci.tsv TP
+B	rice	hirepeat	masked outside curated LTR-RT (Mb)	112.85	report/tables/masking.tsv FP_mb
+B	rice	hirepeat	curated LTR-RT masked (Mb)	87.25	eval/lib/<ds>.ci.tsv TP
+B	rice	hite	masked outside curated LTR-RT (Mb)	19.14	report/tables/masking.tsv FP_mb
+B	rice	hite	curated LTR-RT masked (Mb)	84.69	eval/lib/<ds>.ci.tsv TP
+B	rice	ltrpred	masked outside curated LTR-RT (Mb)	97.53	report/tables/masking.tsv FP_mb
+B	rice	ltrpred	curated LTR-RT masked (Mb)	86.05	eval/lib/<ds>.ci.tsv TP
+B	rice	dante_ltr	masked outside curated LTR-RT (Mb)	23.3	report/tables/masking.tsv FP_mb
+B	rice	dante_ltr	curated LTR-RT masked (Mb)	81.7	eval/lib/<ds>.ci.tsv TP
+B	finch	.	curated LTR-RT (Mb)	56.3	eval/lib/<ds>.ci.tsv TP+FN
+B	finch	ltrquest	masked outside curated LTR-RT (Mb)	134.99	report/tables/masking.tsv FP_mb
+B	finch	ltrquest	curated LTR-RT masked (Mb)	55.67	eval/lib/<ds>.ci.tsv TP
+B	finch	ltrharvest	masked outside curated LTR-RT (Mb)	166.67	report/tables/masking.tsv FP_mb
+B	finch	ltrharvest	curated LTR-RT masked (Mb)	55.76	eval/lib/<ds>.ci.tsv TP
+B	finch	ltr_finder	masked outside curated LTR-RT (Mb)	103.69	report/tables/masking.tsv FP_mb
+B	finch	ltr_finder	curated LTR-RT masked (Mb)	52.63	eval/lib/<ds>.ci.tsv TP
+B	finch	look4ltrs	masked outside curated LTR-RT (Mb)	187.54	report/tables/masking.tsv FP_mb
+B	finch	look4ltrs	curated LTR-RT masked (Mb)	56.06	eval/lib/<ds>.ci.tsv TP
+B	finch	hite	masked outside curated LTR-RT (Mb)	26.44	report/tables/masking.tsv FP_mb
+B	finch	hite	curated LTR-RT masked (Mb)	43.73	eval/lib/<ds>.ci.tsv TP
+B	finch	ltrpred	masked outside curated LTR-RT (Mb)	138.49	report/tables/masking.tsv FP_mb
+B	finch	ltrpred	curated LTR-RT masked (Mb)	55.85	eval/lib/<ds>.ci.tsv TP
+B	maize	.	curated LTR-RT (Mb)	1571.9	eval/lib/<ds>.ci.tsv TP+FN
+B	maize	ltrpred	masked outside curated LTR-RT (Mb)	327.8	report/tables/masking.tsv FP_mb
+B	maize	ltrpred	curated LTR-RT masked (Mb)	1566.71	eval/lib/<ds>.ci.tsv TP
+B	gorilla	.	curated LTR-RT (Mb)	257.7	eval/lib/<ds>.ci.tsv TP+FN
+B	gorilla	hite	masked outside curated LTR-RT (Mb)	526.88	report/tables/masking.tsv FP_mb
+B	gorilla	hite	curated LTR-RT masked (Mb)	132.82	eval/lib/<ds>.ci.tsv TP
+C	arab	ltrquest	precision (printed 0.42)	0.4171	eval/lib/arab/ltrquest.intact.tsv prec
+C	arab	ltrquest	recall (sensitivity) (printed 1.00, bold)	0.9969	eval/lib/arab/ltrquest.intact.tsv sens
+C	arab	ltrquest	F1 (printed 0.59)	0.5882	eval/lib/arab/ltrquest.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	arab	ltrquest	specificity (printed 0.90)	0.9018	eval/lib/arab/ltrquest.intact.tsv spec
+C	arab	ltrquest	accuracy (printed 0.91)	0.9081	eval/lib/arab/ltrquest.intact.tsv accu
+C	arab	ltr_retriever	precision (printed 0.86)	0.8588	eval/lib/arab/ltr_retriever.intact.tsv prec
+C	arab	ltr_retriever	recall (sensitivity) (printed 0.92)	0.9223	eval/lib/arab/ltr_retriever.intact.tsv sens
+C	arab	ltr_retriever	F1 (printed 0.89)	0.8894	eval/lib/arab/ltr_retriever.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	arab	ltr_retriever	specificity (printed 0.99, bold)	0.9893	eval/lib/arab/ltr_retriever.intact.tsv spec
+C	arab	ltr_retriever	accuracy (printed 0.98)	0.9849	eval/lib/arab/ltr_retriever.intact.tsv accu
+C	arab	ltrharvest	precision (printed 0.25)	0.2457	eval/lib/arab/ltrharvest.intact.tsv prec
+C	arab	ltrharvest	recall (sensitivity) (printed 0.99)	0.9949	eval/lib/arab/ltrharvest.intact.tsv sens
+C	arab	ltrharvest	F1 (printed 0.39)	0.394	eval/lib/arab/ltrharvest.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	arab	ltrharvest	specificity (printed 0.78)	0.7846	eval/lib/arab/ltrharvest.intact.tsv spec
+C	arab	ltrharvest	accuracy (printed 0.80)	0.7985	eval/lib/arab/ltrharvest.intact.tsv accu
+C	arab	ltr_finder	precision (printed 0.68)	0.6832	eval/lib/arab/ltr_finder.intact.tsv prec
+C	arab	ltr_finder	recall (sensitivity) (printed 0.91)	0.9109	eval/lib/arab/ltr_finder.intact.tsv sens
+C	arab	ltr_finder	F1 (printed 0.78)	0.7808	eval/lib/arab/ltr_finder.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	arab	ltr_finder	specificity (printed 0.97)	0.9702	eval/lib/arab/ltr_finder.intact.tsv spec
+C	arab	ltr_finder	accuracy (printed 0.97)	0.9663	eval/lib/arab/ltr_finder.intact.tsv accu
+C	arab	look4ltrs	precision (printed 0.22)	0.2181	eval/lib/arab/look4ltrs.intact.tsv prec
+C	arab	look4ltrs	recall (sensitivity) (printed 0.99)	0.9913	eval/lib/arab/look4ltrs.intact.tsv sens
+C	arab	look4ltrs	F1 (printed 0.36)	0.3575	eval/lib/arab/look4ltrs.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	arab	look4ltrs	specificity (printed 0.75)	0.7495	eval/lib/arab/look4ltrs.intact.tsv spec
+C	arab	look4ltrs	accuracy (printed 0.77)	0.7654	eval/lib/arab/look4ltrs.intact.tsv accu
+C	arab	hirepeat	precision (printed 0.25)	0.2474	eval/lib/arab/hirepeat.intact.tsv prec
+C	arab	hirepeat	recall (sensitivity) (printed 1.00, bold)	0.9954	eval/lib/arab/hirepeat.intact.tsv sens
+C	arab	hirepeat	F1 (printed 0.40)	0.3963	eval/lib/arab/hirepeat.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	arab	hirepeat	specificity (printed 0.79)	0.7865	eval/lib/arab/hirepeat.intact.tsv spec
+C	arab	hirepeat	accuracy (printed 0.80)	0.8003	eval/lib/arab/hirepeat.intact.tsv accu
+C	arab	hite	precision (printed 0.86)	0.8631	eval/lib/arab/hite.intact.tsv prec
+C	arab	hite	recall (sensitivity) (printed 0.93)	0.9313	eval/lib/arab/hite.intact.tsv sens
+C	arab	hite	F1 (printed 0.90, bold)	0.8959	eval/lib/arab/hite.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	arab	hite	specificity (printed 0.99, bold)	0.9896	eval/lib/arab/hite.intact.tsv spec
+C	arab	hite	accuracy (printed 0.99, bold)	0.9857	eval/lib/arab/hite.intact.tsv accu
+C	arab	ltrpred	precision (printed 0.42)	0.4152	eval/lib/arab/ltrpred.intact.tsv prec
+C	arab	ltrpred	recall (sensitivity) (printed 0.93)	0.9333	eval/lib/arab/ltrpred.intact.tsv sens
+C	arab	ltrpred	F1 (printed 0.57)	0.5747	eval/lib/arab/ltrpred.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	arab	ltrpred	specificity (printed 0.91)	0.9073	eval/lib/arab/ltrpred.intact.tsv spec
+C	arab	ltrpred	accuracy (printed 0.91)	0.909	eval/lib/arab/ltrpred.intact.tsv accu
+C	arab	dante_ltr	precision (printed 0.87, bold)	0.8713	eval/lib/arab/dante_ltr.intact.tsv prec
+C	arab	dante_ltr	recall (sensitivity) (printed 0.88)	0.8782	eval/lib/arab/dante_ltr.intact.tsv sens
+C	arab	dante_ltr	F1 (printed 0.87)	0.8748	eval/lib/arab/dante_ltr.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	arab	dante_ltr	specificity (printed 0.99, bold)	0.9909	eval/lib/arab/dante_ltr.intact.tsv spec
+C	arab	dante_ltr	accuracy (printed 0.98)	0.9834	eval/lib/arab/dante_ltr.intact.tsv accu
+C	rice	ltrquest	precision (printed 0.52)	0.5205	eval/lib/rice/ltrquest.intact.tsv prec
+C	rice	ltrquest	recall (sensitivity) (printed 0.99)	0.9942	eval/lib/rice/ltrquest.intact.tsv sens
+C	rice	ltrquest	F1 (printed 0.68)	0.6833	eval/lib/rice/ltrquest.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	rice	ltrquest	specificity (printed 0.72)	0.7195	eval/lib/rice/ltrquest.intact.tsv spec
+C	rice	ltrquest	accuracy (printed 0.78)	0.7839	eval/lib/rice/ltrquest.intact.tsv accu
+C	rice	ltr_retriever	precision (printed 0.81)	0.8098	eval/lib/rice/ltr_retriever.intact.tsv prec
+C	rice	ltr_retriever	recall (sensitivity) (printed 0.97)	0.9702	eval/lib/rice/ltr_retriever.intact.tsv sens
+C	rice	ltr_retriever	F1 (printed 0.88, bold)	0.8828	eval/lib/rice/ltr_retriever.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	rice	ltr_retriever	specificity (printed 0.93, bold)	0.9302	eval/lib/rice/ltr_retriever.intact.tsv spec
+C	rice	ltr_retriever	accuracy (printed 0.94, bold)	0.9396	eval/lib/rice/ltr_retriever.intact.tsv accu
+C	rice	ltrharvest	precision (printed 0.43)	0.4266	eval/lib/rice/ltrharvest.intact.tsv prec
+C	rice	ltrharvest	recall (sensitivity) (printed 0.99)	0.9942	eval/lib/rice/ltrharvest.intact.tsv sens
+C	rice	ltrharvest	F1 (printed 0.60)	0.597	eval/lib/rice/ltrharvest.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	rice	ltrharvest	specificity (printed 0.59)	0.5907	eval/lib/rice/ltrharvest.intact.tsv spec
+C	rice	ltrharvest	accuracy (printed 0.69)	0.6853	eval/lib/rice/ltrharvest.intact.tsv accu
+C	rice	ltr_finder	precision (printed 0.69)	0.6852	eval/lib/rice/ltr_finder.intact.tsv prec
+C	rice	ltr_finder	recall (sensitivity) (printed 0.97)	0.9728	eval/lib/rice/ltr_finder.intact.tsv sens
+C	rice	ltr_finder	F1 (printed 0.80)	0.8041	eval/lib/rice/ltr_finder.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	rice	ltr_finder	specificity (printed 0.86)	0.8631	eval/lib/rice/ltr_finder.intact.tsv spec
+C	rice	ltr_finder	accuracy (printed 0.89)	0.8888	eval/lib/rice/ltr_finder.intact.tsv accu
+C	rice	look4ltrs	precision (printed 0.39)	0.3895	eval/lib/rice/look4ltrs.intact.tsv prec
+C	rice	look4ltrs	recall (sensitivity) (printed 1.00, bold)	0.9966	eval/lib/rice/look4ltrs.intact.tsv sens
+C	rice	look4ltrs	F1 (printed 0.56)	0.5601	eval/lib/rice/look4ltrs.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	rice	look4ltrs	specificity (printed 0.52)	0.5216	eval/lib/rice/look4ltrs.intact.tsv spec
+C	rice	look4ltrs	accuracy (printed 0.63)	0.633	eval/lib/rice/look4ltrs.intact.tsv accu
+C	rice	hirepeat	precision (printed 0.44)	0.436	eval/lib/rice/hirepeat.intact.tsv prec
+C	rice	hirepeat	recall (sensitivity) (printed 0.99)	0.9941	eval/lib/rice/hirepeat.intact.tsv sens
+C	rice	hirepeat	F1 (printed 0.61)	0.6062	eval/lib/rice/hirepeat.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	rice	hirepeat	specificity (printed 0.61)	0.6062	eval/lib/rice/hirepeat.intact.tsv spec
+C	rice	hirepeat	accuracy (printed 0.70)	0.6971	eval/lib/rice/hirepeat.intact.tsv accu
+C	rice	hite	precision (printed 0.82, bold)	0.8157	eval/lib/rice/hite.intact.tsv prec
+C	rice	hite	recall (sensitivity) (printed 0.96)	0.965	eval/lib/rice/hite.intact.tsv sens
+C	rice	hite	F1 (printed 0.88, bold)	0.8841	eval/lib/rice/hite.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	rice	hite	specificity (printed 0.93, bold)	0.9332	eval/lib/rice/hite.intact.tsv spec
+C	rice	hite	accuracy (printed 0.94, bold)	0.9407	eval/lib/rice/hite.intact.tsv accu
+C	rice	ltrpred	precision (printed 0.47)	0.4687	eval/lib/rice/ltrpred.intact.tsv prec
+C	rice	ltrpred	recall (sensitivity) (printed 0.98)	0.9805	eval/lib/rice/ltrpred.intact.tsv sens
+C	rice	ltrpred	F1 (printed 0.63)	0.6343	eval/lib/rice/ltrpred.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	rice	ltrpred	specificity (printed 0.66)	0.6596	eval/lib/rice/ltrpred.intact.tsv spec
+C	rice	ltrpred	accuracy (printed 0.73)	0.7349	eval/lib/rice/ltrpred.intact.tsv accu
+C	rice	dante_ltr	precision (printed 0.78)	0.7781	eval/lib/rice/dante_ltr.intact.tsv prec
+C	rice	dante_ltr	recall (sensitivity) (printed 0.93)	0.9309	eval/lib/rice/dante_ltr.intact.tsv sens
+C	rice	dante_ltr	F1 (printed 0.85)	0.8476	eval/lib/rice/dante_ltr.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	rice	dante_ltr	specificity (printed 0.92)	0.9187	eval/lib/rice/dante_ltr.intact.tsv spec
+C	rice	dante_ltr	accuracy (printed 0.92)	0.9215	eval/lib/rice/dante_ltr.intact.tsv accu
+C	finch	ltrquest	precision (printed 0.29)	0.292	eval/lib/finch/ltrquest.intact.tsv prec
+C	finch	ltrquest	recall (sensitivity) (printed 0.99)	0.9895	eval/lib/finch/ltrquest.intact.tsv sens
+C	finch	ltrquest	F1 (printed 0.45)	0.4509	eval/lib/finch/ltrquest.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	finch	ltrquest	specificity (printed 0.88)	0.8755	eval/lib/finch/ltrquest.intact.tsv spec
+C	finch	ltrquest	accuracy (printed 0.88)	0.8812	eval/lib/finch/ltrquest.intact.tsv accu
+C	finch	ltrharvest	precision (printed 0.25)	0.2507	eval/lib/finch/ltrharvest.intact.tsv prec
+C	finch	ltrharvest	recall (sensitivity) (printed 0.99)	0.9912	eval/lib/finch/ltrharvest.intact.tsv sens
+C	finch	ltrharvest	F1 (printed 0.40)	0.4002	eval/lib/finch/ltrharvest.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	finch	ltrharvest	specificity (printed 0.85)	0.8463	eval/lib/finch/ltrharvest.intact.tsv spec
+C	finch	ltrharvest	accuracy (printed 0.85)	0.8535	eval/lib/finch/ltrharvest.intact.tsv accu
+C	finch	ltr_finder	precision (printed 0.34)	0.3367	eval/lib/finch/ltr_finder.intact.tsv prec
+C	finch	ltr_finder	recall (sensitivity) (printed 0.94)	0.9356	eval/lib/finch/ltr_finder.intact.tsv sens
+C	finch	ltr_finder	F1 (printed 0.50)	0.4952	eval/lib/finch/ltr_finder.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	finch	ltr_finder	specificity (printed 0.90)	0.9044	eval/lib/finch/ltr_finder.intact.tsv spec
+C	finch	ltr_finder	accuracy (printed 0.91)	0.9059	eval/lib/finch/ltr_finder.intact.tsv accu
+C	finch	look4ltrs	precision (printed 0.23)	0.2301	eval/lib/finch/look4ltrs.intact.tsv prec
+C	finch	look4ltrs	recall (sensitivity) (printed 1.00, bold)	0.9964	eval/lib/finch/look4ltrs.intact.tsv sens
+C	finch	look4ltrs	F1 (printed 0.37)	0.3739	eval/lib/finch/look4ltrs.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	finch	look4ltrs	specificity (printed 0.83)	0.8271	eval/lib/finch/look4ltrs.intact.tsv spec
+C	finch	look4ltrs	accuracy (printed 0.84)	0.8354	eval/lib/finch/look4ltrs.intact.tsv accu
+C	finch	hite	precision (printed 0.62, bold)	0.6232	eval/lib/finch/hite.intact.tsv prec
+C	finch	hite	recall (sensitivity) (printed 0.78)	0.7772	eval/lib/finch/hite.intact.tsv sens
+C	finch	hite	F1 (printed 0.69, bold)	0.6917	eval/lib/finch/hite.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	finch	hite	specificity (printed 0.98, bold)	0.9756	eval/lib/finch/hite.intact.tsv spec
+C	finch	hite	accuracy (printed 0.97, bold)	0.9658	eval/lib/finch/hite.intact.tsv accu
+C	finch	ltrpred	precision (printed 0.29)	0.2874	eval/lib/finch/ltrpred.intact.tsv prec
+C	finch	ltrpred	recall (sensitivity) (printed 0.99)	0.9928	eval/lib/finch/ltrpred.intact.tsv sens
+C	finch	ltrpred	F1 (printed 0.45)	0.4458	eval/lib/finch/ltrpred.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	finch	ltrpred	specificity (printed 0.87)	0.8723	eval/lib/finch/ltrpred.intact.tsv spec
+C	finch	ltrpred	accuracy (printed 0.88)	0.8783	eval/lib/finch/ltrpred.intact.tsv accu
+C	maize	ltrpred	precision (printed 0.83)	0.827	eval/lib/maize/ltrpred.intact.tsv prec
+C	maize	ltrpred	recall (sensitivity) (printed 1.00)	0.9967	eval/lib/maize/ltrpred.intact.tsv sens
+C	maize	ltrpred	F1 (printed 0.90)	0.9039	eval/lib/maize/ltrpred.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	maize	ltrpred	specificity (printed 0.46)	0.4594	eval/lib/maize/ltrpred.intact.tsv spec
+C	maize	ltrpred	accuracy (printed 0.85)	0.8471	eval/lib/maize/ltrpred.intact.tsv accu
+C	gorilla	hite	precision (printed 0.20)	0.2013	eval/lib/gorilla/hite.intact.tsv prec
+C	gorilla	hite	recall (sensitivity) (printed 0.52)	0.5154	eval/lib/gorilla/hite.intact.tsv sens
+C	gorilla	hite	F1 (printed 0.29)	0.2896	eval/lib/gorilla/hite.intact.tsv F1 (= report/tables/masking.tsv F1 to 4 decimals, tmp/f1_crosscheck.tsv)
+C	gorilla	hite	specificity (printed 0.84)	0.8397	eval/lib/gorilla/hite.intact.tsv spec
+C	gorilla	hite	accuracy (printed 0.82)	0.8161	eval/lib/gorilla/hite.intact.tsv accu
+B-C	finch	dante_ltr	missing result (label)	tool failed	resources.tsv status=failed (crashed with no calls)
+B-C	finch	hirepeat	missing result (label)	not evaluated	masking.tsv ci: incomplete: masking projected ~10 days (457/19693 batches in 5.9 h); not run
+B-C	finch	ltr_retriever	missing result (label)	tool failed	resources.tsv status=timeout (did not finish within 36 h)
+B-C	gorilla	dante_ltr	missing result (label)	tool failed	resources.tsv status=failed (crashed with no calls)
+B-C	gorilla	hirepeat	missing result (label)	not evaluated	masking.tsv ci: incomplete: library build stopped at the 36 h cap (near-duplicate removal of 43,620 calls, 395 Mb, by cd-hit-est); library not built, so not masked and no BM_RM2 (calls: 43,695, 827 Mb of span, longest 26.8 Mb)
+B-C	gorilla	look4ltrs	missing result (label)	tool failed	resources.tsv status=mem_guard (exceeded 200 GB of memory)
+B-C	gorilla	ltr_finder	missing result (label)	not evaluated	masking.tsv ci: incomplete: masking stopped at the 36 h cap at batch 26,019 of 61,148 (slow in tandem arrays); not scored
+B-C	gorilla	ltr_retriever	missing result (label)	tool failed	resources.tsv status=timeout (did not finish within 36 h)
+B-C	gorilla	ltrharvest	missing result (label)	tool failed	resources.tsv status=timeout (did not finish within 36 h)
+B-C	gorilla	ltrpred	missing result (label)	tool failed	resources.tsv status=timeout (did not finish within 36 h)
+B-C	gorilla	ltrquest	missing result (label)	not evaluated	masking.tsv ci: incomplete: masking stopped at the 36 h cap at batch 55,136 of 61,148 (90%; 36 h counted from its 11-14 12:48 restart after the kernel stall); not scored
+B-C	maize	dante_ltr	missing result (label)	not evaluated	masking.tsv ci: incomplete: masking measured at 146 batches/h -> ~259 h > 36 h; not run; library 445 Mb
+B-C	maize	hirepeat	missing result (label)	not evaluated	masking.tsv ci: incomplete: library as large as or larger than dante_ltr's (445 Mb, ~260 h); masking > 36 h; not run; library 1195 Mb
+B-C	maize	hite	missing result (label)	not evaluated	masking.tsv ci: incomplete: masking measured at 593 batches/h -> ~64 h > 36 h; not run; library 171 Mb
+B-C	maize	look4ltrs	missing result (label)	not evaluated	masking.tsv ci: incomplete: library as large as or larger than dante_ltr's (445 Mb, ~260 h); masking > 36 h; not run; library 1465 Mb
+B-C	maize	ltr_finder	missing result (label)	not evaluated	masking.tsv ci: incomplete: library as large as or larger than dante_ltr's (445 Mb, ~260 h); masking > 36 h; not run; library 450 Mb
+B-C	maize	ltr_retriever	missing result (label)	tool failed	resources.tsv status=timeout (did not finish within 36 h)
+B-C	maize	ltrharvest	missing result (label)	not evaluated	masking.tsv ci: incomplete: library as large as or larger than dante_ltr's (445 Mb, ~260 h); masking > 36 h; not run; library 601 Mb
+B-C	maize	ltrquest	missing result (label)	not evaluated	masking.tsv ci: incomplete: library as large as or larger than dante_ltr's (445 Mb, ~260 h); masking > 36 h; not run; library 1110 Mb
+legend	maize	.	curated LTR-RT share of the genome (%)	72	computed: lib-test (TP+FN)/(TP+TN+FP+FN), eval/lib/maize/ltrpred.intact.tsv
+legend	arab	ltrquest	recall (as printed in the legend, 3 decimals)	0.997	eval/lib/arab/ltrquest.intact.tsv sens
+legend	rice	ltrquest	recall (as printed in the legend, 3 decimals)	0.994	eval/lib/rice/ltrquest.intact.tsv sens
+legend	finch	ltrquest	recall (as printed in the legend, 3 decimals)	0.990	eval/lib/finch/ltrquest.intact.tsv sens
+legend	arab	ltrquest	specificity (as printed in the legend)	0.90	eval/lib/arab/ltrquest.intact.tsv spec
+legend	rice	ltrquest	specificity (as printed in the legend)	0.72	eval/lib/rice/ltrquest.intact.tsv spec
+legend	finch	ltrquest	specificity (as printed in the legend)	0.88	eval/lib/finch/ltrquest.intact.tsv spec
+legend	arab	hite	specificity (as printed in the legend)	0.99	eval/lib/arab/hite.intact.tsv spec
+legend	rice	hite	specificity (as printed in the legend)	0.93	eval/lib/rice/hite.intact.tsv spec
+legend	finch	hite	specificity (as printed in the legend)	0.98	eval/lib/finch/hite.intact.tsv spec
+legend	arab	ltrquest	sensitivity (curated sequence masked)	0.9969	report/tables/masking.tsv sens
+legend	arab	ltrquest	masked outside curated LTR-RT (Mb)	10.96	report/tables/masking.tsv FP_mb
+legend	rice	ltrquest	sensitivity (curated sequence masked)	0.9942	report/tables/masking.tsv sens
+legend	rice	ltrquest	masked outside curated LTR-RT (Mb)	80.37	report/tables/masking.tsv FP_mb
+legend	finch	ltrquest	sensitivity (curated sequence masked)	0.9895	report/tables/masking.tsv sens
+legend	finch	ltrquest	masked outside curated LTR-RT (Mb)	134.99	report/tables/masking.tsv FP_mb

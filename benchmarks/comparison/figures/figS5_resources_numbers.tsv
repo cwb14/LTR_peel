@@ -1,0 +1,758 @@
+item	ds	tool	status	value	drawn_as	source
+wall time (h)	arab	LTRquest	ok	0.4242	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/ltrquest/resources.json)
+CPU time (h)	arab	LTRquest	ok	2.2260	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/ltrquest/resources.json)
+peak memory PSS (GB)	arab	LTRquest	ok	8.671	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/ltrquest/resources.json)
+peak memory RSS (GB)	arab	LTRquest	ok	8.7	not drawn	report/tables/resources.tsv (drawn at full precision from runs/arab/ltrquest/resources.json)
+threads	arab	LTRquest	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	arab	LTRquest	ok	19	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_3	LTRquest	ok	0.0546	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltrquest/resources.json)
+CPU time (h)	S1_3	LTRquest	ok	0.6264	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltrquest/resources.json)
+peak memory PSS (GB)	S1_3	LTRquest	ok	8.666	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltrquest/resources.json)
+peak memory RSS (GB)	S1_3	LTRquest	ok	8.7	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltrquest/resources.json)
+threads	S1_3	LTRquest	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_3	LTRquest	ok	42	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_2	LTRquest	ok	0.0571	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltrquest/resources.json)
+CPU time (h)	S1_2	LTRquest	ok	0.6087	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltrquest/resources.json)
+peak memory PSS (GB)	S1_2	LTRquest	ok	8.667	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltrquest/resources.json)
+peak memory RSS (GB)	S1_2	LTRquest	ok	8.7	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltrquest/resources.json)
+threads	S1_2	LTRquest	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_2	LTRquest	ok	57	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_1	LTRquest	ok	0.0572	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltrquest/resources.json)
+CPU time (h)	S1_1	LTRquest	ok	0.6747	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltrquest/resources.json)
+peak memory PSS (GB)	S1_1	LTRquest	ok	8.664	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltrquest/resources.json)
+peak memory RSS (GB)	S1_1	LTRquest	ok	8.7	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltrquest/resources.json)
+threads	S1_1	LTRquest	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_1	LTRquest	ok	85	legend (range)	report/tables/resources.tsv
+wall time (h)	asue	LTRquest	ok	0.3981	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/ltrquest/resources.json)
+CPU time (h)	asue	LTRquest	ok	3.6200	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/ltrquest/resources.json)
+peak memory PSS (GB)	asue	LTRquest	ok	8.712	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/ltrquest/resources.json)
+peak memory RSS (GB)	asue	LTRquest	ok	8.7	not drawn	report/tables/resources.tsv (drawn at full precision from runs/asue/ltrquest/resources.json)
+threads	asue	LTRquest	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	asue	LTRquest	ok	43	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_2	LTRquest	ok	0.2026	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltrquest/resources.json)
+CPU time (h)	S2_2	LTRquest	ok	2.6949	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltrquest/resources.json)
+peak memory PSS (GB)	S2_2	LTRquest	ok	11.270	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltrquest/resources.json)
+peak memory RSS (GB)	S2_2	LTRquest	ok	11.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltrquest/resources.json)
+threads	S2_2	LTRquest	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_2	LTRquest	ok	130	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_3	LTRquest	ok	0.1997	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltrquest/resources.json)
+CPU time (h)	S2_3	LTRquest	ok	2.5683	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltrquest/resources.json)
+peak memory PSS (GB)	S2_3	LTRquest	ok	11.320	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltrquest/resources.json)
+peak memory RSS (GB)	S2_3	LTRquest	ok	11.4	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltrquest/resources.json)
+threads	S2_3	LTRquest	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_3	LTRquest	ok	49	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_1	LTRquest	ok	0.1992	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltrquest/resources.json)
+CPU time (h)	S2_1	LTRquest	ok	2.5420	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltrquest/resources.json)
+peak memory PSS (GB)	S2_1	LTRquest	ok	11.534	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltrquest/resources.json)
+peak memory RSS (GB)	S2_1	LTRquest	ok	11.6	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltrquest/resources.json)
+threads	S2_1	LTRquest	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_1	LTRquest	ok	64	legend (range)	report/tables/resources.tsv
+wall time (h)	rice	LTRquest	ok	0.3744	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/ltrquest/resources.json)
+CPU time (h)	rice	LTRquest	ok	3.5506	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/ltrquest/resources.json)
+peak memory PSS (GB)	rice	LTRquest	ok	8.749	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/ltrquest/resources.json)
+peak memory RSS (GB)	rice	LTRquest	ok	8.8	not drawn	report/tables/resources.tsv (drawn at full precision from runs/rice/ltrquest/resources.json)
+threads	rice	LTRquest	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	rice	LTRquest	ok	31	legend (range)	report/tables/resources.tsv
+wall time (h)	finch	LTRquest	ok	2.5897	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/ltrquest/resources.json)
+CPU time (h)	finch	LTRquest	ok	34.0337	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/ltrquest/resources.json)
+peak memory PSS (GB)	finch	LTRquest	ok	22.459	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/ltrquest/resources.json)
+peak memory RSS (GB)	finch	LTRquest	ok	22.5	not drawn	report/tables/resources.tsv (drawn at full precision from runs/finch/ltrquest/resources.json)
+threads	finch	LTRquest	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	finch	LTRquest	ok	45	legend (range)	report/tables/resources.tsv
+wall time (h)	pann	LTRquest	ok	6.5210	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/ltrquest/resources.json)
+CPU time (h)	pann	LTRquest	ok	80.1497	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/ltrquest/resources.json)
+peak memory PSS (GB)	pann	LTRquest	ok	40.012	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/ltrquest/resources.json)
+peak memory RSS (GB)	pann	LTRquest	ok	40.0	not drawn	report/tables/resources.tsv (drawn at full precision from runs/pann/ltrquest/resources.json)
+threads	pann	LTRquest	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	pann	LTRquest	ok	77	legend (range)	report/tables/resources.tsv
+wall time (h)	maize	LTRquest	ok	6.7888	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/ltrquest/resources.json)
+CPU time (h)	maize	LTRquest	ok	83.8529	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/ltrquest/resources.json)
+peak memory PSS (GB)	maize	LTRquest	ok	92.587	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/ltrquest/resources.json)
+peak memory RSS (GB)	maize	LTRquest	ok	92.6	not drawn	report/tables/resources.tsv (drawn at full precision from runs/maize/ltrquest/resources.json)
+threads	maize	LTRquest	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	maize	LTRquest	ok	51	legend (range)	report/tables/resources.tsv
+wall time (h)	gorilla	LTRquest	ok	33.4222	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltrquest/resources.json)
+CPU time (h)	gorilla	LTRquest	ok	507.4099	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltrquest/resources.json)
+peak memory PSS (GB)	gorilla	LTRquest	ok	38.514	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltrquest/resources.json)
+peak memory RSS (GB)	gorilla	LTRquest	ok	52.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltrquest/resources.json)
+threads	gorilla	LTRquest	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	gorilla	LTRquest	ok	216	legend (range)	report/tables/resources.tsv
+wall time (h)	arab	LTR_retriever	ok	0.2977	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/ltr_retriever/resources.json)
+CPU time (h)	arab	LTR_retriever	ok	0.9680	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/ltr_retriever/resources.json)
+peak memory PSS (GB)	arab	LTR_retriever	ok	1.016	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/ltr_retriever/resources.json)
+peak memory RSS (GB)	arab	LTR_retriever	ok	4.0	not drawn	report/tables/resources.tsv (drawn at full precision from runs/arab/ltr_retriever/resources.json)
+threads	arab	LTR_retriever	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	arab	LTR_retriever	ok	53	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_3	LTR_retriever	ok	0.2064	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltr_retriever/resources.json)
+CPU time (h)	S1_3	LTR_retriever	ok	1.5763	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltr_retriever/resources.json)
+peak memory PSS (GB)	S1_3	LTR_retriever	ok	1.218	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltr_retriever/resources.json)
+peak memory RSS (GB)	S1_3	LTR_retriever	ok	4.0	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltr_retriever/resources.json)
+threads	S1_3	LTR_retriever	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_3	LTR_retriever	ok	45	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_2	LTR_retriever	ok	0.2037	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltr_retriever/resources.json)
+CPU time (h)	S1_2	LTR_retriever	ok	1.5583	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltr_retriever/resources.json)
+peak memory PSS (GB)	S1_2	LTR_retriever	ok	1.705	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltr_retriever/resources.json)
+peak memory RSS (GB)	S1_2	LTR_retriever	ok	5.0	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltr_retriever/resources.json)
+threads	S1_2	LTR_retriever	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_2	LTR_retriever	ok	56	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_1	LTR_retriever	ok	0.2199	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltr_retriever/resources.json)
+CPU time (h)	S1_1	LTR_retriever	ok	1.7382	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltr_retriever/resources.json)
+peak memory PSS (GB)	S1_1	LTR_retriever	ok	1.661	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltr_retriever/resources.json)
+peak memory RSS (GB)	S1_1	LTR_retriever	ok	4.1	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltr_retriever/resources.json)
+threads	S1_1	LTR_retriever	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_1	LTR_retriever	ok	80	legend (range)	report/tables/resources.tsv
+wall time (h)	asue	LTR_retriever	ok	0.7653	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/ltr_retriever/resources.json)
+CPU time (h)	asue	LTR_retriever	ok	4.7047	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/ltr_retriever/resources.json)
+peak memory PSS (GB)	asue	LTR_retriever	ok	2.190	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/ltr_retriever/resources.json)
+peak memory RSS (GB)	asue	LTR_retriever	ok	5.0	not drawn	report/tables/resources.tsv (drawn at full precision from runs/asue/ltr_retriever/resources.json)
+threads	asue	LTR_retriever	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	asue	LTR_retriever	ok	26	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_2	LTR_retriever	ok	0.8684	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltr_retriever/resources.json)
+CPU time (h)	S2_2	LTR_retriever	ok	8.4622	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltr_retriever/resources.json)
+peak memory PSS (GB)	S2_2	LTR_retriever	ok	4.030	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltr_retriever/resources.json)
+peak memory RSS (GB)	S2_2	LTR_retriever	ok	9.1	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltr_retriever/resources.json)
+threads	S2_2	LTR_retriever	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_2	LTR_retriever	ok	33	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_3	LTR_retriever	ok	0.8666	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltr_retriever/resources.json)
+CPU time (h)	S2_3	LTR_retriever	ok	8.4494	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltr_retriever/resources.json)
+peak memory PSS (GB)	S2_3	LTR_retriever	ok	4.135	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltr_retriever/resources.json)
+peak memory RSS (GB)	S2_3	LTR_retriever	ok	8.8	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltr_retriever/resources.json)
+threads	S2_3	LTR_retriever	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_3	LTR_retriever	ok	72	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_1	LTR_retriever	ok	0.8467	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltr_retriever/resources.json)
+CPU time (h)	S2_1	LTR_retriever	ok	8.4441	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltr_retriever/resources.json)
+peak memory PSS (GB)	S2_1	LTR_retriever	ok	3.573	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltr_retriever/resources.json)
+peak memory RSS (GB)	S2_1	LTR_retriever	ok	5.8	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltr_retriever/resources.json)
+threads	S2_1	LTR_retriever	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_1	LTR_retriever	ok	62	legend (range)	report/tables/resources.tsv
+wall time (h)	rice	LTR_retriever	ok	1.1952	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/ltr_retriever/resources.json)
+CPU time (h)	rice	LTR_retriever	ok	10.6549	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/ltr_retriever/resources.json)
+peak memory PSS (GB)	rice	LTR_retriever	ok	3.183	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/ltr_retriever/resources.json)
+peak memory RSS (GB)	rice	LTR_retriever	ok	4.9	not drawn	report/tables/resources.tsv (drawn at full precision from runs/rice/ltr_retriever/resources.json)
+threads	rice	LTR_retriever	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	rice	LTR_retriever	ok	14	legend (range)	report/tables/resources.tsv
+wall time (h)	finch	LTR_retriever	timeout	36.0017	A tool failed (36 h cap)	report/tables/resources.tsv (drawn at full precision from runs/finch/ltr_retriever/resources.json)
+CPU time (h)	finch	LTR_retriever	timeout	158.5678	B tool failed (36 h cap)	report/tables/resources.tsv (drawn at full precision from runs/finch/ltr_retriever/resources.json)
+peak memory PSS (GB)	finch	LTR_retriever	timeout	9.509	C tool failed (36 h cap)	report/tables/resources.tsv (drawn at full precision from runs/finch/ltr_retriever/resources.json)
+peak memory RSS (GB)	finch	LTR_retriever	timeout	24.1	not drawn	report/tables/resources.tsv (drawn at full precision from runs/finch/ltr_retriever/resources.json)
+threads	finch	LTR_retriever	timeout	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	finch	LTR_retriever	timeout	52	legend (range)	report/tables/resources.tsv
+wall time (h)	pann	LTR_retriever	ok	19.1732	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/ltr_retriever/resources.json)
+CPU time (h)	pann	LTR_retriever	ok	195.7412	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/ltr_retriever/resources.json)
+peak memory PSS (GB)	pann	LTR_retriever	ok	28.523	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/ltr_retriever/resources.json)
+peak memory RSS (GB)	pann	LTR_retriever	ok	28.6	not drawn	report/tables/resources.tsv (drawn at full precision from runs/pann/ltr_retriever/resources.json)
+threads	pann	LTR_retriever	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	pann	LTR_retriever	ok	111	legend (range)	report/tables/resources.tsv
+wall time (h)	maize	LTR_retriever	timeout	36.0014	A tool failed (36 h cap)	report/tables/resources.tsv (drawn at full precision from runs/maize/ltr_retriever/resources.json)
+CPU time (h)	maize	LTR_retriever	timeout	457.3339	B tool failed (36 h cap)	report/tables/resources.tsv (drawn at full precision from runs/maize/ltr_retriever/resources.json)
+peak memory PSS (GB)	maize	LTR_retriever	timeout	41.773	C tool failed (36 h cap)	report/tables/resources.tsv (drawn at full precision from runs/maize/ltr_retriever/resources.json)
+peak memory RSS (GB)	maize	LTR_retriever	timeout	42.8	not drawn	report/tables/resources.tsv (drawn at full precision from runs/maize/ltr_retriever/resources.json)
+threads	maize	LTR_retriever	timeout	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	maize	LTR_retriever	timeout	115	legend (range)	report/tables/resources.tsv
+wall time (h)	gorilla	LTR_retriever	timeout	36.0060	A tool failed (36 h cap)	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltr_retriever/resources.json)
+CPU time (h)	gorilla	LTR_retriever	timeout	20.6328	B tool failed (36 h cap)	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltr_retriever/resources.json)
+peak memory PSS (GB)	gorilla	LTR_retriever	timeout	89.269	C tool failed (36 h cap)	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltr_retriever/resources.json)
+peak memory RSS (GB)	gorilla	LTR_retriever	timeout	89.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltr_retriever/resources.json)
+threads	gorilla	LTR_retriever	timeout	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	gorilla	LTR_retriever	timeout	250	legend (range)	report/tables/resources.tsv
+wall time (h)	arab	LTRharvest	ok	0.0296	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/ltrharvest/resources.json)
+CPU time (h)	arab	LTRharvest	ok	0.0292	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/ltrharvest/resources.json)
+peak memory PSS (GB)	arab	LTRharvest	ok	1.010	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/ltrharvest/resources.json)
+peak memory RSS (GB)	arab	LTRharvest	ok	1.0	not drawn	report/tables/resources.tsv (drawn at full precision from runs/arab/ltrharvest/resources.json)
+threads	arab	LTRharvest	ok	1	legend	report/tables/resources.tsv
+load at start (of 256 cores)	arab	LTRharvest	ok	69	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_3	LTRharvest	ok	0.0233	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltrharvest/resources.json)
+CPU time (h)	S1_3	LTRharvest	ok	0.0231	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltrharvest/resources.json)
+peak memory PSS (GB)	S1_3	LTRharvest	ok	1.217	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltrharvest/resources.json)
+peak memory RSS (GB)	S1_3	LTRharvest	ok	1.2	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltrharvest/resources.json)
+threads	S1_3	LTRharvest	ok	1	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_3	LTRharvest	ok	69	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_2	LTRharvest	ok	0.0222	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltrharvest/resources.json)
+CPU time (h)	S1_2	LTRharvest	ok	0.0218	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltrharvest/resources.json)
+peak memory PSS (GB)	S1_2	LTRharvest	ok	1.221	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltrharvest/resources.json)
+peak memory RSS (GB)	S1_2	LTRharvest	ok	1.2	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltrharvest/resources.json)
+threads	S1_2	LTRharvest	ok	1	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_2	LTRharvest	ok	69	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_1	LTRharvest	ok	0.0204	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltrharvest/resources.json)
+CPU time (h)	S1_1	LTRharvest	ok	0.0199	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltrharvest/resources.json)
+peak memory PSS (GB)	S1_1	LTRharvest	ok	1.232	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltrharvest/resources.json)
+peak memory RSS (GB)	S1_1	LTRharvest	ok	1.2	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltrharvest/resources.json)
+threads	S1_1	LTRharvest	ok	1	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_1	LTRharvest	ok	69	legend (range)	report/tables/resources.tsv
+wall time (h)	asue	LTRharvest	ok	0.1138	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/ltrharvest/resources.json)
+CPU time (h)	asue	LTRharvest	ok	0.1130	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/ltrharvest/resources.json)
+peak memory PSS (GB)	asue	LTRharvest	ok	2.189	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/ltrharvest/resources.json)
+peak memory RSS (GB)	asue	LTRharvest	ok	2.2	not drawn	report/tables/resources.tsv (drawn at full precision from runs/asue/ltrharvest/resources.json)
+threads	asue	LTRharvest	ok	1	legend	report/tables/resources.tsv
+load at start (of 256 cores)	asue	LTRharvest	ok	69	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_2	LTRharvest	ok	0.0535	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltrharvest/resources.json)
+CPU time (h)	S2_2	LTRharvest	ok	0.0532	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltrharvest/resources.json)
+peak memory PSS (GB)	S2_2	LTRharvest	ok	2.546	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltrharvest/resources.json)
+peak memory RSS (GB)	S2_2	LTRharvest	ok	2.6	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltrharvest/resources.json)
+threads	S2_2	LTRharvest	ok	1	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_2	LTRharvest	ok	69	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_3	LTRharvest	ok	0.0613	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltrharvest/resources.json)
+CPU time (h)	S2_3	LTRharvest	ok	0.0609	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltrharvest/resources.json)
+peak memory PSS (GB)	S2_3	LTRharvest	ok	2.571	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltrharvest/resources.json)
+peak memory RSS (GB)	S2_3	LTRharvest	ok	2.6	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltrharvest/resources.json)
+threads	S2_3	LTRharvest	ok	1	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_3	LTRharvest	ok	69	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_1	LTRharvest	ok	0.0529	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltrharvest/resources.json)
+CPU time (h)	S2_1	LTRharvest	ok	0.0526	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltrharvest/resources.json)
+peak memory PSS (GB)	S2_1	LTRharvest	ok	2.585	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltrharvest/resources.json)
+peak memory RSS (GB)	S2_1	LTRharvest	ok	2.6	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltrharvest/resources.json)
+threads	S2_1	LTRharvest	ok	1	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_1	LTRharvest	ok	69	legend (range)	report/tables/resources.tsv
+wall time (h)	rice	LTRharvest	ok	0.1004	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/ltrharvest/resources.json)
+CPU time (h)	rice	LTRharvest	ok	0.1000	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/ltrharvest/resources.json)
+peak memory PSS (GB)	rice	LTRharvest	ok	3.181	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/ltrharvest/resources.json)
+peak memory RSS (GB)	rice	LTRharvest	ok	3.2	not drawn	report/tables/resources.tsv (drawn at full precision from runs/rice/ltrharvest/resources.json)
+threads	rice	LTRharvest	ok	1	legend	report/tables/resources.tsv
+load at start (of 256 cores)	rice	LTRharvest	ok	69	legend (range)	report/tables/resources.tsv
+wall time (h)	finch	LTRharvest	ok	3.6525	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/ltrharvest/resources.json)
+CPU time (h)	finch	LTRharvest	ok	3.6399	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/ltrharvest/resources.json)
+peak memory PSS (GB)	finch	LTRharvest	ok	9.507	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/ltrharvest/resources.json)
+peak memory RSS (GB)	finch	LTRharvest	ok	9.5	not drawn	report/tables/resources.tsv (drawn at full precision from runs/finch/ltrharvest/resources.json)
+threads	finch	LTRharvest	ok	1	legend	report/tables/resources.tsv
+load at start (of 256 cores)	finch	LTRharvest	ok	69	legend (range)	report/tables/resources.tsv
+wall time (h)	pann	LTRharvest	ok	2.0156	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/ltrharvest/resources.json)
+CPU time (h)	pann	LTRharvest	ok	1.9949	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/ltrharvest/resources.json)
+peak memory PSS (GB)	pann	LTRharvest	ok	15.261	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/ltrharvest/resources.json)
+peak memory RSS (GB)	pann	LTRharvest	ok	15.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/pann/ltrharvest/resources.json)
+threads	pann	LTRharvest	ok	1	legend	report/tables/resources.tsv
+load at start (of 256 cores)	pann	LTRharvest	ok	69	legend (range)	report/tables/resources.tsv
+wall time (h)	maize	LTRharvest	ok	4.0003	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/ltrharvest/resources.json)
+CPU time (h)	maize	LTRharvest	ok	3.9773	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/ltrharvest/resources.json)
+peak memory PSS (GB)	maize	LTRharvest	ok	18.334	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/ltrharvest/resources.json)
+peak memory RSS (GB)	maize	LTRharvest	ok	18.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/maize/ltrharvest/resources.json)
+threads	maize	LTRharvest	ok	1	legend	report/tables/resources.tsv
+load at start (of 256 cores)	maize	LTRharvest	ok	69	legend (range)	report/tables/resources.tsv
+wall time (h)	gorilla	LTRharvest	timeout	36.0032	A tool failed (36 h cap)	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltrharvest/resources.json)
+CPU time (h)	gorilla	LTRharvest	timeout	28.5657	B tool failed (36 h cap)	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltrharvest/resources.json)
+peak memory PSS (GB)	gorilla	LTRharvest	timeout	33.530	C tool failed (36 h cap)	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltrharvest/resources.json)
+peak memory RSS (GB)	gorilla	LTRharvest	timeout	33.5	not drawn	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltrharvest/resources.json)
+threads	gorilla	LTRharvest	timeout	1	legend	report/tables/resources.tsv
+load at start (of 256 cores)	gorilla	LTRharvest	timeout	69	legend (range)	report/tables/resources.tsv
+wall time (h)	arab	LTR_Finder	ok	0.1304	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/ltr_finder/resources.json)
+CPU time (h)	arab	LTR_Finder	ok	0.3955	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/ltr_finder/resources.json)
+peak memory PSS (GB)	arab	LTR_Finder	ok	0.830	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/ltr_finder/resources.json)
+peak memory RSS (GB)	arab	LTR_Finder	ok	1.0	not drawn	report/tables/resources.tsv (drawn at full precision from runs/arab/ltr_finder/resources.json)
+threads	arab	LTR_Finder	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	arab	LTR_Finder	ok	53	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_3	LTR_Finder	ok	0.0024	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltr_finder/resources.json)
+CPU time (h)	S1_3	LTR_Finder	ok	0.0198	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltr_finder/resources.json)
+peak memory PSS (GB)	S1_3	LTR_Finder	ok	1.573	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltr_finder/resources.json)
+peak memory RSS (GB)	S1_3	LTR_Finder	ok	1.7	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltr_finder/resources.json)
+threads	S1_3	LTR_Finder	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_3	LTR_Finder	ok	43	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_2	LTR_Finder	ok	0.0030	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltr_finder/resources.json)
+CPU time (h)	S1_2	LTR_Finder	ok	0.0197	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltr_finder/resources.json)
+peak memory PSS (GB)	S1_2	LTR_Finder	ok	1.498	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltr_finder/resources.json)
+peak memory RSS (GB)	S1_2	LTR_Finder	ok	1.6	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltr_finder/resources.json)
+threads	S1_2	LTR_Finder	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_2	LTR_Finder	ok	63	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_1	LTR_Finder	ok	0.0030	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltr_finder/resources.json)
+CPU time (h)	S1_1	LTR_Finder	ok	0.0220	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltr_finder/resources.json)
+peak memory PSS (GB)	S1_1	LTR_Finder	ok	1.446	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltr_finder/resources.json)
+peak memory RSS (GB)	S1_1	LTR_Finder	ok	1.6	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltr_finder/resources.json)
+threads	S1_1	LTR_Finder	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_1	LTR_Finder	ok	82	legend (range)	report/tables/resources.tsv
+wall time (h)	asue	LTR_Finder	ok	0.1857	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/ltr_finder/resources.json)
+CPU time (h)	asue	LTR_Finder	ok	0.7501	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/ltr_finder/resources.json)
+peak memory PSS (GB)	asue	LTR_Finder	ok	1.370	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/ltr_finder/resources.json)
+peak memory RSS (GB)	asue	LTR_Finder	ok	1.5	not drawn	report/tables/resources.tsv (drawn at full precision from runs/asue/ltr_finder/resources.json)
+threads	asue	LTR_Finder	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	asue	LTR_Finder	ok	30	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_2	LTR_Finder	ok	0.0084	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltr_finder/resources.json)
+CPU time (h)	S2_2	LTR_Finder	ok	0.0906	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltr_finder/resources.json)
+peak memory PSS (GB)	S2_2	LTR_Finder	ok	1.787	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltr_finder/resources.json)
+peak memory RSS (GB)	S2_2	LTR_Finder	ok	1.9	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltr_finder/resources.json)
+threads	S2_2	LTR_Finder	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_2	LTR_Finder	ok	30	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_3	LTR_Finder	ok	0.0085	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltr_finder/resources.json)
+CPU time (h)	S2_3	LTR_Finder	ok	0.0917	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltr_finder/resources.json)
+peak memory PSS (GB)	S2_3	LTR_Finder	ok	1.766	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltr_finder/resources.json)
+peak memory RSS (GB)	S2_3	LTR_Finder	ok	1.9	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltr_finder/resources.json)
+threads	S2_3	LTR_Finder	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_3	LTR_Finder	ok	93	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_1	LTR_Finder	ok	0.0090	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltr_finder/resources.json)
+CPU time (h)	S2_1	LTR_Finder	ok	0.0956	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltr_finder/resources.json)
+peak memory PSS (GB)	S2_1	LTR_Finder	ok	1.774	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltr_finder/resources.json)
+peak memory RSS (GB)	S2_1	LTR_Finder	ok	1.9	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltr_finder/resources.json)
+threads	S2_1	LTR_Finder	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_1	LTR_Finder	ok	59	legend (range)	report/tables/resources.tsv
+wall time (h)	rice	LTR_Finder	ok	0.0721	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/ltr_finder/resources.json)
+CPU time (h)	rice	LTR_Finder	ok	0.2697	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/ltr_finder/resources.json)
+peak memory PSS (GB)	rice	LTR_Finder	ok	1.039	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/ltr_finder/resources.json)
+peak memory RSS (GB)	rice	LTR_Finder	ok	1.2	not drawn	report/tables/resources.tsv (drawn at full precision from runs/rice/ltr_finder/resources.json)
+threads	rice	LTR_Finder	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	rice	LTR_Finder	ok	20	legend (range)	report/tables/resources.tsv
+wall time (h)	finch	LTR_Finder	ok	0.7529	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/ltr_finder/resources.json)
+CPU time (h)	finch	LTR_Finder	ok	8.0447	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/ltr_finder/resources.json)
+peak memory PSS (GB)	finch	LTR_Finder	ok	1.503	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/ltr_finder/resources.json)
+peak memory RSS (GB)	finch	LTR_Finder	ok	1.7	not drawn	report/tables/resources.tsv (drawn at full precision from runs/finch/ltr_finder/resources.json)
+threads	finch	LTR_Finder	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	finch	LTR_Finder	ok	27	legend (range)	report/tables/resources.tsv
+wall time (h)	pann	LTR_Finder	ok	0.7385	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/ltr_finder/resources.json)
+CPU time (h)	pann	LTR_Finder	ok	10.3637	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/ltr_finder/resources.json)
+peak memory PSS (GB)	pann	LTR_Finder	ok	1.334	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/ltr_finder/resources.json)
+peak memory RSS (GB)	pann	LTR_Finder	ok	1.5	not drawn	report/tables/resources.tsv (drawn at full precision from runs/pann/ltr_finder/resources.json)
+threads	pann	LTR_Finder	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	pann	LTR_Finder	ok	71	legend (range)	report/tables/resources.tsv
+wall time (h)	maize	LTR_Finder	ok	0.3950	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/ltr_finder/resources.json)
+CPU time (h)	maize	LTR_Finder	ok	5.5962	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/ltr_finder/resources.json)
+peak memory PSS (GB)	maize	LTR_Finder	ok	1.530	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/ltr_finder/resources.json)
+peak memory RSS (GB)	maize	LTR_Finder	ok	1.7	not drawn	report/tables/resources.tsv (drawn at full precision from runs/maize/ltr_finder/resources.json)
+threads	maize	LTR_Finder	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	maize	LTR_Finder	ok	138	legend (range)	report/tables/resources.tsv
+wall time (h)	gorilla	LTR_Finder	ok	10.1183	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltr_finder/resources.json)
+CPU time (h)	gorilla	LTR_Finder	ok	127.3678	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltr_finder/resources.json)
+peak memory PSS (GB)	gorilla	LTR_Finder	ok	1.866	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltr_finder/resources.json)
+peak memory RSS (GB)	gorilla	LTR_Finder	ok	2.0	not drawn	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltr_finder/resources.json)
+threads	gorilla	LTR_Finder	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	gorilla	LTR_Finder	ok	138	legend (range)	report/tables/resources.tsv
+wall time (h)	arab	Look4LTRs	ok	0.0097	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/look4ltrs/resources.json)
+CPU time (h)	arab	Look4LTRs	ok	0.0514	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/look4ltrs/resources.json)
+peak memory PSS (GB)	arab	Look4LTRs	ok	4.045	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/look4ltrs/resources.json)
+peak memory RSS (GB)	arab	Look4LTRs	ok	4.1	not drawn	report/tables/resources.tsv (drawn at full precision from runs/arab/look4ltrs/resources.json)
+threads	arab	Look4LTRs	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	arab	Look4LTRs	ok	53	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_3	Look4LTRs	ok	0.0102	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/look4ltrs/resources.json)
+CPU time (h)	S1_3	Look4LTRs	ok	0.0469	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/look4ltrs/resources.json)
+peak memory PSS (GB)	S1_3	Look4LTRs	ok	3.622	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/look4ltrs/resources.json)
+peak memory RSS (GB)	S1_3	Look4LTRs	ok	3.6	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_3/look4ltrs/resources.json)
+threads	S1_3	Look4LTRs	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_3	Look4LTRs	ok	43	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_2	Look4LTRs	ok	0.0072	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/look4ltrs/resources.json)
+CPU time (h)	S1_2	Look4LTRs	ok	0.0442	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/look4ltrs/resources.json)
+peak memory PSS (GB)	S1_2	Look4LTRs	ok	4.105	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/look4ltrs/resources.json)
+peak memory RSS (GB)	S1_2	Look4LTRs	ok	4.1	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_2/look4ltrs/resources.json)
+threads	S1_2	Look4LTRs	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_2	Look4LTRs	ok	86	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_1	Look4LTRs	ok	0.0085	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/look4ltrs/resources.json)
+CPU time (h)	S1_1	Look4LTRs	ok	0.0462	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/look4ltrs/resources.json)
+peak memory PSS (GB)	S1_1	Look4LTRs	ok	3.847	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/look4ltrs/resources.json)
+peak memory RSS (GB)	S1_1	Look4LTRs	ok	3.9	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_1/look4ltrs/resources.json)
+threads	S1_1	Look4LTRs	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_1	Look4LTRs	ok	92	legend (range)	report/tables/resources.tsv
+wall time (h)	asue	Look4LTRs	ok	0.0112	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/look4ltrs/resources.json)
+CPU time (h)	asue	Look4LTRs	ok	0.0979	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/look4ltrs/resources.json)
+peak memory PSS (GB)	asue	Look4LTRs	ok	11.142	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/look4ltrs/resources.json)
+peak memory RSS (GB)	asue	Look4LTRs	ok	11.1	not drawn	report/tables/resources.tsv (drawn at full precision from runs/asue/look4ltrs/resources.json)
+threads	asue	Look4LTRs	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	asue	Look4LTRs	ok	28	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_2	Look4LTRs	ok	0.0160	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/look4ltrs/resources.json)
+CPU time (h)	S2_2	Look4LTRs	ok	0.0930	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/look4ltrs/resources.json)
+peak memory PSS (GB)	S2_2	Look4LTRs	ok	8.889	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/look4ltrs/resources.json)
+peak memory RSS (GB)	S2_2	Look4LTRs	ok	8.9	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_2/look4ltrs/resources.json)
+threads	S2_2	Look4LTRs	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_2	Look4LTRs	ok	26	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_3	Look4LTRs	ok	0.0142	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/look4ltrs/resources.json)
+CPU time (h)	S2_3	Look4LTRs	ok	0.0979	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/look4ltrs/resources.json)
+peak memory PSS (GB)	S2_3	Look4LTRs	ok	8.772	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/look4ltrs/resources.json)
+peak memory RSS (GB)	S2_3	Look4LTRs	ok	8.8	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_3/look4ltrs/resources.json)
+threads	S2_3	Look4LTRs	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_3	Look4LTRs	ok	95	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_1	Look4LTRs	ok	0.0148	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/look4ltrs/resources.json)
+CPU time (h)	S2_1	Look4LTRs	ok	0.0895	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/look4ltrs/resources.json)
+peak memory PSS (GB)	S2_1	Look4LTRs	ok	8.334	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/look4ltrs/resources.json)
+peak memory RSS (GB)	S2_1	Look4LTRs	ok	8.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_1/look4ltrs/resources.json)
+threads	S2_1	Look4LTRs	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_1	Look4LTRs	ok	59	legend (range)	report/tables/resources.tsv
+wall time (h)	rice	Look4LTRs	ok	0.0163	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/look4ltrs/resources.json)
+CPU time (h)	rice	Look4LTRs	ok	0.1411	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/look4ltrs/resources.json)
+peak memory PSS (GB)	rice	Look4LTRs	ok	13.347	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/look4ltrs/resources.json)
+peak memory RSS (GB)	rice	Look4LTRs	ok	13.4	not drawn	report/tables/resources.tsv (drawn at full precision from runs/rice/look4ltrs/resources.json)
+threads	rice	Look4LTRs	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	rice	Look4LTRs	ok	18	legend (range)	report/tables/resources.tsv
+wall time (h)	finch	Look4LTRs	ok	0.0706	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/look4ltrs/resources.json)
+CPU time (h)	finch	Look4LTRs	ok	0.4247	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/look4ltrs/resources.json)
+peak memory PSS (GB)	finch	Look4LTRs	ok	18.314	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/look4ltrs/resources.json)
+peak memory RSS (GB)	finch	Look4LTRs	ok	18.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/finch/look4ltrs/resources.json)
+threads	finch	Look4LTRs	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	finch	Look4LTRs	ok	25	legend (range)	report/tables/resources.tsv
+wall time (h)	pann	Look4LTRs	ok	0.7329	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/look4ltrs/resources.json)
+CPU time (h)	pann	Look4LTRs	ok	1.2067	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/look4ltrs/resources.json)
+peak memory PSS (GB)	pann	Look4LTRs	ok	13.714	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/look4ltrs/resources.json)
+peak memory RSS (GB)	pann	Look4LTRs	ok	13.7	not drawn	report/tables/resources.tsv (drawn at full precision from runs/pann/look4ltrs/resources.json)
+threads	pann	Look4LTRs	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	pann	Look4LTRs	ok	71	legend (range)	report/tables/resources.tsv
+wall time (h)	maize	Look4LTRs	ok	1.2547	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/look4ltrs/resources.json)
+CPU time (h)	maize	Look4LTRs	ok	2.1338	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/look4ltrs/resources.json)
+peak memory PSS (GB)	maize	Look4LTRs	ok	15.421	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/look4ltrs/resources.json)
+peak memory RSS (GB)	maize	Look4LTRs	ok	15.4	not drawn	report/tables/resources.tsv (drawn at full precision from runs/maize/look4ltrs/resources.json)
+threads	maize	Look4LTRs	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	maize	Look4LTRs	ok	121	legend (range)	report/tables/resources.tsv
+wall time (h)	gorilla	Look4LTRs	mem_guard	13.2079	A tool failed (200 GB guard)	report/tables/resources.tsv (drawn at full precision from runs/gorilla/look4ltrs/resources.json)
+CPU time (h)	gorilla	Look4LTRs	mem_guard	92.0265	B tool failed (200 GB guard)	report/tables/resources.tsv (drawn at full precision from runs/gorilla/look4ltrs/resources.json)
+peak memory PSS (GB)	gorilla	Look4LTRs	mem_guard	200.407	C tool failed (200 GB guard)	report/tables/resources.tsv (drawn at full precision from runs/gorilla/look4ltrs/resources.json)
+peak memory RSS (GB)	gorilla	Look4LTRs	mem_guard	200.4	not drawn	report/tables/resources.tsv (drawn at full precision from runs/gorilla/look4ltrs/resources.json)
+threads	gorilla	Look4LTRs	mem_guard	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	gorilla	Look4LTRs	mem_guard	158	legend (range)	report/tables/resources.tsv
+wall time (h)	arab	HiRepEat	ok	0.0254	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/hirepeat/resources.json)
+CPU time (h)	arab	HiRepEat	ok	0.1205	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/hirepeat/resources.json)
+peak memory PSS (GB)	arab	HiRepEat	ok	1.062	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/hirepeat/resources.json)
+peak memory RSS (GB)	arab	HiRepEat	ok	3.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/arab/hirepeat/resources.json)
+threads	arab	HiRepEat	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	arab	HiRepEat	ok	53	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_3	HiRepEat	ok	0.0214	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/hirepeat/resources.json)
+CPU time (h)	S1_3	HiRepEat	ok	0.1797	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/hirepeat/resources.json)
+peak memory PSS (GB)	S1_3	HiRepEat	ok	1.528	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/hirepeat/resources.json)
+peak memory RSS (GB)	S1_3	HiRepEat	ok	3.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_3/hirepeat/resources.json)
+threads	S1_3	HiRepEat	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_3	HiRepEat	ok	53	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_2	HiRepEat	ok	0.0268	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/hirepeat/resources.json)
+CPU time (h)	S1_2	HiRepEat	ok	0.2437	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/hirepeat/resources.json)
+peak memory PSS (GB)	S1_2	HiRepEat	ok	1.554	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/hirepeat/resources.json)
+peak memory RSS (GB)	S1_2	HiRepEat	ok	3.4	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_2/hirepeat/resources.json)
+threads	S1_2	HiRepEat	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_2	HiRepEat	ok	57	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_1	HiRepEat	ok	0.0304	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/hirepeat/resources.json)
+CPU time (h)	S1_1	HiRepEat	ok	0.2707	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/hirepeat/resources.json)
+peak memory PSS (GB)	S1_1	HiRepEat	ok	1.599	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/hirepeat/resources.json)
+peak memory RSS (GB)	S1_1	HiRepEat	ok	3.5	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_1/hirepeat/resources.json)
+threads	S1_1	HiRepEat	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_1	HiRepEat	ok	83	legend (range)	report/tables/resources.tsv
+wall time (h)	asue	HiRepEat	ok	0.0676	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/hirepeat/resources.json)
+CPU time (h)	asue	HiRepEat	ok	0.4407	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/hirepeat/resources.json)
+peak memory PSS (GB)	asue	HiRepEat	ok	2.224	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/hirepeat/resources.json)
+peak memory RSS (GB)	asue	HiRepEat	ok	6.1	not drawn	report/tables/resources.tsv (drawn at full precision from runs/asue/hirepeat/resources.json)
+threads	asue	HiRepEat	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	asue	HiRepEat	ok	16	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_2	HiRepEat	ok	0.1870	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/hirepeat/resources.json)
+CPU time (h)	S2_2	HiRepEat	ok	1.5961	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/hirepeat/resources.json)
+peak memory PSS (GB)	S2_2	HiRepEat	ok	5.747	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/hirepeat/resources.json)
+peak memory RSS (GB)	S2_2	HiRepEat	ok	12.5	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_2/hirepeat/resources.json)
+threads	S2_2	HiRepEat	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_2	HiRepEat	ok	32	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_3	HiRepEat	ok	0.2390	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/hirepeat/resources.json)
+CPU time (h)	S2_3	HiRepEat	ok	1.9973	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/hirepeat/resources.json)
+peak memory PSS (GB)	S2_3	HiRepEat	ok	5.993	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/hirepeat/resources.json)
+peak memory RSS (GB)	S2_3	HiRepEat	ok	13.0	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_3/hirepeat/resources.json)
+threads	S2_3	HiRepEat	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_3	HiRepEat	ok	77	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_1	HiRepEat	ok	0.2273	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/hirepeat/resources.json)
+CPU time (h)	S2_1	HiRepEat	ok	1.9305	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/hirepeat/resources.json)
+peak memory PSS (GB)	S2_1	HiRepEat	ok	5.904	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/hirepeat/resources.json)
+peak memory RSS (GB)	S2_1	HiRepEat	ok	13.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_1/hirepeat/resources.json)
+threads	S2_1	HiRepEat	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_1	HiRepEat	ok	61	legend (range)	report/tables/resources.tsv
+wall time (h)	rice	HiRepEat	ok	0.1787	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/hirepeat/resources.json)
+CPU time (h)	rice	HiRepEat	ok	1.0963	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/hirepeat/resources.json)
+peak memory PSS (GB)	rice	HiRepEat	ok	3.597	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/hirepeat/resources.json)
+peak memory RSS (GB)	rice	HiRepEat	ok	9.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/rice/hirepeat/resources.json)
+threads	rice	HiRepEat	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	rice	HiRepEat	ok	47	legend (range)	report/tables/resources.tsv
+wall time (h)	finch	HiRepEat	ok	0.1293	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/hirepeat/resources.json)
+CPU time (h)	finch	HiRepEat	ok	0.7692	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/hirepeat/resources.json)
+peak memory PSS (GB)	finch	HiRepEat	ok	2.523	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/hirepeat/resources.json)
+peak memory RSS (GB)	finch	HiRepEat	ok	6.7	not drawn	report/tables/resources.tsv (drawn at full precision from runs/finch/hirepeat/resources.json)
+threads	finch	HiRepEat	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	finch	HiRepEat	ok	31	legend (range)	report/tables/resources.tsv
+wall time (h)	pann	HiRepEat	ok	6.1029	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/hirepeat/resources.json)
+CPU time (h)	pann	HiRepEat	ok	40.5663	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/hirepeat/resources.json)
+peak memory PSS (GB)	pann	HiRepEat	ok	31.915	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/hirepeat/resources.json)
+peak memory RSS (GB)	pann	HiRepEat	ok	84.9	not drawn	report/tables/resources.tsv (drawn at full precision from runs/pann/hirepeat/resources.json)
+threads	pann	HiRepEat	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	pann	HiRepEat	ok	111	legend (range)	report/tables/resources.tsv
+wall time (h)	maize	HiRepEat	ok	15.8928	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/hirepeat/resources.json)
+CPU time (h)	maize	HiRepEat	ok	87.7899	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/hirepeat/resources.json)
+peak memory PSS (GB)	maize	HiRepEat	ok	51.055	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/hirepeat/resources.json)
+peak memory RSS (GB)	maize	HiRepEat	ok	139.7	not drawn	report/tables/resources.tsv (drawn at full precision from runs/maize/hirepeat/resources.json)
+threads	maize	HiRepEat	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	maize	HiRepEat	ok	116	legend (range)	report/tables/resources.tsv
+wall time (h)	gorilla	HiRepEat	ok	0.5057	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/gorilla/hirepeat/resources.json)
+CPU time (h)	gorilla	HiRepEat	ok	2.4734	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/gorilla/hirepeat/resources.json)
+peak memory PSS (GB)	gorilla	HiRepEat	ok	5.098	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/gorilla/hirepeat/resources.json)
+peak memory RSS (GB)	gorilla	HiRepEat	ok	22.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/gorilla/hirepeat/resources.json)
+threads	gorilla	HiRepEat	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	gorilla	HiRepEat	ok	73	legend (range)	report/tables/resources.tsv
+wall time (h)	arab	HiTE	ok	0.2089	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/hite/resources.json)
+CPU time (h)	arab	HiTE	ok	1.3381	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/hite/resources.json)
+peak memory PSS (GB)	arab	HiTE	ok	7.961	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/hite/resources.json)
+peak memory RSS (GB)	arab	HiTE	ok	8.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/arab/hite/resources.json)
+threads	arab	HiTE	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	arab	HiTE	ok	57	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_3	HiTE	ok	0.4099	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/hite/resources.json)
+CPU time (h)	S1_3	HiTE	ok	4.0581	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/hite/resources.json)
+peak memory PSS (GB)	S1_3	HiTE	ok	8.078	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/hite/resources.json)
+peak memory RSS (GB)	S1_3	HiTE	ok	8.5	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_3/hite/resources.json)
+threads	S1_3	HiTE	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_3	HiTE	ok	47	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_2	HiTE	ok	0.4341	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/hite/resources.json)
+CPU time (h)	S1_2	HiTE	ok	4.2511	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/hite/resources.json)
+peak memory PSS (GB)	S1_2	HiTE	ok	8.665	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/hite/resources.json)
+peak memory RSS (GB)	S1_2	HiTE	ok	9.1	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_2/hite/resources.json)
+threads	S1_2	HiTE	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_2	HiTE	ok	56	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_1	HiTE	ok	0.5259	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/hite/resources.json)
+CPU time (h)	S1_1	HiTE	ok	4.6514	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/hite/resources.json)
+peak memory PSS (GB)	S1_1	HiTE	ok	9.481	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/hite/resources.json)
+peak memory RSS (GB)	S1_1	HiTE	ok	9.9	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_1/hite/resources.json)
+threads	S1_1	HiTE	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_1	HiTE	ok	95	legend (range)	report/tables/resources.tsv
+wall time (h)	asue	HiTE	ok	0.4342	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/hite/resources.json)
+CPU time (h)	asue	HiTE	ok	3.7835	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/hite/resources.json)
+peak memory PSS (GB)	asue	HiTE	ok	9.496	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/hite/resources.json)
+peak memory RSS (GB)	asue	HiTE	ok	11.8	not drawn	report/tables/resources.tsv (drawn at full precision from runs/asue/hite/resources.json)
+threads	asue	HiTE	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	asue	HiTE	ok	18	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_2	HiTE	ok	2.6359	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/hite/resources.json)
+CPU time (h)	S2_2	HiTE	ok	27.2384	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/hite/resources.json)
+peak memory PSS (GB)	S2_2	HiTE	ok	11.577	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/hite/resources.json)
+peak memory RSS (GB)	S2_2	HiTE	ok	16.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_2/hite/resources.json)
+threads	S2_2	HiTE	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_2	HiTE	ok	40	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_3	HiTE	ok	2.6533	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/hite/resources.json)
+CPU time (h)	S2_3	HiTE	ok	27.4589	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/hite/resources.json)
+peak memory PSS (GB)	S2_3	HiTE	ok	11.721	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/hite/resources.json)
+peak memory RSS (GB)	S2_3	HiTE	ok	16.8	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_3/hite/resources.json)
+threads	S2_3	HiTE	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_3	HiTE	ok	100	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_1	HiTE	ok	2.5324	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/hite/resources.json)
+CPU time (h)	S2_1	HiTE	ok	28.3165	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/hite/resources.json)
+peak memory PSS (GB)	S2_1	HiTE	ok	11.405	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/hite/resources.json)
+peak memory RSS (GB)	S2_1	HiTE	ok	17.9	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_1/hite/resources.json)
+threads	S2_1	HiTE	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_1	HiTE	ok	38	legend (range)	report/tables/resources.tsv
+wall time (h)	rice	HiTE	ok	1.0352	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/hite/resources.json)
+CPU time (h)	rice	HiTE	ok	9.4411	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/hite/resources.json)
+peak memory PSS (GB)	rice	HiTE	ok	12.061	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/hite/resources.json)
+peak memory RSS (GB)	rice	HiTE	ok	26.2	not drawn	report/tables/resources.tsv (drawn at full precision from runs/rice/hite/resources.json)
+threads	rice	HiTE	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	rice	HiTE	ok	33	legend (range)	report/tables/resources.tsv
+wall time (h)	finch	HiTE	ok	1.0270	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/hite/resources.json)
+CPU time (h)	finch	HiTE	ok	7.4781	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/hite/resources.json)
+peak memory PSS (GB)	finch	HiTE	ok	12.694	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/hite/resources.json)
+peak memory RSS (GB)	finch	HiTE	ok	44.5	not drawn	report/tables/resources.tsv (drawn at full precision from runs/finch/hite/resources.json)
+threads	finch	HiTE	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	finch	HiTE	ok	33	legend (range)	report/tables/resources.tsv
+wall time (h)	pann	HiTE	ok	15.4279	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/hite/resources.json)
+CPU time (h)	pann	HiTE	ok	133.4492	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/hite/resources.json)
+peak memory PSS (GB)	pann	HiTE	ok	22.436	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/hite/resources.json)
+peak memory RSS (GB)	pann	HiTE	ok	98.0	not drawn	report/tables/resources.tsv (drawn at full precision from runs/pann/hite/resources.json)
+threads	pann	HiTE	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	pann	HiTE	ok	64	legend (range)	report/tables/resources.tsv
+wall time (h)	maize	HiTE	ok	31.4941	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/hite/resources.json)
+CPU time (h)	maize	HiTE	ok	274.2021	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/hite/resources.json)
+peak memory PSS (GB)	maize	HiTE	ok	21.865	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/hite/resources.json)
+peak memory RSS (GB)	maize	HiTE	ok	79.1	not drawn	report/tables/resources.tsv (drawn at full precision from runs/maize/hite/resources.json)
+threads	maize	HiTE	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	maize	HiTE	ok	102	legend (range)	report/tables/resources.tsv
+wall time (h)	gorilla	HiTE	ok	6.8102	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/gorilla/hite/resources.json)
+CPU time (h)	gorilla	HiTE	ok	43.3345	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/gorilla/hite/resources.json)
+peak memory PSS (GB)	gorilla	HiTE	ok	21.837	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/gorilla/hite/resources.json)
+peak memory RSS (GB)	gorilla	HiTE	ok	98.2	not drawn	report/tables/resources.tsv (drawn at full precision from runs/gorilla/hite/resources.json)
+threads	gorilla	HiTE	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	gorilla	HiTE	ok	85	legend (range)	report/tables/resources.tsv
+wall time (h)	arab	LTRpred	ok	0.5334	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/ltrpred/resources.json)
+CPU time (h)	arab	LTRpred	ok	0.5364	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/ltrpred/resources.json)
+peak memory PSS (GB)	arab	LTRpred	ok	1.135	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/ltrpred/resources.json)
+peak memory RSS (GB)	arab	LTRpred	ok	1.1	not drawn	report/tables/resources.tsv (drawn at full precision from runs/arab/ltrpred/resources.json)
+threads	arab	LTRpred	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	arab	LTRpred	ok	86	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_3	LTRpred	ok	1.7430	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltrpred/resources.json)
+CPU time (h)	S1_3	LTRpred	ok	1.7504	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltrpred/resources.json)
+peak memory PSS (GB)	S1_3	LTRpred	ok	1.342	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltrpred/resources.json)
+peak memory RSS (GB)	S1_3	LTRpred	ok	1.4	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_3/ltrpred/resources.json)
+threads	S1_3	LTRpred	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_3	LTRpred	ok	46	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_2	LTRpred	ok	1.8352	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltrpred/resources.json)
+CPU time (h)	S1_2	LTRpred	ok	1.8434	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltrpred/resources.json)
+peak memory PSS (GB)	S1_2	LTRpred	ok	1.336	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltrpred/resources.json)
+peak memory RSS (GB)	S1_2	LTRpred	ok	1.4	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_2/ltrpred/resources.json)
+threads	S1_2	LTRpred	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_2	LTRpred	ok	50	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_1	LTRpred	ok	1.9629	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltrpred/resources.json)
+CPU time (h)	S1_1	LTRpred	ok	1.9716	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltrpred/resources.json)
+peak memory PSS (GB)	S1_1	LTRpred	ok	1.346	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltrpred/resources.json)
+peak memory RSS (GB)	S1_1	LTRpred	ok	1.4	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_1/ltrpred/resources.json)
+threads	S1_1	LTRpred	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_1	LTRpred	ok	88	legend (range)	report/tables/resources.tsv
+wall time (h)	asue	LTRpred	ok	1.5051	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/ltrpred/resources.json)
+CPU time (h)	asue	LTRpred	ok	1.5111	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/ltrpred/resources.json)
+peak memory PSS (GB)	asue	LTRpred	ok	2.304	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/ltrpred/resources.json)
+peak memory RSS (GB)	asue	LTRpred	ok	2.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/asue/ltrpred/resources.json)
+threads	asue	LTRpred	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	asue	LTRpred	ok	44	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_2	LTRpred	ok	9.4688	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltrpred/resources.json)
+CPU time (h)	S2_2	LTRpred	ok	9.5026	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltrpred/resources.json)
+peak memory PSS (GB)	S2_2	LTRpred	ok	2.672	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltrpred/resources.json)
+peak memory RSS (GB)	S2_2	LTRpred	ok	2.7	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_2/ltrpred/resources.json)
+threads	S2_2	LTRpred	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_2	LTRpred	ok	62	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_3	LTRpred	ok	7.1731	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltrpred/resources.json)
+CPU time (h)	S2_3	LTRpred	ok	7.2012	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltrpred/resources.json)
+peak memory PSS (GB)	S2_3	LTRpred	ok	2.687	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltrpred/resources.json)
+peak memory RSS (GB)	S2_3	LTRpred	ok	2.7	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_3/ltrpred/resources.json)
+threads	S2_3	LTRpred	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_3	LTRpred	ok	45	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_1	LTRpred	ok	10.1719	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltrpred/resources.json)
+CPU time (h)	S2_1	LTRpred	ok	10.2099	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltrpred/resources.json)
+peak memory PSS (GB)	S2_1	LTRpred	ok	2.698	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltrpred/resources.json)
+peak memory RSS (GB)	S2_1	LTRpred	ok	2.7	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_1/ltrpred/resources.json)
+threads	S2_1	LTRpred	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_1	LTRpred	ok	26	legend (range)	report/tables/resources.tsv
+wall time (h)	rice	LTRpred	ok	2.8681	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/ltrpred/resources.json)
+CPU time (h)	rice	LTRpred	ok	2.8784	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/ltrpred/resources.json)
+peak memory PSS (GB)	rice	LTRpred	ok	3.294	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/ltrpred/resources.json)
+peak memory RSS (GB)	rice	LTRpred	ok	3.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/rice/ltrpred/resources.json)
+threads	rice	LTRpred	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	rice	LTRpred	ok	23	legend (range)	report/tables/resources.tsv
+wall time (h)	finch	LTRpred	ok	6.8318	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/ltrpred/resources.json)
+CPU time (h)	finch	LTRpred	ok	6.8061	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/ltrpred/resources.json)
+peak memory PSS (GB)	finch	LTRpred	ok	9.619	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/finch/ltrpred/resources.json)
+peak memory RSS (GB)	finch	LTRpred	ok	9.6	not drawn	report/tables/resources.tsv (drawn at full precision from runs/finch/ltrpred/resources.json)
+threads	finch	LTRpred	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	finch	LTRpred	ok	50	legend (range)	report/tables/resources.tsv
+wall time (h)	pann	LTRpred	ok	18.8489	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/ltrpred/resources.json)
+CPU time (h)	pann	LTRpred	ok	18.8049	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/ltrpred/resources.json)
+peak memory PSS (GB)	pann	LTRpred	ok	15.385	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/ltrpred/resources.json)
+peak memory RSS (GB)	pann	LTRpred	ok	15.4	not drawn	report/tables/resources.tsv (drawn at full precision from runs/pann/ltrpred/resources.json)
+threads	pann	LTRpred	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	pann	LTRpred	ok	101	legend (range)	report/tables/resources.tsv
+wall time (h)	maize	LTRpred	ok	31.7996	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/ltrpred/resources.json)
+CPU time (h)	maize	LTRpred	ok	31.7155	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/ltrpred/resources.json)
+peak memory PSS (GB)	maize	LTRpred	ok	18.449	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/ltrpred/resources.json)
+peak memory RSS (GB)	maize	LTRpred	ok	18.5	not drawn	report/tables/resources.tsv (drawn at full precision from runs/maize/ltrpred/resources.json)
+threads	maize	LTRpred	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	maize	LTRpred	ok	115	legend (range)	report/tables/resources.tsv
+wall time (h)	gorilla	LTRpred	timeout	36.0039	A tool failed (36 h cap)	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltrpred/resources.json)
+CPU time (h)	gorilla	LTRpred	timeout	22.6951	B tool failed (36 h cap)	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltrpred/resources.json)
+peak memory PSS (GB)	gorilla	LTRpred	timeout	42.846	C tool failed (36 h cap)	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltrpred/resources.json)
+peak memory RSS (GB)	gorilla	LTRpred	timeout	42.9	not drawn	report/tables/resources.tsv (drawn at full precision from runs/gorilla/ltrpred/resources.json)
+threads	gorilla	LTRpred	timeout	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	gorilla	LTRpred	timeout	232	legend (range)	report/tables/resources.tsv
+wall time (h)	arab	DANTE_LTR	ok	0.1337	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/dante_ltr/resources.json)
+CPU time (h)	arab	DANTE_LTR	ok	0.7523	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/dante_ltr/resources.json)
+peak memory PSS (GB)	arab	DANTE_LTR	ok	9.377	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/arab/dante_ltr/resources.json)
+peak memory RSS (GB)	arab	DANTE_LTR	ok	9.4	not drawn	report/tables/resources.tsv (drawn at full precision from runs/arab/dante_ltr/resources.json)
+threads	arab	DANTE_LTR	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	arab	DANTE_LTR	ok	53	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_3	DANTE_LTR	ok	0.4361	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/dante_ltr/resources.json)
+CPU time (h)	S1_3	DANTE_LTR	ok	1.7080	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/dante_ltr/resources.json)
+peak memory PSS (GB)	S1_3	DANTE_LTR	ok	9.609	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_3/dante_ltr/resources.json)
+peak memory RSS (GB)	S1_3	DANTE_LTR	ok	9.6	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_3/dante_ltr/resources.json)
+threads	S1_3	DANTE_LTR	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_3	DANTE_LTR	ok	42	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_2	DANTE_LTR	ok	0.4403	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/dante_ltr/resources.json)
+CPU time (h)	S1_2	DANTE_LTR	ok	1.7313	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/dante_ltr/resources.json)
+peak memory PSS (GB)	S1_2	DANTE_LTR	ok	9.617	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_2/dante_ltr/resources.json)
+peak memory RSS (GB)	S1_2	DANTE_LTR	ok	9.6	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_2/dante_ltr/resources.json)
+threads	S1_2	DANTE_LTR	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_2	DANTE_LTR	ok	61	legend (range)	report/tables/resources.tsv
+wall time (h)	S1_1	DANTE_LTR	ok	0.5101	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/dante_ltr/resources.json)
+CPU time (h)	S1_1	DANTE_LTR	ok	1.9216	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/dante_ltr/resources.json)
+peak memory PSS (GB)	S1_1	DANTE_LTR	ok	9.609	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S1_1/dante_ltr/resources.json)
+peak memory RSS (GB)	S1_1	DANTE_LTR	ok	9.6	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S1_1/dante_ltr/resources.json)
+threads	S1_1	DANTE_LTR	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S1_1	DANTE_LTR	ok	51	legend (range)	report/tables/resources.tsv
+wall time (h)	asue	DANTE_LTR	ok	0.2836	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/dante_ltr/resources.json)
+CPU time (h)	asue	DANTE_LTR	ok	1.7155	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/dante_ltr/resources.json)
+peak memory PSS (GB)	asue	DANTE_LTR	ok	9.404	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/asue/dante_ltr/resources.json)
+peak memory RSS (GB)	asue	DANTE_LTR	ok	9.4	not drawn	report/tables/resources.tsv (drawn at full precision from runs/asue/dante_ltr/resources.json)
+threads	asue	DANTE_LTR	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	asue	DANTE_LTR	ok	92	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_2	DANTE_LTR	ok	1.7866	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/dante_ltr/resources.json)
+CPU time (h)	S2_2	DANTE_LTR	ok	7.9865	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/dante_ltr/resources.json)
+peak memory PSS (GB)	S2_2	DANTE_LTR	ok	9.830	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_2/dante_ltr/resources.json)
+peak memory RSS (GB)	S2_2	DANTE_LTR	ok	9.9	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_2/dante_ltr/resources.json)
+threads	S2_2	DANTE_LTR	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_2	DANTE_LTR	ok	20	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_3	DANTE_LTR	ok	1.8661	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/dante_ltr/resources.json)
+CPU time (h)	S2_3	DANTE_LTR	ok	8.4541	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/dante_ltr/resources.json)
+peak memory PSS (GB)	S2_3	DANTE_LTR	ok	9.762	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_3/dante_ltr/resources.json)
+peak memory RSS (GB)	S2_3	DANTE_LTR	ok	9.8	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_3/dante_ltr/resources.json)
+threads	S2_3	DANTE_LTR	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_3	DANTE_LTR	ok	72	legend (range)	report/tables/resources.tsv
+wall time (h)	S2_1	DANTE_LTR	ok	1.8587	A open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/dante_ltr/resources.json)
+CPU time (h)	S2_1	DANTE_LTR	ok	8.3015	B open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/dante_ltr/resources.json)
+peak memory PSS (GB)	S2_1	DANTE_LTR	ok	9.819	C open circle	report/tables/resources.tsv (drawn at full precision from runs/S2_1/dante_ltr/resources.json)
+peak memory RSS (GB)	S2_1	DANTE_LTR	ok	9.8	not drawn	report/tables/resources.tsv (drawn at full precision from runs/S2_1/dante_ltr/resources.json)
+threads	S2_1	DANTE_LTR	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	S2_1	DANTE_LTR	ok	79	legend (range)	report/tables/resources.tsv
+wall time (h)	rice	DANTE_LTR	ok	0.5593	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/dante_ltr/resources.json)
+CPU time (h)	rice	DANTE_LTR	ok	3.4977	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/dante_ltr/resources.json)
+peak memory PSS (GB)	rice	DANTE_LTR	ok	9.637	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/rice/dante_ltr/resources.json)
+peak memory RSS (GB)	rice	DANTE_LTR	ok	9.7	not drawn	report/tables/resources.tsv (drawn at full precision from runs/rice/dante_ltr/resources.json)
+threads	rice	DANTE_LTR	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	rice	DANTE_LTR	ok	19	legend (range)	report/tables/resources.tsv
+wall time (h)	finch	DANTE_LTR	failed	0.2500	A tool failed (0 calls, error exit)	report/tables/resources.tsv (drawn at full precision from runs/finch/dante_ltr/resources.json)
+CPU time (h)	finch	DANTE_LTR	failed	3.6644	B tool failed (0 calls, error exit)	report/tables/resources.tsv (drawn at full precision from runs/finch/dante_ltr/resources.json)
+peak memory PSS (GB)	finch	DANTE_LTR	failed	8.683	C tool failed (0 calls, error exit)	report/tables/resources.tsv (drawn at full precision from runs/finch/dante_ltr/resources.json)
+peak memory RSS (GB)	finch	DANTE_LTR	failed	9.4	not drawn	report/tables/resources.tsv (drawn at full precision from runs/finch/dante_ltr/resources.json)
+threads	finch	DANTE_LTR	failed	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	finch	DANTE_LTR	failed	52	legend (range)	report/tables/resources.tsv
+wall time (h)	pann	DANTE_LTR	ok	2.9212	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/dante_ltr/resources.json)
+CPU time (h)	pann	DANTE_LTR	ok	34.5157	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/dante_ltr/resources.json)
+peak memory PSS (GB)	pann	DANTE_LTR	ok	18.368	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/pann/dante_ltr/resources.json)
+peak memory RSS (GB)	pann	DANTE_LTR	ok	18.9	not drawn	report/tables/resources.tsv (drawn at full precision from runs/pann/dante_ltr/resources.json)
+threads	pann	DANTE_LTR	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	pann	DANTE_LTR	ok	135	legend (range)	report/tables/resources.tsv
+wall time (h)	maize	DANTE_LTR	ok	7.7505	A filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/dante_ltr/resources.json)
+CPU time (h)	maize	DANTE_LTR	ok	83.3519	B filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/dante_ltr/resources.json)
+peak memory PSS (GB)	maize	DANTE_LTR	ok	22.021	C filled circle	report/tables/resources.tsv (drawn at full precision from runs/maize/dante_ltr/resources.json)
+peak memory RSS (GB)	maize	DANTE_LTR	ok	22.6	not drawn	report/tables/resources.tsv (drawn at full precision from runs/maize/dante_ltr/resources.json)
+threads	maize	DANTE_LTR	ok	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	maize	DANTE_LTR	ok	121	legend (range)	report/tables/resources.tsv
+wall time (h)	gorilla	DANTE_LTR	failed	0.8027	A tool failed (0 calls, error exit)	report/tables/resources.tsv (drawn at full precision from runs/gorilla/dante_ltr/resources.json)
+CPU time (h)	gorilla	DANTE_LTR	failed	11.7829	B tool failed (0 calls, error exit)	report/tables/resources.tsv (drawn at full precision from runs/gorilla/dante_ltr/resources.json)
+peak memory PSS (GB)	gorilla	DANTE_LTR	failed	16.765	C tool failed (0 calls, error exit)	report/tables/resources.tsv (drawn at full precision from runs/gorilla/dante_ltr/resources.json)
+peak memory RSS (GB)	gorilla	DANTE_LTR	failed	17.3	not drawn	report/tables/resources.tsv (drawn at full precision from runs/gorilla/dante_ltr/resources.json)
+threads	gorilla	DANTE_LTR	failed	16	legend	report/tables/resources.tsv
+load at start (of 256 cores)	gorilla	DANTE_LTR	failed	98	legend (range)	report/tables/resources.tsv
+genome size (Gb)	arab	.	.	0.1197	x axis	data/arab/genome.fa.fai
+genome size (Gb)	asue	.	.	0.2626	x axis	data/asue/genome.fa.fai
+genome size (Gb)	rice	.	.	0.3745	x axis	data/rice/genome.fa.fai
+genome size (Gb)	finch	.	.	1.1412	x axis	data/finch/genome.fa.fai
+genome size (Gb)	pann	.	.	1.8059	x axis	data/pann/genome.fa.fai
+genome size (Gb)	maize	.	.	2.1821	x axis	data/maize/genome.fa.fai
+genome size (Gb)	gorilla	.	.	3.5459	x axis	data/gorilla/genome.fa.fai
+genome size (Gb)	S1_1	.	.	0.1464	x axis	data/S1_1/genome.fa.fai
+genome size (Gb)	S1_2	.	.	0.1451	x axis	data/S1_2/genome.fa.fai
+genome size (Gb)	S1_3	.	.	0.1446	x axis	data/S1_3/genome.fa.fai
+genome size (Gb)	S2_1	.	.	0.3103	x axis	data/S2_1/genome.fa.fai
+genome size (Gb)	S2_2	.	.	0.3057	x axis	data/S2_2/genome.fa.fai
+genome size (Gb)	S2_3	.	.	0.3087	x axis	data/S2_3/genome.fa.fai
+runs drawn	.	.	.	117	legend	computed from report/tables/resources.tsv
+runs stopped at the 36 h cap	.	.	.	5	legend	computed from report/tables/resources.tsv
+runs stopped by the 200 GB guard	.	.	.	1	legend	computed from report/tables/resources.tsv
+runs with 0 calls and an error exit	.	.	.	2	legend	computed from report/tables/resources.tsv
+gorilla: tools stopped at a limit (of 9)	.	.	.	4	legend	computed from report/tables/resources.tsv
+gorilla: shortest finished run (h)	.	.	.	0.51	legend	computed from report/tables/resources.tsv
+gorilla: longest finished run (h)	.	.	.	33.42	legend	computed from report/tables/resources.tsv
+fold spread of finished wall times, smallest over real genomes	.	.	.	26.2	legend	computed from report/tables/resources.tsv
+fold spread of finished wall times, largest over real genomes	.	.	.	175.6	legend	computed from report/tables/resources.tsv
+fold spread of finished wall times, arab	.	.	.	54.7	legend	computed from report/tables/resources.tsv
+fold spread of finished wall times, asue	.	.	.	134.1	legend	computed from report/tables/resources.tsv
+fold spread of finished wall times, rice	.	.	.	175.6	legend	computed from report/tables/resources.tsv
+fold spread of finished wall times, finch	.	.	.	96.8	legend	computed from report/tables/resources.tsv
+fold spread of finished wall times, pann	.	.	.	26.2	legend	computed from report/tables/resources.tsv
+fold spread of finished wall times, maize	.	.	.	80.5	legend	computed from report/tables/resources.tsv
+fold spread of finished wall times, gorilla	.	.	.	66.1	legend	computed from report/tables/resources.tsv
+LTRquest: fastest S2 seed wall / rice wall	.	.	.	0.53	legend	computed from report/tables/resources.tsv
+LTR_retriever: fastest S2 seed wall / rice wall	.	.	.	0.71	legend	computed from report/tables/resources.tsv
+LTRharvest: fastest S2 seed wall / rice wall	.	.	.	0.53	legend	computed from report/tables/resources.tsv
+LTR_Finder: fastest S2 seed wall / rice wall	.	.	.	0.12	legend	computed from report/tables/resources.tsv
+Look4LTRs: fastest S2 seed wall / rice wall	.	.	.	0.87	legend	computed from report/tables/resources.tsv
+HiRepEat: fastest S2 seed wall / rice wall	.	.	.	1.05	legend	computed from report/tables/resources.tsv
+HiTE: fastest S2 seed wall / rice wall	.	.	.	2.45	legend	computed from report/tables/resources.tsv
+LTRpred: fastest S2 seed wall / rice wall	.	.	.	2.50	legend	computed from report/tables/resources.tsv
+DANTE_LTR: fastest S2 seed wall / rice wall	.	.	.	3.19	legend	computed from report/tables/resources.tsv
+LTRquest gorilla wall (h)	.	.	.	33.42	legend	computed from report/tables/resources.tsv
+LTRquest gorilla CPU (h), most of any run	.	.	.	507.4	legend	computed from report/tables/resources.tsv
+LTRquest maize peak PSS (GB), most of any finished run	.	.	.	92.6	legend	computed from report/tables/resources.tsv
+LTR_Finder largest peak PSS (GB)	.	.	.	1.9	legend	computed from report/tables/resources.tsv
+Look4LTRs gorilla peak PSS at the stop (GB)	.	.	.	200.4	legend	computed from report/tables/resources.tsv
+Look4LTRs gorilla wall at the stop (h)	.	.	.	13.21	legend	computed from report/tables/resources.tsv
+LTRpred CPU/wall, finished runs, min	.	.	.	0.996	legend	computed from report/tables/resources.tsv
+LTRpred CPU/wall, finished runs, max	.	.	.	1.006	legend	computed from report/tables/resources.tsv
+load at job start, min (of 256 cores)	.	.	.	14	legend	computed from report/tables/resources.tsv
+load at job start, max (of 256 cores)	.	.	.	250	legend	computed from report/tables/resources.tsv
+threads per tool	.	.	.	16	legend	bench/memo.md Fixed decisions; resources.tsv threads
+LTRharvest threads (gt has no thread option)	.	.	.	1	legend	resources.tsv threads; bench/memo.md DNFs
+wall-time cap (h)	.	.	.	36.0	legend	bench/memo.md Fixed decisions
+memory guard, PSS (GB)	.	.	.	200.0	legend	bench/memo.md Fixed decisions
+CPU ceiling line, 16 threads x 36 h (h)	.	.	.	576.0	legend	derived: threads x cap
+finch LTR_retriever: calls complete at (h)	.	.	.	2.6	legend	bench/memo.md DNFs
+maize LTR_retriever: calls complete at (h)	.	.	.	22.1	legend	bench/memo.md DNFs

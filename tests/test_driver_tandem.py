@@ -14,7 +14,7 @@ def block(text: str, start: str, end: str) -> str:
 
 
 def test_help_documents_the_flag(driver):
-    result = run("bash", str(driver), "--help")
+    result = run("bash", str(driver), "--help-all")
     assert "--no-tandem-filter" in result.stdout + result.stderr
 
 

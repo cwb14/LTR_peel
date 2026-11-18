@@ -1,0 +1,8 @@
+# Approach 1b (post hoc) divergence series. Frozen after the pilot (seed 3001: 1,977
+# intact LTR-RTs at fixed coordinates in all snapshots; median LTR-LTR K2P 0, 0.010, 0.052, 0.092, 0.133, 0.172, 0.213,
+# 0.253 at steps 0-7) and before any tool run. PrinTE 1.0.3 (build/PrinTE), library sims/lib_clean.fa, default
+# ratios.tsv, TAIR10 CDS genes. Timepoints: burnin (00) + gen 1.54M x k (k = 1..10).
+set	seed	args
+D	3101	-sz 50Mb -cn 5 -P 15 -itp 25 -ftp 10 -tmx 0 -ir 0 -br 0 -dr 0 -m 1.3e-8 -ge 15400000 -st 1540000 -t 8
+D	3102	-sz 50Mb -cn 5 -P 15 -itp 25 -ftp 10 -tmx 0 -ir 0 -br 0 -dr 0 -m 1.3e-8 -ge 15400000 -st 1540000 -t 8
+D	3103	-sz 50Mb -cn 5 -P 15 -itp 25 -ftp 10 -tmx 0 -ir 0 -br 0 -dr 0 -m 1.3e-8 -ge 15400000 -st 1540000 -t 8

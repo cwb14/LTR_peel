@@ -41,6 +41,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable, List, Optional, Tuple
 
+from ..helper_tools import OFFLINE_HINT
+
 FASTAN_URL = "https://github.com/thegenemyers/FASTAN"
 FASTAN_REF = "843d0ed28b93b05ad428995d986312f02468afcd"
 SOURCE = Path(__file__).resolve().parent / "FastLTR.c"
@@ -142,7 +144,11 @@ def ensure(tools_dir: Path) -> str:
                 "Or run without it: --no-fastltr")
         if src_dir.exists():
             shutil.rmtree(src_dir)
-        subprocess.run(["git", "clone", "--quiet", FASTAN_URL, str(src_dir)], check=True)
+        try:
+            subprocess.run(["git", "clone", "--quiet", FASTAN_URL, str(src_dir)], check=True)
+        except subprocess.CalledProcessError as exc:
+            raise RuntimeError(f"could not clone {FASTAN_URL} into {src_dir} (git exited "
+                               f"{exc.returncode}).\n{OFFLINE_HINT}") from None
         subprocess.run(["git", "-C", str(src_dir), "checkout", "--quiet", FASTAN_REF],
                        check=True)
 

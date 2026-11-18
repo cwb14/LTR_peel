@@ -46,7 +46,7 @@ This launcher only drives Apptainer/Singularity. With Docker, run the image
 directly:
 
     docker run --rm -v "$PWD:/data" -w /data -u "$(id -u):$(id -g)" \
-        ghcr.io/cwb14/ltrquest:1.0.1 --genome your_genome.fa
+        ghcr.io/cwb14/ltrquest:latest --genome your_genome.fa
 EOF
     exit 127
 fi
@@ -70,7 +70,7 @@ Looked for: \$LTRQUEST_SIF, $self_dir/ltrquest.sif, ./ltrquest.sif
 
 Get one with:
 
-    apptainer pull ltrquest.sif docker://ghcr.io/cwb14/ltrquest:1.0.1
+    apptainer pull ltrquest.sif docker://ghcr.io/cwb14/ltrquest:latest
 
 or point at an image you already have:
 

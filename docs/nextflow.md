@@ -117,21 +117,21 @@ per genome ─┬─ ROUND_01: detect ──► mask ─┐
                    │
               flag-fp              purge false-positive families and tandem-array calls
   ═════════════════▼══════════════ back to per genome ═══════════════════════
-        recoverstrand:align        recover strand for unstranded elements  (opt-in)
+        recoverstrand:align        recover strand for unstranded elements  (default on)
                    │
               annotate             strand + family columns
                    │
-        recoverstrand:apply        re-orient the depth FASTAs to match     (opt-in)
+        recoverstrand:apply        re-orient the _clean_ FASTAs to match   (default on)
                    │
               gff3 ──► plots
 ```
 
-The two `recoverstrand` steps run only with `--strand_recovery`. The first
+The two `recoverstrand` steps run unless `--strand_recovery off`. The first
 calls strand for the elements the annotator's cascade cannot reach and writes
 `<prefix>_strand_recovery.tsv`; the annotator reads that as a fourth tier; the
-second brings the depth FASTAs into line with the strand column it wrote. With
-the parameter unset an empty list flows in the sidecar's place, so the DAG is
-exactly what it was. See
+second brings the `_clean_` depth FASTAs into line with the strand column it wrote
+(the unfiltered depth FASTAs are left as detected). With `off` an empty list flows
+in the sidecar's place, so the DAG is the one without recovery. See
 [outputs.md](outputs.md#7-strand-recovery---strand-recovery) for the presets.
 
 The pooled middle is the point of running several genomes together: families
@@ -140,14 +140,14 @@ convincing in one genome but wrong across several is only caught when they are
 judged together. It is also a barrier — every genome's detection must finish
 before clustering starts.
 
-`--reboundary` adds a second pooled step, between `annotate`/`recoverstrand:apply`
+`--reboundary` (on by default; `--reboundary false` skips it) adds a second pooled step, between `annotate`/`recoverstrand:apply`
 and `gff3`. Like `cluster`/`flag-fp`, it cannot run one sample at a time, because an
 element's templates (the calls whose ends carry an exact TSD) come from every sample.
 It needs BLAST+ (`blastn`, `makeblastdb`). Its outputs, the re-bounded `_clean_`
 depth tables and each sample's `<prefix>_reboundary.tsv`, publish to one shared
 `results/reboundary/` directory: the one place this pipeline's output layout is not
 per sample. `gff3` and `plots` still publish to `results/<sample>/`. See
-[outputs.md](outputs.md#8-re-boundarying---reboundary).
+[outputs.md](outputs.md#8-re-boundarying).
 
 ### The round chain
 
@@ -183,16 +183,29 @@ raise it, or run that genome through the CLI, which handles the re-run properly:
 grep 'FP fraction' results/families/*_fpcheck.log
 ```
 
+The defaults match the CLI's: a 300 s cap per chunk per LTR caller, the sdust
+low-complexity filter, strand recovery at the `sensitive` preset with the
+polypurine-tract fallback, and re-boundarying. Each turns off from the command
+line:
+
+| Stage | Default | Turn off |
+|---|---|---|
+| Per-chunk caller cap | `--ltr_timeout 300` | `--ltr_timeout 0` |
+| sdust low-complexity filter | on | `--skip_sdust` |
+| Strand recovery | `--strand_recovery sensitive` | `--strand_recovery off` |
+| PPT fallback | `--strand_recovery_ppt true` | `--strand_recovery_ppt false` |
+| Re-boundarying | `--reboundary true` | `--reboundary false` |
+
 Everything else — the rounds, the reconciliation, the pooled family basis, the
 annotation, strand recovery, the GFF3, the plots — is the same code the CLI
 calls, invoked the same way. The CLI's `--strand-recovery` and
 `--strand-recovery-ppt` are `--strand_recovery` and `--strand_recovery_ppt`
-here, following the pipeline's own underscore convention, and its
+here, and its `--no-sdust` is `--skip_sdust`, following the pipeline's own underscore convention, and its
 `--no-tandem-filter` is `--skip_tandem_filter`. `flag-fp` stages every sample's
 genome for the tandem-array purge, so each call is judged against its own
 flanks; its scores publish to `results/families/*_fpcheck.tandem.tsv`. The
 CLI's `--fastltr` is the same `--fastltr all|rescue|off` here, and its
-`--detect-args "ltr-timeout=N"` is `--ltr_timeout N`.
+`--ltr-timeout N` is `--ltr_timeout N`.
 
 ## Development
 
