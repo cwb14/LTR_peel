@@ -45,9 +45,9 @@ The cap is wall-clock time, not work done. A borderline chunk that finishes in
 genome can differ in which chunks were capped. FastLTR searches capped chunks
 (section 3), which is why this rarely changes the final set.
 
-Changing a default changes what is found. Each detected genome records its
-settings (the cap, the sdust switch, strand recovery and others), and a later run
-in the same folder with different ones stops rather than mixing them; pass
+Changing a default changes what is found. With `--keep-intermediates` each detected
+genome records its settings (the cap, the sdust switch, strand recovery and others),
+and a later run in the same folder with different ones stops rather than mixing them; pass
 `--redetect` to detect again ([section 5](#5-multiple-genomes-shared-family-names)).
 A run folder made by an earlier version, before these defaults, therefore needs
 `--redetect` too.
@@ -101,7 +101,7 @@ files, directly inside the run folder, are touched; your inputs never are.
 
 Everything is also kept automatically, with a message, when plotting, strand
 recovery or re-boundarying failed, so the step can be redone. Nothing is removed
-for a genome that has no GFF3 or `_clean_` tables (when the false-positive step
+when a genome has no GFF3 or `_clean_` tables (when the false-positive step
 never ran on degenerate input), since its unfiltered tables are then all it has.
 
 The helper tools (TEsorter2, TRF-mod, sdust, FASTAN/FastLTR, Kmer2LTR) are fetched
@@ -137,11 +137,11 @@ can be capped on a loaded machine and not on an idle one.
 FastLTR crosses an array in seconds, so it still searches those chunks. It counts
 8-mer matches along the diagonals of 32 kb windows and aligns only the promising
 ones; LTRquest's version marks each tandem alignment so it crosses an array once
-instead of once per spacing, and it searches the same LTR spacings as LTRharvest
-(100-20,000 bp). `--fastltr rescue` (the default) runs it only on chunks a cap
-fired on; `all` runs it on every chunk (more elements, lower precision); `off`
-never (`--no-fastltr` is the same). `--fastltr-args` (default `-d100 -D20000 -w8`)
-passes options to it. Cap and FastLTR together:
+instead of once per spacing, and it searches LTR spacings of 100-20,000 bp.
+`--fastltr rescue` (the default) runs it only on chunks a cap fired on; `all` runs
+it on every chunk (more elements, lower precision); `off` never (`--no-fastltr` is
+the same). `--fastltr-args` (default `-d100 -D20000 -w8`) passes options to it.
+Cap and FastLTR together:
 
 ```bash
 ltrquest --genome t2t.fa --proteins prot.fa --threads 20 --ltr-timeout 30
@@ -240,7 +240,7 @@ below). LTRquest appends the last five — `strand`, `family`, `confidence`,
 | 27 | `tsd` | Target-site duplication at the called boundary. `.` = searched and absent; `NA` = could not be searched. On TG..CA ends it is the exact 4–6 bp duplication at those ends |
 | 28 | `tsd_offset` | `d5,d3` — how far each boundary had to move for `tsd` to appear, positive meaning *into* the element. `0,0` on canonical ends. `NA` whenever `tsd` carries no sequence, whether that is `.` or `NA` |
 | 29 | `tsd_input` | The same measurement at the record's termini as originally supplied, before re-bounding |
-| 30 | `strand` | The element's biological orientation, resolved by LTRquest from classification, domain order and pass-2 homology, and from strand recovery when it is on: `+`, `-`, or `.` if none of those resolved it |
+| 30 | `strand` | The element's biological orientation, resolved by LTRquest from classification, domain order and pass-2 homology (similarity to an already classified element), and from strand recovery when it is on: `+`, `-`, or `.` if none of those resolved it |
 | 31 | `family` | Family id from the pooled consensus-LTR clustering, `<prefix>_fam00001` … — see [section 5](#5-multiple-genomes-shared-family-names) |
 | 32 | `confidence` | Hallmarks of an insertion at the reported ends: `high` = TG..CA termini and an exact TSD (`tsd` with `tsd_offset` `0,0`), `medium` = one of the two, `low` = neither — see below |
 | 33 | `domains` | Protein domains with genomic coordinates: `GENE\|clade@start-end;...`, or `.` |
@@ -374,7 +374,7 @@ A pair is left as called when both sides continue, when the continuation would
 run through another call, when an element would be in two rejoins, or when a
 rebuilt LTR would be longer than 7 kb, the longest LTR the callers report. Past
 that length the "continuation" is the next unit of a tandem array. Such a host
-is never a re-boundarying target. The sidecar (kept only with `--keep-intermediates`) has one row per rebuilt host, and
+is never a re-boundarying target. The table (kept only with `--keep-intermediates`) has one row per rebuilt host, and
 the strand stages use it to carry the call made on the detected fragment to the
 new key:
 
@@ -410,7 +410,7 @@ Athal_tair10_chr2_LTRs_depth0_clean_ltr.tsv     family = merged_fam00001
 Alyrata_chr2_LTRs_depth0_clean_ltr.tsv          family = merged_fam00001
 Athal_tair10_chr2_LTRs_all_depth_LTR_cleaned.gff3
 Alyrata_chr2_LTRs_all_depth_LTR_cleaned.gff3
-merged_all_ltr.consensus_id0.75_cluster.tsv     ← the one shared table
+merged_all_ltr.consensus_id0.75_cluster.tsv     ← the one shared table (kept with --keep-intermediates)
 ```
 
 False-positive families are also called over the pooled set rather than one
@@ -657,7 +657,7 @@ Kmer2LTR is refused before anything changes: `ltrquest-reboundary` exits 3 and
 > skips it), the task that writes the re-bounded `_clean_` depth tables and
 > `<prefix>_reboundary.tsv` is pooled, because an element's templates are drawn
 > from every sample, but each file is still published to its own sample's
-> `${params.outdir}/<sample>/`. See [nextflow.md](nextflow.md#what-the-pipeline-does).
+> `${params.outdir}/<sample>_LTRs/`. See [nextflow.md](nextflow.md#what-the-pipeline-does).
 
 ### 8.1 `<prefix>_reboundary.tsv`
 
@@ -704,9 +704,9 @@ templates imply (a majority vote), else genomic left and right.
 
 Moved elements carry `boundary_source=templates` and `boundary_shift=<ext5>,<ext3>`
 (signed bp at the biological 5′ / 3′ end; negative = trimmed). The GFF3 writer reads
-the sidecar (`--reboundary-map`) so family and strand-provenance attributes still find
-renamed elements. Sidecars from the pre-release design (decision `extended`) still
-load.
+`<prefix>_reboundary.tsv` (`--reboundary-map`) so family and strand-provenance attributes
+still find renamed elements. Such tables from the pre-release design (decision `extended`)
+still load.
 
 ### 8.3 Finished runs
 
@@ -721,7 +721,7 @@ ltrquest-reboundary --restore --indir RUN --prefix P1 P2 ...     # undo
 `<prefix>_pre_reboundary/` once, re-bounds, then rewrites the GFF3s and plots
 (`--no-plots` skips the plots). A second `--posthoc` run starts again from that
 backup, so trying other settings never stacks on an earlier result. It refuses a run
-that `ltrquest` already re-boundaried in place (a sidecar and no backup):
+that `ltrquest` already re-boundaried in place (a `_reboundary.tsv` and no backup):
 that would be a second pass. Benchmarks: `benchmarks/reboundary/README.md`.
 
 ## 9. Plots (`<prefix>_plots/`)
@@ -729,7 +729,7 @@ that would be a second pass. Benchmarks: `benchmarks/reboundary/README.md`.
 | Output | What it shows |
 |---|---|
 | `struct/<clade>_average.pdf` | Average element structure per classification clade with bootstrap 95% CI whiskers on feature positions |
-| `struct/<clade>_individual.pdf` | Every element of the clade drawn individually, all domains shown |
+| `struct/<clade>_individual_{expanded,collapsed}.pdf` | Every element of the clade drawn individually, all domains shown; `expanded` with nested insertions in place, `collapsed` with them cut out |
 | `struct/all_elements.pdf` | All elements on one page |
 | `<prefix>_summary.pdf` | Multi-page summary |
 | `<prefix>_TEGV.html` | Self-contained interactive genome browser (open in web browser) |

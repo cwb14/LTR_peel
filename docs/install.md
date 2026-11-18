@@ -109,9 +109,9 @@ first real run stops on `cc: not found`. Pass `--no-trf` if you would rather not
 have TRF-mod at all. TEsorter2 is cloned the same way but never compiled.
 Kmer2LTR needs neither step, normally: it is an ordinary Python package,
 resolved from `PATH` if it is already installed there, and only cloned (never
-built) as a fallback when it is not. BLAST+ and minimap2 are in `environment.yml`
-because re-boundarying (on by default) needs BLAST+, and strand recovery (off by
-default) needs both.
+built) as a fallback when it is not. BLAST+ and minimap2 are in `environment.yml`:
+every run uses minimap2, re-boundarying (on by default) needs BLAST+, and strand
+recovery (off by default) needs both.
 
 ## Docker
 

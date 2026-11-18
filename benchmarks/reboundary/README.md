@@ -105,7 +105,7 @@ B1 on the truth elements it confirms.
 ## Run it
 
 ```bash
-cd <a finished LTRquest run directory>          # made without --reboundary
+cd <a finished LTRquest run directory>          # made with --no-reboundary
 export PATH=/path/to/ltrquest/env/bin:$PATH      # blastn and makeblastdb on it
 export PYTHONPATH=<repo>/src                     # or pip install . from this checkout
 B=<repo>/benchmarks/reboundary/bench.py
@@ -116,7 +116,7 @@ python $B b2 --run . --prefix $P --genome $G --tools-dir $T --out bench/b2_defau
 python $B collect --out bench
 ```
 
-Point `--run` at a run made without `--reboundary` (or one put back with
+Point `--run` at a run made with `--no-reboundary` (or one put back with
 `--restore`); on re-boundaried tables, B2 would measure a second pass. `--tools-dir`
 needs a Kmer2LTR that `ltrquest-reboundary` accepts (see the CHANGELOG). Each mode
 writes `summary.json` into its `--out`. B1 adds `b1.tsv` (one row per contig) and

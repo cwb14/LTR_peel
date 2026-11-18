@@ -9,7 +9,7 @@ Nextflow:
 
 ```bash
 # 30 seconds, no bioinformatics tools needed -- checks the wiring
-nextflow run cwb14/LTRquest -profile test,singularity --outdir results
+nextflow run cwb14/LTRquest -profile test -stub-run --outdir results
 
 # the real thing
 nextflow run cwb14/LTRquest -profile singularity --input sheet.csv --outdir results
@@ -48,8 +48,8 @@ directory, so a sheet and its data stay portable as a unit. Absolute paths and
 > ```
 
 To add a genome later, add its row and re-run with `-resume`: the genomes
-already detected are reused from `work/`, and only the pooled family stages
-re-run for all of them.
+already detected are reused from `work/`, and only the pooled family stages and
+the steps after them re-run for all of them.
 
 ## Profiles
 
@@ -117,11 +117,11 @@ per genome ─┬─ ROUND_01: detect ──► mask ─┐
                    │
               flag-fp              purge false-positive families and tandem-array calls
   ═════════════════▼══════════════ back to per genome ═══════════════════════
-        recoverstrand:align        recover strand for unstranded elements  (default on)
+        recoverstrand:align        recover strand for unstranded elements  (default off)
                    │
-              annotate             strand + family columns
+              annotate             strand, family, confidence columns
                    │
-        recoverstrand:apply        re-orient the _clean_ FASTAs to match   (default on)
+        recoverstrand:apply        re-orient the _clean_ FASTAs to match   (default off)
                    │
               gff3 ──► plots
 ```
@@ -146,7 +146,7 @@ and `gff3`. Like `cluster`/`flag-fp`, it cannot run one sample at a time, becaus
 element's templates (the calls whose ends carry an exact TSD) come from every sample.
 It needs BLAST+ (`blastn`, `makeblastdb`). Its outputs, the re-bounded `_clean_`
 depth tables and each sample's `<prefix>_reboundary.tsv`, publish to
-`results/<sample>/` like everything else, routed by the prefix in their names. See
+`results/<sample>_LTRs/` like everything else, routed by the prefix in their names. See
 [outputs.md](outputs.md#8-re-boundarying).
 
 ### The round chain
@@ -166,11 +166,11 @@ Nextflow's laziness is the loop's `break`.
 
 ## Differences from the CLI
 
-One difference, and it is deliberate.
+One difference in what runs, and it is deliberate.
 
 When false positives are **pervasive** — above `--fp_mask_threshold` — the CLI
 hard-masks those repeats in the genome and re-runs the entire pipeline on the
-masked copy, up to ten times. The Nextflow pipeline does a single pass and
+masked copy, for up to ten attempts in all. The Nextflow pipeline does a single pass and
 reports the fraction in `results/families/*_fpcheck.log` instead.
 
 That outer loop is a chain of *whole-pipeline* iterations, each of whose
@@ -198,13 +198,17 @@ changes from the command line:
 Everything else — the rounds, the reconciliation, the pooled family basis, the
 annotation, strand recovery, the GFF3, the plots — is the same code the CLI
 calls, invoked the same way. The CLI's `--strand-recovery` and
-`--strand-recovery-ppt` are `--strand_recovery` and `--strand_recovery_ppt`
+`--no-strand-recovery-ppt` are `--strand_recovery` and `--strand_recovery_ppt false`
 here, and its `--no-sdust` is `--skip_sdust`, following the pipeline's own underscore convention, and its
 `--no-tandem-filter` is `--skip_tandem_filter`. `flag-fp` stages every sample's
 genome for the tandem-array purge, so each call is judged against its own
 flanks; its scores publish to `results/families/*_fpcheck.tandem.tsv`. The
 CLI's `--fastltr` is the same `--fastltr all|rescue|off` here, and its
 `--ltr-timeout N` is `--ltr_timeout N`.
+
+What is kept differs too. Each sample's `results/<sample>_LTRs/` gets the depth
+tables, the GFF3s and the plots, but not the depth FASTAs, which stay in `work/`;
+the family tables go to `results/families/`.
 
 ## Development
 

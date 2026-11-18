@@ -131,9 +131,19 @@ do not annotate, so other tools build cleaner repeat libraries.
 
 ![LTRquest and eight other callers on simulated and real genomes](docs/images/benchmark_summary.png)
 
-Simulated genomes (A-C): one nested locus with every tool's calls (A), scores for each kind of element (B), and the
-share of elements with protein domains still found as their LTRs diverge with age (C). Real genomes (D): libraries of
-each tool's elements scored against the curated annotation. Gray "tool failed" cells mark runs that did not finish
+| Panel | What it asks | What is counted |
+|---|---|---|
+| A | What does each tool call at one nested locus? | one example, drawn |
+| B | Does the tool find each element, and are its calls real? | elements, in simulated genomes where every element is known |
+| C | Does it keep finding an element as the element ages? | elements with protein domains, as their LTRs diverge |
+| D | Used as a repeat library, do the tool's elements mask the same bases as the curated library? | masked bases, in real genomes |
+
+B and D share colors but not meaning: B scores elements, D scores a tool's elements as a masking library. High recall
+in D means the library covers the curated families, not that every element was found. Low precision in D means it
+also masks sequence the curated library leaves unmasked, which can include real elements that curated libraries miss
+([test 5](benchmarks/comparison/README.md#5-library-support-and-protein-evidence-of-each-call)).
+
+Gray "tool failed" cells mark runs that did not finish
 within our 36 h / 200 GB limits or ended with an error, and "not evaluated" a scoring step that would have run past
 36 h ([details](benchmarks/comparison/README.md#runs-and-steps-that-did-not-finish)). The simulations come from
 PrinTE, which shares an author with LTRquest, and LTRquest was tuned on PrinTE simulations and on rice.

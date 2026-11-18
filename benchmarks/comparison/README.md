@@ -19,12 +19,13 @@ finish](#runs-and-steps-that-did-not-finish) · [Limits and conflicts of interes
 
 ![Figure 1: where LTR-RT callers lose elements](figures/fig_benchmark.png)
 
-**Figure 1.** Where LTR-RT callers lose elements, and what recovering them costs. Panels A-D use simulated genomes:
-one nested locus with every tool's calls (A), precision, recall and F1 by element class in three deeply nested
-genomes (B), and recall of coding (C) and protein-less (D) elements as their LTRs diverge with age. Panels E-H use
-real genomes: masking scores against curated annotation (E), curated families recovered (F), curated annotation of
-protein-confirmed *A. thaliana* loci sorted by age (G), and real insertion polymorphisms genotyped correctly in
-*Cardamine amara* (H).
+**Figure 1.** Where LTR-RT callers lose elements, and what recovering them costs. Panels A-D use simulated genomes,
+where every element is known, and count elements: one nested locus with every tool's calls (A), precision, recall and
+F1 by element class in three deeply nested genomes (B), and recall of coding (C) and protein-less (D) elements as their
+LTRs diverge with age. Panels E-H use real genomes: how closely a library of each tool's elements masks the same bases
+as the curated library (E; masked bases, not elements found), the share of curated families that library contains (F),
+curated annotation of protein-confirmed *A. thaliana* loci sorted by age (G), and real insertion polymorphisms
+genotyped correctly in *Cardamine amara* (H).
 
 LTRquest is built for sensitivity. In these tests it found more nested, old and protein-less LTR-RTs than the other
 eight callers, except that DANTE_LTR found as many elements at the oldest simulated age and more of those with protein
@@ -79,10 +80,15 @@ on most genomes, and LTR_Finder needs the least memory on real genomes.
   superfamily (DANTE with the REXdb database). Protein-less elements carry none, so they cannot transpose on their own.
   Partly coding elements are the rest.
 - **Recall, precision, F1.** Recall is the share of true elements a tool finds, precision the share of its calls that
-  are true, and F1 their harmonic mean, which is high only when both are.
+  are true, and F1 their harmonic mean, which is high only when both are. Tests 1, 2 and 6 count elements. Test 3
+  counts masked bases instead (recall: share of curated LTR-RT bases masked; precision: share of masked bases that are
+  curated LTR-RT), and test 4 counts curated families.
 - **Reciprocal overlap 0.9.** A call matches a true element when each covers at least 90% of the other.
 - **Curated library.** A hand-checked set of repeat consensus sequences for one species. Masking the genome with it
   gives the reference annotation.
+- **Repeat library, masking.** A repeat library is a set of repeat sequences; masking marks every stretch of the genome
+  that resembles one of them. Tests 3 and 4 build a library from each tool's elements and score what it masks or
+  contains, which shows how useful the elements are for masking, not how many elements the tool found.
 - **Not finished, stopped, 0 calls, not evaluated.** "Not finished in 36 h (our limit)" and "stopped at our 200 GB
   limit" mark runs we stopped at limits set for this shared server, and "0 calls (error)" a run that ended in an error
   without calls. The figures label all three cases "tool failed". "Not evaluated" marks a finished run whose scoring
@@ -123,8 +129,8 @@ out. It then filters their candidates, masks what it found and scans again.
 The benchmark ran LTRquest 1.0.1 (commit 5042a1e) as
 `ltrquest --genome G --proteins P --threads 16 --detect-args "ltr-timeout=300" --run-sdust --no-plots --reboundary`:
 a 300 s limit per caller and 500 kb chunk, the sdust low-complexity filter, re-boundarying of truncated calls, and no
-plots. These settings equal LTRquest's new defaults except two: strand recovery, which only sets the strand of
-elements left without one and does not change which elements are called, and plots. The results describe commit
+plots. These settings equal LTRquest's current defaults except the plots, which do not change which elements are
+called. Strand recovery, off by default now, was not run. The results describe commit
 5042a1e, which reports version 1.0.1 but is newer than the v1.0.1 release tag; later code changes are not covered.
 
 The result tables also carry rows named `ltrquest_hc` (role `post_hoc`): the calls of the same LTRquest run rated high
@@ -136,7 +142,7 @@ on this page.
 
 Every genome was normalized by `scripts/prep_genome.py` before any tool saw it. Sizes of the real genomes and of S1
 and S2 are from [`figures/figS5_resources_numbers.tsv`](figures/figS5_resources_numbers.tsv); curated LTR entries from
-[`results/bm_rm2.tsv`](results/bm_rm2.tsv).
+the test 4 table, [`results/bm_rm2.tsv`](results/bm_rm2.tsv).
 
 | Genome | Assembly | Size | Curated library (source) | Curated LTR entries | LTRquest proteins |
 |---|---|---|---|---|---|
@@ -178,27 +184,26 @@ the two LTRs runs from 0 to 0.37 across the 11 ages ([`sim_divergence.tsv`](resu
 
 ## Tests
 
-| # | Test | Question | Data | When the rules were fixed | Rerun from this repo |
-|---|---|---|---|---|---|
-| 1 | [Simulated genomes](#1-simulated-genomes-nested-elements) | Are nested elements found? | S1, S2 | before any scoring | yes |
-| 2 | [Divergence series](#2-divergence-series-old-elements) | Are old elements found? | 33 simulated genomes | added later; fixed before any tool ran on them | yes |
-| 3 | [Masking](#3-masking-with-curated-libraries) | Does a library of the tool's elements reproduce the curated annotation? | 5 real genomes | before any scoring | yes |
-| 4 | [Families recovered](#4-curated-families-recovered) | Which curated families does that library contain? | 5 real genomes | added later; published script | yes |
-| 5 | [Library support and protein evidence](#5-library-support-and-protein-evidence-of-each-call) | Are calls without curated support real? | 5 real genomes | added later; fixed before any per-tool number | yes |
-| 6 | [Protein-less elements](#6-protein-less-elements) | Are elements without proteins found? | simulated and real genomes | added later; fixed before any per-tool number | yes |
-| 7 | [Subgenome phasing](#7-subgenome-phasing) | Do the elements carry subgenome signal? | 2 allopolyploids | before any scoring | no, see the test |
-| 8 | [Genotyping](#8-genotyping-real-insertion-polymorphisms) | Do the calls let a genotyper type real insertions? | *C. amara* | added later; fixed before scoring | no, see the test |
+| # | Test | Question | What is counted | Data | When the rules were fixed | Rerun from this repo |
+|---|---|---|---|---|---|---|
+| 1 | [Simulated genomes](#1-simulated-genomes-nested-elements) | Are nested elements found? | elements | S1, S2 | before any scoring | yes |
+| 2 | [Divergence series](#2-divergence-series-old-elements) | Are old elements found? | elements, as they age | 33 simulated genomes | added later; fixed before any tool ran on them | yes |
+| 3 | [Masking](#3-masking-with-curated-libraries) | Used as a repeat library, do the tool's elements mask the same bases as the curated library? | masked bases | 5 real genomes | before any scoring | yes |
+| 4 | [Families recovered](#4-curated-families-recovered) | Which curated families does that library contain? | curated families | 5 real genomes | added later; published script | yes |
+| 5 | [Library support and protein evidence](#5-library-support-and-protein-evidence-of-each-call) | Are calls the curated library misses real elements? | calls, by protein domains above chance | 5 real genomes | added later; fixed before any per-tool number | yes |
+| 6 | [Protein-less elements](#6-protein-less-elements) | Are elements without proteins found? | elements | simulated and real genomes | added later; fixed before any per-tool number | yes |
+| 7 | [Subgenome phasing](#7-subgenome-phasing) | Do the elements carry subgenome signal? | correct subgenome splits | 2 allopolyploids | before any scoring | no, see the test |
+| 8 | [Genotyping](#8-genotyping-real-insertion-polymorphisms) | Do the calls let a genotyper type real insertions? | insertions genotyped correctly | *C. amara* | added later; fixed before scoring | no, see the test |
 
 Tests marked "added later" were designed after the first results were known, including LTRquest's low masking scores
 in test 3. Test 5 was built to ask whether those scores penalize real elements that curated libraries miss. Test 3 is
 reported in full and unchanged. Bold in the score tables below marks each column's best value (for "copies for 80%
-correct" the fewest) where at least two tools have one. The code and result tables keep the original names: approach 1
-is test 1, approach 1b test 2, approach 2 test 3, BM_RM2 test 4, approach 4 test 5, `nonauto` test 6, approach 3 test 7,
-and the `ltrkin_geno` benchmark test 8.
+correct" the fewest) where at least two tools have one.
 
 ### 1. Simulated genomes: nested elements
 
-**Measures.** Whether each tool finds every intact LTR-RT, hosts and tenants included, when the truth is exact.
+**Measures.** Whether each tool finds every intact LTR-RT, hosts and tenants included, when the truth is exact. It
+counts elements.
 
 **Rule.** A call matches a true element at reciprocal overlap ≥ 0.9, one to one. F1 is scored against PrinTE's intact
 set and against the same set with hosts rebuilt ("hosts added"). Values are means of the three genomes of each set.
@@ -242,7 +247,7 @@ LTRquest was tuned on PrinTE simulations and on rice.
 
 ### 2. Divergence series: old elements
 
-**Measures.** How recall falls as the same elements age, with nothing else changing.
+**Measures.** How recall falls as the same elements age, with nothing else changing. It counts elements.
 
 **Rule.** One burst of 1,928-1,956 intact LTR-RTs with an LTR pair per 50 Mb genome ages by substitutions only. The
 same elements are scored at 11 ages in 3 genomes. Recall counts elements with an LTR pair. The K2P where recall halves
@@ -292,7 +297,9 @@ through which a tool could find old copies by homology. PrinTE shares an author 
 ### 3. Masking with curated libraries
 
 **Measures.** How well a repeat library made from a tool's elements reproduces the curated LTR-RT annotation of the
-same genome, base by base.
+same genome, base by base. It counts masked bases, not elements: a high score means the elements make a good masking
+library, not that the tool found every element, and sequence masked outside the curated annotation can include real
+elements the curated library lacks (test 5).
 
 **Rule.** The library holds the full sequence of every intact call, with near-identical copies removed
 (`cd-hit-est -c 0.95`) for speed. On *A. thaliana* this changed LTR F1 by less than 0.001 for every tool, compared with
@@ -300,7 +307,7 @@ using every call ([`library_reduction/arab.tsv`](results/library_reduction/arab.
 Calls longer than 1 Mb (HiRepEat only) skip cd-hit-est, which crashes on them. The genome is masked with MaskerAide's
 `rmfast`, a reimplementation of RepeatMasker, with EDTA's benchmark parameters (`-q -no_is -norna -nolow -div 40
 -cutoff 225`, 16 threads), and scored with EDTA's `lib-test.py` against the genome masked with the curated library. The
-score is the LTR F1, with 95% intervals and the paired difference to LTRquest from resampling 5 Mb genome blocks (2,000
+score is the F1 over masked LTR-RT bases, with 95% intervals and the paired difference to LTRquest from resampling 5 Mb genome blocks (2,000
 draws). A scoring step projected past 36 h at 16 threads was not run.
 
 **Code.** `scripts/build_library.py`, Snakefile rules `lib_intact`, `mask`, `libtest`; `scripts/libtest_ci.py`.
@@ -354,8 +361,8 @@ and gorilla are incomplete for most tools.
 
 ### 4. Curated families recovered
 
-**Measures.** How many curated LTR families a tool's library contains: recall of known families, not precision. This is
-the RepeatModeler2 library benchmark.
+**Measures.** How many curated LTR families a tool's library contains: recall of known families, not precision. It
+counts curated families. This is the RepeatModeler2 library benchmark (BM_RM2 in the code and tables).
 
 **Rule.** The library from test 3 is masked with the curated library (`rmfast -nolow`). The RepeatModeler2 benchmark
 script `get_family_summary_paper.sh`, vendored unchanged from HiTE's repository into `scripts/vendor/`, then counts
@@ -391,7 +398,7 @@ the present share and the tools' own libraries).
 ### 5. Library support and protein evidence of each call
 
 **Measures.** Whether calls that the curated library does not support are real elements, and whether curated support
-falls with element age.
+falls with element age. It counts calls, judged by LTR-RT protein domains above chance.
 
 **Rule.** A call is library-supported when at least 80% of its span is annotated LTR-RT by the curated library. A
 coding unit is at least two distinct LTR-RT protein domains of one superfamily on one strand inside the element
@@ -453,7 +460,8 @@ information.
 
 ### 6. Protein-less elements
 
-**Measures.** Recall and precision for elements without LTR-RT protein domains, against coding elements.
+**Measures.** Recall and precision for elements without LTR-RT protein domains, against coding elements. It counts
+elements.
 
 **Rule.** Classes come from DANTE protein domains (REXdb; see [Terms](#terms)). In simulations an element takes its
 library family's class; in real genomes a call is classed by the domains inside it. 95% intervals come from 1,000
@@ -733,6 +741,10 @@ each and at most 80 threads of tool runs at a time, with scoring running alongsi
 | `tests/` | unit tests of the scripts, with tiny fixtures |
 | `figures/` | figure scripts, images and `_numbers.tsv` files with every number on each figure and its source |
 | `results/` | the result tables cited on this page |
+
+Code and result files keep the names the tests had while they were built: approach 1 is test 1, approach 1b test 2,
+approach 2 test 3, BM_RM2 (the RepeatModeler2 library benchmark) test 4, approach 4 test 5, `nonauto` (protein-less,
+that is non-autonomous) test 6, approach 3 test 7, and `ltrkin_geno` (the genotyping harness) test 8.
 
 Some source labels inside `figures/*_numbers.tsv` name working notes (for example `bench/memo.md`) that are not part
 of this repository; the facts they point to are stated on this page.

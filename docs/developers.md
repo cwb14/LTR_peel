@@ -16,10 +16,10 @@ ltrquest (driver, src/ltrquest/scripts/ltrquest.sh)
   |-- Kmer2LTR + ltrquest.flag_fp       cluster into families, purge false-positive families
   |                                     and tandem-array calls (rDNA, satellites)
   |-- ltrquest.recover_strand           give strand to unstranded elements   (off by default)
-  |-- ltrquest.annotate                 add strand + family columns
-  |-- ltrquest.gff3                     pooled GFF3
+  |-- ltrquest.annotate                 add strand, family, confidence columns
   |-- ltrquest.recover_strand           re-orient the _clean_ FASTAs to match (off by default)
   |-- ltrquest.reboundary               re-bound calls that lack a TSD       (on by default)
+  |-- ltrquest.gff3                     pooled GFF3 (after annotate when re-boundarying is off)
   |-- ltrquest-plots                    structure PDFs, summary PDF, TEGV browser
   +-- ltrquest.cleanup                  remove working files (unless --keep-intermediates)
 ```
@@ -96,10 +96,14 @@ Kmer2LTR skip.
   `tests/` too, at a Python 3.9 floor; CI installs the newest ruff.
 - **lint: shellcheck** (`--severity=warning` on `src/ltrquest/scripts/*.sh`,
   `bin/entrypoint.sh`, `bin/ltrquest-container`). Runs only once ruff passes.
-- **pytest** on Python 3.9, 3.11 and 3.13 (`pytest -m "not slow"`). Locally,
+- **pytest** on Python 3.9 (on `ubuntu-24.04`; `ubuntu-latest` has no 3.9 builds),
+  3.11 and 3.13 (`pytest -m "not slow"`). Locally,
   put `src/` first on `PYTHONPATH`, as `dev/check.sh` does: in an environment
   with an older LTRquest installed, pytest otherwise tests that copy.
-- **nextflow stub** under 24.04.4 and `latest-stable`, which picks up each
+- **nextflow stub** under 24.04.4 and `latest-stable`: the test profile, then
+  `--max_rounds 1`, then the off switches (`--reboundary false --strand_recovery
+  off`, which must leave both steps out of `trace.txt`; `dev/check.sh` skips this
+  third run). `latest-stable` picks up each
   Nextflow release the day it ships, and releases keep tightening the syntax:
   26.10 refused `return` in a workflow body (`main.nf` now uses `exit 0`).
   `nextflow lint .` under the newest Nextflow lists the errors; its warnings

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Recover strand for the LTR-RTs ltrquest.annotate's cascade left unstranded.
 
-A post-processing stage that `ltrquest` runs by default (`--strand-recovery off`
-skips it), in two phases around the annotator:
+A post-processing stage that `ltrquest` runs when asked (`--strand-recovery MODE`;
+off by default), in two phases around the annotator:
 
     recover_strand --phase align   aligns, writes {prefix}_strand_recovery.tsv
     annotate                       reads that file as its fourth cascade tier

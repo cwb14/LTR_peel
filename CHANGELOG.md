@@ -24,8 +24,8 @@ the old one's, which forces the schema, flag and stage changes below.
 - `--help-all`: every flag, grouped, beside a short `--help`.
 - `--keep-intermediates` (keep every working file).
 - `--tools-dir DIR` (a reused helper-tools folder, never removed; also `LTRQUEST_TOOLS_DIR`).
-- Off switches `--no-sdust`, `--strand-recovery off`, `--no-strand-recovery-ppt` and
-  `--no-reboundary`; Nextflow `skip_sdust`. (`--ltr-timeout` is under FastLTR below.)
+- Off switches `--no-sdust`, `--no-strand-recovery-ppt` and `--no-reboundary`;
+  Nextflow `skip_sdust`. (`--ltr-timeout` is under FastLTR below.)
 - `docs/install.md` (every install route, the container launcher, offline clusters)
   and `docs/developers.md`.
 - **FastLTR, a third LTR caller** (`--fastltr rescue|all|off`, default `rescue`,
@@ -133,8 +133,8 @@ the old one's, which forces the schema, flag and stage changes below.
   `--qc-min-n`, `--untested`, `--credit`, `--mafft` and `--cache` are gone, and its
   sidecars (decision `extended`) still load.
 - Add a genome to an earlier multi-genome run without re-detecting the others:
-  re-run in the same directory with the longer `--genome` list. Each detected
-  genome leaves a `<prefix>.detect.json` (input checksums, detection settings);
+  re-run in the same directory with the longer `--genome` list. Each genome detected
+  with `--keep-intermediates` leaves a `<prefix>.detect.json` (input checksums, detection settings);
   on any re-run, single-genome included, a genome whose record still matches is
   reused, and families are rebuilt over all genomes. A mismatch stops the run;
   `--redetect` ignores the records. Genomes are now pooled in name order, so
@@ -165,7 +165,7 @@ the old one's, which forces the schema, flag and stage changes below.
 - `--mutation-rate`, forwarded to Kmer2LTR's `-u` for both the per-round
   table and the pooled family-clustering pass. Insertion age used to come
   from a fixed μ = 3×10⁻⁸ baked into the old Kmer2LTR script with no flag to
-  change it; now `k2p_time` is `NA` unless you supply a rate that actually
+  change it; that rate is now only the default (a plant rate), so set one that
   matches your organism.
 
 ### Changed
@@ -226,7 +226,7 @@ the old one's, which forces the schema, flag and stage changes below.
   call that is very likely wrong; in *Poa*, 44% of calls were non-canonical and,
   among young ones, an empty site confirmed them 12-21% of the time against 73-78%
   for canonical calls of the same age.
-- `ltrquest-plots`' `--min_ltr_aln` is renamed `--min_ltr_len`, and
+- `ltrquest.plot_struct`'s `--min_ltr_aln` is renamed `--min_ltr_len`, and
   `flagged_false_positives.tsv`'s `aln_len_raw` column is renamed
   `ltr3_len_raw`. Both hold a 3' LTR length, not an alignment length; the
   names say what they measure.
@@ -236,8 +236,8 @@ the old one's, which forces the schema, flag and stage changes below.
   no longer needs a compiler.
 - Failures to find or build a helper name the conda package that provides it and
   the compiler toolchain that would build it, instead of only the tool.
-- LTRquest's own `depth<N>_clean_ltr.tsv` is now Kmer2LTR's 33-column schema
-  (see [docs/outputs.md](docs/outputs.md)), replacing the old 21-column one
+- LTRquest's own `depth<N>_clean_ltr.tsv` is now Kmer2LTR's 29 columns plus
+  LTRquest's five (34; see [docs/outputs.md](docs/outputs.md)), replacing the old 21-column one
   built around `LTR_len`, `raw_d`/`raw_T`, `JC69_d`/`JC69_T` and
   `left_trim`/`right_trim` — none of which the new boundary model or K2P
   estimator produces. `K2P_d`/`K2P_T` survive only as the GFF3 attribute
@@ -284,7 +284,7 @@ the old one's, which forces the schema, flag and stage changes below.
 
 - Nextflow: `--reboundary false` and `--strand_recovery_ppt false` did not switch those steps off on Nextflow 26.10,
   which passes `false` from the command line as text; every on/off setting now reads the same on 24.04 and 26.10.
-- Nextflow: the re-boundaried depth tables and `<prefix>_reboundary.tsv` publish to `results/<sample>/` with the
+- Nextflow: the re-boundaried depth tables and `<prefix>_reboundary.tsv` publish to `results/<sample>_LTRs/` with the
   rest of that sample's results, not to a shared `results/reboundary/`.
 - Re-boundarying no longer writes `<genome>.fai` beside the input genome.
 - TEsorter2's pass-2 index (`temp_ltr_2pass_lib_*.fa.fxi`) no longer ends up in the run folder.

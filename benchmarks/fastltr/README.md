@@ -174,6 +174,10 @@ bash run_one.sh athal TR 16           # one configuration; see the header for al
 bash run_analysis.sh                  # the tables above, into $FASTLTR_BENCH/analysis
 ```
 
+These runs predate the current defaults (a 300 s cap, sdust and re-boundarying on). To
+rerun them with this version, add `--ltr-timeout 0 --no-sdust --no-reboundary` to the
+`ltrquest` command in `run_one.sh`; otherwise `U` and `UA` run under a 300 s cap.
+
 `inputs/` holds `<genome>.fa` (and proteins, `<genome>.pep[.gz]`) for `athal`,
 `rice`, `chm13`, `sim` and `spike`, the PrinTE truth `sim.truth.bed`, and the
 region sources `make_regions.sh` names; `external/` the CHM13 v2.0 RepeatMasker
