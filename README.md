@@ -1,12 +1,12 @@
-# LTRquest
+# LTR_peel
 
-[![CI](https://github.com/cwb14/LTRquest/actions/workflows/ci.yml/badge.svg)](https://github.com/cwb14/LTRquest/actions/workflows/ci.yml)
-[![container](https://github.com/cwb14/LTRquest/actions/workflows/docker.yml/badge.svg)](https://github.com/cwb14/LTRquest/actions/workflows/docker.yml)
+[![CI](https://github.com/cwb14/LTR_peel/actions/workflows/ci.yml/badge.svg)](https://github.com/cwb14/LTR_peel/actions/workflows/ci.yml)
+[![container](https://github.com/cwb14/LTR_peel/actions/workflows/docker.yml/badge.svg)](https://github.com/cwb14/LTR_peel/actions/workflows/docker.yml)
 [![License: GPL v3](https://img.shields.io/badge/license-GPLv3-blue)](LICENSE)
 
 **Find LTR retrotransposons in a genome assembly, including old ones and ones that other elements have inserted into.**
 
-![LTRquest in four steps: find, peel nests, clean up, describe](docs/images/workflow.png)
+![LTR_peel in four steps: find, peel nests, clean up, describe](docs/images/workflow.png)
 
 The four steps as a cartoon (ages and family numbers are examples). Arcs join the two LTRs of an element, squares are
 its target-site duplications (TSDs, the few bases of genome copied on both sides of an insertion), black bars are
@@ -15,7 +15,7 @@ genomes in one run.
 
 ## What it does
 
-LTRquest finds LTR retrotransposons (LTR-RTs) with established callers such as LTRharvest and LTR_Finder, which look
+LTR_peel finds LTR retrotransposons (LTR-RTs) with established callers such as LTRharvest and LTR_Finder, which look
 for pairs of LTRs. Each round masks the elements it found and searches again, so an element that a later insertion
 split in two is found once that insertion is masked. It then removes false positives and gives every element its age,
 family, strand and nesting depth (the number of layers of elements nested inside it).
@@ -25,21 +25,21 @@ family, strand and nesting depth (the number of layers of elements nested inside
 With **Apptainer**, the usual choice on a cluster (no root needed; `singularity` works the same):
 
 ```bash
-apptainer pull ltrquest.sif docker://ghcr.io/cwb14/ltrquest:latest
-./ltrquest.sif --help
+apptainer pull LTR_peel.sif docker://ghcr.io/cwb14/LTR_peel:latest
+./LTR_peel.sif --help
 ```
 
 `:latest` is the newest release; for a paper, replace `latest` with the number of the release you used. With the
-container, type `./ltrquest.sif` wherever this page says `ltrquest`.
+container, type `./LTR_peel.sif` wherever this page says `LTR_peel`.
 
 With **conda / mamba**, which puts the tools on your `PATH` (a run fetches a few helper tools, so it needs internet; see
 [offline clusters](docs/install.md#offline-clusters)):
 
 ```bash
-git clone https://github.com/cwb14/LTRquest.git
-cd LTRquest
-mamba env create -n ltrquest -f environment.yml
-mamba activate ltrquest
+git clone https://github.com/cwb14/LTR_peel.git
+cd LTR_peel
+mamba env create -n LTR_peel -f environment.yml
+mamba activate LTR_peel
 pip install .
 ```
 
@@ -51,9 +51,9 @@ Docker, pip, clusters without internet, and what to do when the container says y
 **Try it** on *A. thaliana* chromosome 2 (19.7 Mb) with *A. thaliana* proteins:
 
 ```bash
-curl -LO https://github.com/cwb14/LTRquest/raw/main/tests/data/Athal_tair10_chr2.fa.gz
-curl -LO https://github.com/cwb14/LTRquest/raw/main/tests/data/Athal.pep.gz
-ltrquest --genome Athal_tair10_chr2.fa.gz --proteins Athal.pep.gz
+curl -LO https://github.com/cwb14/LTR_peel/raw/main/tests/data/Athal_tair10_chr2.fa.gz
+curl -LO https://github.com/cwb14/LTR_peel/raw/main/tests/data/Athal.pep.gz
+ltr_peel --genome Athal_tair10_chr2.fa.gz --proteins Athal.pep.gz
 ```
 
 It takes 5-7 minutes with the default 20 threads, uses about 9 GB of memory, and ends by printing where the results
@@ -63,7 +63,7 @@ To see every element, open `Athal_tair10_chr2_LTRs_plots/Athal_tair10_chr2_LTRs_
 **Your genome:**
 
 ```bash
-ltrquest --genome your_genome.fa --proteins related_species.pep.fa --threads 20
+LTR_peel --genome your_genome.fa --proteins related_species.pep.fa --threads 20
 ```
 
 | Option | What to give it |
@@ -74,7 +74,7 @@ ltrquest --genome your_genome.fa --proteins related_species.pep.fa --threads 20
 | `--mutation-rate` | Substitutions per site per year, used only to turn LTR divergence into years (`k2p_time`). Default 3e-8, a plant rate; 7e-9 suits *A. thaliana*. Use your species' rate. |
 
 The defaults are the settings benchmarked below; the benchmark runs only left out the plots, which do not change the
-elements found. Every option: `ltrquest --help-all`.
+elements found. Every option: `ltr_peel --help-all`.
 
 ## Outputs
 
@@ -120,16 +120,16 @@ some lines empty, which `samtools faidx` refuses; rewrap with
 
 Working files are deleted at the end unless you add `--keep-intermediates`; they are also kept when a step such as
 plotting fails ([what is kept](docs/outputs.md#2-run-folder-clean-up-and---keep-intermediates)). Re-plotting a finished
-run (`ltrquest-plots`) and adding a genome to an earlier run (rerun in the same folder with the longer `--genome` list)
+run (`ltr_peel-plots`) and adding a genome to an earlier run (rerun in the same folder with the longer `--genome` list)
 both need `--keep-intermediates` on that run. Every file and column: [docs/outputs.md](docs/outputs.md).
 
 ## How good is it
 
-In short: in simulated genomes, where every element is known, LTRquest found the most nested elements and, with
+In short: in simulated genomes, where every element is known, ltr_peel found the most nested elements and, with
 DANTE_LTR, the most old ones, with few false calls. On real genomes it also calls many elements that curated libraries
 do not annotate, so other tools build cleaner repeat libraries.
 
-![LTRquest and eight other callers on simulated and real genomes](docs/images/benchmark_summary.png)
+![ltr_peel and eight other callers on simulated and real genomes](docs/images/benchmark_summary.png)
 
 | Panel | What it asks | What is counted |
 |---|---|---|
@@ -146,19 +146,19 @@ also masks sequence the curated library leaves unmasked, which can include real 
 Gray "tool failed" cells mark runs that did not finish
 within our 36 h / 200 GB limits or ended with an error, and "not evaluated" a scoring step that would have run past
 36 h ([details](benchmarks/comparison/README.md#runs-and-steps-that-did-not-finish)). The simulations come from
-PrinTE, which shares an author with LTRquest, and LTRquest was tuned on PrinTE simulations and on rice.
+PrinTE, which shares an author with LTR_peel, and LTR_peel was tuned on PrinTE simulations and on rice.
 
-- **Nested elements.** LTRquest found 0.94 of the simulated elements that a later insertion had split in two, the
+- **Nested elements.** LTR_peel found 0.94 of the simulated elements that a later insertion had split in two, the
   other eight tools at most 0.79 (HiRepEat). It had the highest F1 for every kind of element (F1 is high only when few
   elements are missed and few calls are false), while HiTE had the highest precision, the share of calls that were
   right (both in B).
-- **Old elements.** When the two LTRs had diverged to K2P 0.17 (about 85% identical), LTRquest still found 0.90-0.91
+- **Old elements.** When the two LTRs had diverged to K2P 0.17 (about 85% identical), LTR_peel still found 0.90-0.91
   of all simulated elements, the other tools at most 0.57. Its recall (the share found) halved only at K2P 0.32-0.33,
   against 0.17-0.18 for HiRepEat, the runner-up among tools that search for LTR pairs. C shows only the elements with
-  protein domains, where at K2P 0.17 LTRquest found 0.96 and DANTE_LTR 0.71.
+  protein domains, where at K2P 0.17 LTR_peel found 0.96 and DANTE_LTR 0.71.
 - **The exception is DANTE_LTR**, which starts from protein domains: it found fewer young elements but more of the
   oldest ones that carry protein domains (0.54 against 0.49 at K2P 0.33, 0.39 against 0.32 at K2P 0.37; C).
-- **Real genomes.** A library of LTRquest's elements masked nearly all curated LTR-RT sequence (recall 0.99-1.00) in
+- **Real genomes.** A library of LTR_peel's elements masked nearly all curated LTR-RT sequence (recall 0.99-1.00) in
   *A. thaliana*, rice and zebra finch, but only 0.42, 0.52 and 0.29 of what it masked was curated LTR-RT (precision),
   against 0.86, 0.82 and 0.62 for HiTE (D).
 - **Curated families.** The same library recovered the most curated LTR families in 4 of 5 genomes (0.80-0.89 in
@@ -190,9 +190,9 @@ Benchmark runs at 16 threads, made without plots, which add up to a fifth:
 | maize | 2.18 Gb | 6.8 h | 92.6 GB |
 | gorilla | 3.55 Gb | 33.4 h | 38.5 GB |
 
-The server was shared and its load varied, so treat the times as rough. On the genomes over 1 Gb LTRquest kept 12-15
+The server was shared and its load varied, so treat the times as rough. On the genomes over 1 Gb LTR_peel kept 12-15
 of its 16 threads busy, so more threads may help. Gorilla, the largest genome, was also searched twice: more than 10%
-of its first-pass calls were false positives, so LTRquest masked them and searched the whole genome again
+of its first-pass calls were false positives, so LTR_peel masked them and searched the whole genome again
 (`--fp-mask-threshold`).
 
 Strand recovery is off by default. The usual steps give a strand to most elements (65-72% in three grass genomes);
@@ -201,7 +201,7 @@ half times as long as detection (for example 4.8 h after 6.8 h of detection on 5
 
 ## More
 
-- Every option: `ltrquest --help-all`
+- Every option: `LTR_peel --help-all`
 - Every output file and column: [docs/outputs.md](docs/outputs.md)
 - Install routes, containers, clusters without internet: [docs/install.md](docs/install.md)
 - Many genomes, or a cluster, with Nextflow: [docs/nextflow.md](docs/nextflow.md)
@@ -211,14 +211,14 @@ half times as long as detection (for example 4.8 h after 6.8 h of detection on 5
 
 ## Citing
 
-LTRquest was extracted from [synLTR](https://github.com/cwb14/synLTR) and shares
+LTR_peel was extracted from [synLTR](https://github.com/cwb14/synLTR) and shares
 its false-positive family caller with
 [Kmer2LTR](https://github.com/cwb14/Kmer2LTR). If you use it, please cite this
 repository.
 
 The FastLTR caller is adapted from Gene Myers' FastLTR in
 [FASTAN](https://github.com/thegenemyers/FASTAN), under FASTAN's license
-([`src/ltrquest/fastltr/LICENSE.FASTAN`](src/ltrquest/fastltr/LICENSE.FASTAN)),
+([`src/LTR_peel/fastltr/LICENSE.FASTAN`](src/LTR_peel/fastltr/LICENSE.FASTAN)),
 and takes two fixes from [HiRepEat](https://github.com/AnantMaheshwari/HiRepEat).
 If your results rely on it, please also cite HiRepEat: Maheshwari A, Myers EW,
 et al. Efficient and precise discovery of LTR-retrotransposon families using
