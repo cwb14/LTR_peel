@@ -20,13 +20,13 @@ def test_the_flag_parses(driver):
 
 def test_a_missing_blastn_fails_before_any_work(driver, toy_genome, tmp_path):
     result = run("bash", str(driver), "--genome", str(toy_genome), "--reboundary",
-                 env={"PATH": "/usr/bin:/bin", "LTRQUEST_PYTHON": "/nonexistent/python"},
+                 env={"PATH": "/usr/bin:/bin", "LTR_PEEL_PYTHON": "/nonexistent/python"},
                  cwd=tmp_path)
     assert result.returncode != 0 and "blastn" in result.stderr
 
 
 def test_an_incompatible_kmer2ltr_stops_the_run_before_detection(driver, toy_genome, tmp_path):
-    """A stand-in interpreter imports ltrquest fine but reports a Kmer2LTR that
+    """A stand-in interpreter imports ltr_peel fine but reports a Kmer2LTR that
     force-pairs credited flanks: the run must stop with exit 3, not detect for hours
     and then keep the calls as detected."""
     bin_ = tmp_path / "bin"
@@ -42,7 +42,7 @@ def test_an_incompatible_kmer2ltr_stops_the_run_before_detection(driver, toy_gen
     py.chmod(0o755)
     result = run("bash", str(driver), "--genome", str(toy_genome), "--reboundary",
                  "--strand-recovery", "off",
-                 env={"PATH": f"{bin_}:/usr/bin:/bin", "LTRQUEST_PYTHON": str(py)}, cwd=tmp_path)
+                 env={"PATH": f"{bin_}:/usr/bin:/bin", "LTR_PEEL_PYTHON": str(py)}, cwd=tmp_path)
     assert result.returncode == 3 and "force-pairs credited flanks" in result.stderr
 
 
@@ -62,7 +62,7 @@ def test_a_plain_run_names_the_off_switch_when_kmer2ltr_is_too_old(driver, toy_g
                   'exit 0\n')
     py.chmod(0o755)
     result = run("bash", str(driver), "--genome", str(toy_genome),
-                 env={"PATH": f"{bin_}:/usr/bin:/bin", "LTRQUEST_PYTHON": str(py)}, cwd=tmp_path)
+                 env={"PATH": f"{bin_}:/usr/bin:/bin", "LTR_PEEL_PYTHON": str(py)}, cwd=tmp_path)
     assert result.returncode == 3 and "--no-reboundary" in result.stderr
 
 

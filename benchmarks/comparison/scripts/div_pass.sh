@@ -20,8 +20,8 @@ while :; do
         d=${d%/}; ds=$(basename "$(dirname "$d")"); tool=$(basename "$d")
         [ -e "$d/.done" ] || continue
         [ -s "eval/sim/$ds/$tool.metrics.tsv" ] || T+=("eval/sim/$ds/$tool.metrics.tsv")
-        if [ "$tool" = ltrquest ] && [ ! -s "eval/sim/$ds/ltrquest_hc.metrics.tsv" ]; then
-            T+=("eval/sim/$ds/ltrquest_hc.metrics.tsv")
+        if [ "$tool" = ltr_peel ] && [ ! -s "eval/sim/$ds/ltr_peel_hc.metrics.tsv" ]; then
+            T+=("eval/sim/$ds/ltr_peel_hc.metrics.tsv")
         fi
     done
     if [ ${#T[@]} -gt 0 ]; then

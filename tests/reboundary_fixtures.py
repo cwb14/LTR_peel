@@ -1,4 +1,4 @@
-"""A synthetic LTR-RT family with truncated calls, written as LTRquest writes a run.
+"""A synthetic LTR-RT family with truncated calls, written as LTR_peel writes a run.
 
 One contig, `chrS`. Family `syn_fam00001` (LTR 400 bp, TG..CA, internal 2 kb) has
 13 intact copies whose calls are right and six whose calls stop short at an
@@ -22,7 +22,7 @@ one element called twice:
                        true right end (one element, two staggered calls)
 
 Every copy has a 5 bp TSD at its true ends except `decayed`, an intact copy whose
-TSD was broken. Tables carry LTRquest's 34 columns; FASTAs store minus-oriented
+TSD was broken. Tables carry LTR_peel's 34 columns; FASTAs store minus-oriented
 records reverse-complemented and mask the host's nested inner with `N` (depth 0).
 """
 
@@ -33,8 +33,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List
 
-from ltrquest.detect import revcomp as revcomp_record
-from ltrquest.kmer2ltr import COLUMNS
+from ltr_peel.detect import revcomp as revcomp_record
+from ltr_peel.kmer2ltr import COLUMNS
 
 CHROM = "chrS"
 FAMILY = "syn_fam00001"
@@ -332,7 +332,7 @@ def _row(e: Element) -> List[str]:
 def members(fx: Fixture):
     """The fixture's elements as ltr_model.Member objects, as reboundary_io
     would load them."""
-    from ltrquest.ltr_model import Member
+    from ltr_peel.ltr_model import Member
     return [Member(prefix=fx.prefix, name=e.name, chrom=CHROM, start=e.start,
                    end=e.end, l1=e.l1, r0=e.r0, strand=e.strand,
                    orientation="-" if e.strand == "-" else "+", family=e.family,

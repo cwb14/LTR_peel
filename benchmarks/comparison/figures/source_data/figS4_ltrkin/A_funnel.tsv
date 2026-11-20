@@ -1,0 +1,9 @@
+step	loci
+haplotype 2 pooled loci	696
+true ends known, exact TSD (true_confirmed, te_flag ok)	608
+TG...CA at the true ends	210
+both LTRs, lengths within 5%, identity >= 0.95 (LTR_peel's LTRs)	182
+TSD once at the haplotype 1 empty site	167
+reads: >= 4 carrying and >= 4 skipping, >= 1 kb flank each side	93
+typical: every finished caller at its most frequent outcome	2
+no other pooled locus within 5000 bp	2

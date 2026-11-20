@@ -1,7 +1,7 @@
 # Evaluation workflow of the ltrkin_geno benchmark (genotyping of real insertion polymorphisms with ltrkin).
 #
 # Tool runs go through the tool queue (runs/jobs.tsv). This workflow evaluates whatever has finished: OK[ds] = the
-# tools with runs/<ds>/<tool>/.done when the DAG is built (ltrquest_hc with ltrquest), so rerun it as runs complete.
+# tools with runs/<ds>/<tool>/.done when the DAG is built (ltr_peel_hc with ltr_peel), so rerun it as runs complete.
 # The score tables are a target only once every tool run has ended (.done or .failed): a DNF is a row of its own.
 #   cd $LG && TMPDIR=$LG/tmp/eval nice -n 10 $SMK -s workflow/Snakefile -d $LG --cores 32 \
 #       --resources mem_mb=64000 --keep-going --rerun-incomplete
@@ -32,7 +32,7 @@ S = f"{LG}/scripts"
 CONDA_SH = '"$(conda info --base)/etc/profile.d/conda.sh"'
 K2P_THREADS = 16
 K2P_MAX_LEN = 100000                           # fallback only: spans longer than this skip Kmer2LTR (as approach 4)
-SRC = {"ltrquest_hc": "ltrquest"}              # derived call set -> the run it is read from
+SRC = {"ltr_peel_hc": "ltr_peel"}              # derived call set -> the run it is read from
 DS = list(DATASETS)                            # camara_hap2 (primary), camara_hap1 (replicate)
 TABLES = ["recall", "boundaries", "ltrkin_yield", "false_e", "by_length", "solo", "pool"]
 
@@ -71,13 +71,13 @@ def primary_ok(ds):
 
 
 def native_gff(ds):
-    return f"runs/{ds}/ltrquest/{ds}_LTRs_all_depth_LTR_cleaned.gff3"
+    return f"runs/{ds}/ltr_peel/{ds}_LTRs_all_depth_LTR_cleaned.gff3"
 
 
-NATIVE = [d for d in DS if "ltrquest" in OK[d] and os.path.exists(native_gff(d))]
+NATIVE = [d for d in DS if "ltr_peel" in OK[d] and os.path.exists(native_gff(d))]
 for _ds in DS:
     print(f"ltrkin_geno: {_ds}: {len(OK[_ds])} call sets ready: {' '.join(OK[_ds]) or 'none'}", file=sys.stderr)
-    if "ltrquest" in OK[_ds] and _ds not in NATIVE:
+    if "ltr_peel" in OK[_ds] and _ds not in NATIVE:
         print(f"warning: {native_gff(_ds)} not found; native check of {_ds} skipped", file=sys.stderr)
 for _x in LATE:
     print(f"ltrkin_geno: going ahead without {_x} (still running)", file=sys.stderr)
@@ -87,7 +87,7 @@ if not ALL_ENDED:
 
 def ltrkin_logs():
     logs = [f"{run}/{d}/{t}.log" for d in DS for t in OK[d] for run in ("ltrkin", "control")]
-    return logs + [f"check/{d}/ltrquest_native.log" for d in NATIVE]
+    return logs + [f"check/{d}/ltr_peel_native.log" for d in NATIVE]
 
 
 def targets():
@@ -263,19 +263,19 @@ rule ltrkin_control:  # common-background control run
            "-t {LTRKIN_THREADS} -v {input.bam} 2> {log}"
 
 
-rule native:  # LTRquest's own GFF3 (normalized names renamed) must give the converter's genotypes
-    input: gff=lambda w: native_gff(w.ds), done="runs/{ds}/ltrquest/.done", a="ltrkin/{ds}/ltrquest.genotypes.tsv",
+rule native:  # LTR_peel's own GFF3 (normalized names renamed) must give the converter's genotypes
+    input: gff=lambda w: native_gff(w.ds), done="runs/{ds}/ltr_peel/.done", a="ltrkin/{ds}/ltr_peel.genotypes.tsv",
            ref=dsfile("ref"), bam=dsfile("bam"), bai=dsfile("bam", ".bai")
     output: tsv="check/{ds}/native.tsv", diffs="check/{ds}/native.tsv.diffs.tsv",
-            gff="check/{ds}/ltrquest_native.gff3", gt="check/{ds}/ltrquest_native.genotypes.tsv",
-            vcf="check/{ds}/ltrquest_native.vcf.gz"
-    log: ltrkin="check/{ds}/ltrquest_native.log", steps="logs/check/{ds}/native.log"
+            gff="check/{ds}/ltr_peel_native.gff3", gt="check/{ds}/ltr_peel_native.genotypes.tsv",
+            vcf="check/{ds}/ltr_peel_native.vcf.gz"
+    log: ltrkin="check/{ds}/ltr_peel_native.log", steps="logs/check/{ds}/native.log"
     benchmark: "logs/bench/native/{ds}.tsv"
     threads: LTRKIN_THREADS
     shell:
         "{PY} {S}/native_check.py rename --gff {input.gff} --datadir data/{wildcards.ds} --out {output.gff} "
         "2> {log.steps} && "
-        "{LTRKIN} genotype -r {input.ref} -a {output.gff} -o check/{wildcards.ds}/ltrquest_native "
+        "{LTRKIN} genotype -r {input.ref} -a {output.gff} -o check/{wildcards.ds}/ltr_peel_native "
         "-t {LTRKIN_THREADS} -v {input.bam} 2> {log.ltrkin} && "
         "{PY} {S}/native_check.py compare --a {input.a} --b {output.gt} --out {output.tsv} 2>> {log.steps}"
 

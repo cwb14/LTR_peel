@@ -2,12 +2,12 @@ panel	quantity	value	source
 A	example host (S2 seed 1, 0-based half-open)	chr1:11858003-11868332 owiit_AC196151_4998 Copia +	sims/truth/S2_1.truth.tsv
 A	example tenant	chr1:11861453-11866676 Os0336 Gypsy -	sims/truth/S2_1.truth.tsv
 A	example non-nested element	chr1:11885081-11890067 ajit_AC191382_3096 Copia + (LTR 265 bp, TSD CGAGG, 16749 bp from the host)	sims/truth/S2_1.truth.tsv
-A	tools matching host / tenant / non-nested element	LTRquest,Look4LTRs,HiRepEat,HiTE / LTRquest,LTR_retriever,LTRharvest,LTR_Finder,Look4LTRs,HiRepEat,HiTE,DANTE_LTR / LTRquest,LTR_retriever,LTRharvest,LTR_Finder,Look4LTRs,HiRepEat,HiTE,LTRpred,DANTE_LTR	score_elements.match RO 0.9
+A	tools matching host / tenant / non-nested element	LTR_peel,Look4LTRs,HiRepEat,HiTE / LTR_peel,LTR_retriever,LTRharvest,LTR_Finder,Look4LTRs,HiRepEat,HiTE,DANTE_LTR / LTR_peel,LTR_retriever,LTRharvest,LTR_Finder,Look4LTRs,HiRepEat,HiTE,LTRpred,DANTE_LTR	score_elements.match RO 0.9
 A	other tools finding the host / non-nested element here; median over all S2_1 hosts / non-nested	3 / 8; 3 / 6	score_elements.match RO 0.9
-A	LTRquest reported features (source)	strand: calls tsv strand (clean_ltr.tsv); LTR: calls tsv lltr_end/rltr_start; TSD: clean_ltr.tsv tsd sequence, tsd_offset 0,0 (flanks drawn adjacent); domains: S2_1_LTRs_all_depth_LTR_cleaned.gff3 protein_match (1-based)	runs/S2_1/ltrquest/ and calls/S2_1/ltrquest.tsv
-A	LTRquest call 11858003-11868332 (0-based): strand / LTR ends / TSDs / domains	+ / 11858397,11867938 / [(11857998, 11858003), (11868332, 11868337)] / GAG 11858696-11858975, PROT 11859524-11859740, INT 11859926-11860526, RT 11866663-11867194, RH 11867461-11867842	runs/S2_1/ltrquest/
-A	LTRquest call 11861453-11866676 (0-based): strand / LTR ends / TSDs / domains	- / 11861811,11866318 / [(11861448, 11861453), (11866676, 11866681)] / CHD 11861834-11862056, INT 11862143-11862776, RH 11863287-11863722, RT 11863911-11864430, PROT 11864778-11865000, GAG 11865540-11865729	runs/S2_1/ltrquest/
-A	LTRquest call 11885081-11890067 (0-based): strand / LTR ends / TSDs / domains	+ / 11885346,11889802 / [(11885076, 11885081), (11890067, 11890072)] / GAG 11885688-11885967, PROT 11886588-11886804, INT 11886990-11887590, RT 11888301-11888925, RH 11889322-11889703	runs/S2_1/ltrquest/
+A	LTR_peel reported features (source)	strand: calls tsv strand (clean_ltr.tsv); LTR: calls tsv lltr_end/rltr_start; TSD: clean_ltr.tsv tsd sequence, tsd_offset 0,0 (flanks drawn adjacent); domains: S2_1_LTRs_all_depth_LTR_cleaned.gff3 protein_match (1-based)	runs/S2_1/ltr_peel/ and calls/S2_1/ltr_peel.tsv
+A	LTR_peel call 11858003-11868332 (0-based): strand / LTR ends / TSDs / domains	+ / 11858397,11867938 / [(11857998, 11858003), (11868332, 11868337)] / GAG 11858696-11858975, PROT 11859524-11859740, INT 11859926-11860526, RT 11866663-11867194, RH 11867461-11867842	runs/S2_1/ltr_peel/
+A	LTR_peel call 11861453-11866676 (0-based): strand / LTR ends / TSDs / domains	- / 11861811,11866318 / [(11861448, 11861453), (11866676, 11866681)] / CHD 11861834-11862056, INT 11862143-11862776, RH 11863287-11863722, RT 11863911-11864430, PROT 11864778-11865000, GAG 11865540-11865729	runs/S2_1/ltr_peel/
+A	LTR_peel call 11885081-11890067 (0-based): strand / LTR ends / TSDs / domains	+ / 11885346,11889802 / [(11885076, 11885081), (11890067, 11890072)] / GAG 11885688-11885967, PROT 11886588-11886804, INT 11886990-11887590, RT 11888301-11888925, RH 11889322-11889703	runs/S2_1/ltr_peel/
 A	LTR_retriever reported features (source)	strand: pass.list Strand (calls tsv); LTR: pass.list (calls tsv); TSD: S2_1.fa.mod.pass.list 5_TSD / 3_TSD (1-based); domains: none	runs/S2_1/ltr_retriever/ and calls/S2_1/ltr_retriever.tsv
 A	LTR_retriever call 11861453-11866676 (0-based): strand / LTR ends / TSDs / domains	- / 11861811,11866318 / [(11861448, 11861453), (11866676, 11866681)] / none	runs/S2_1/ltr_retriever/
 A	LTR_retriever call 11885081-11890067 (0-based): strand / LTR ends / TSDs / domains	+ / 11885346,11889802 / [(11885076, 11885081), (11890067, 11890072)] / none	runs/S2_1/ltr_retriever/
@@ -35,21 +35,21 @@ A	DANTE_LTR reported features (source)	strand: dante_ltr.gff3 transposable_eleme
 A	DANTE_LTR call 11861453-11866676 (0-based): strand / LTR ends / TSDs / domains	- / 11861811,11866318 / [(11861448, 11861453), (11866676, 11866681)] / CHD 11861843-11862056, INT 11862143-11863056, RH 11863287-11863722, RT 11863911-11864430, PROT 11864778-11865000, GAG 11865540-11865893	runs/S2_1/dante_ltr/
 A	DANTE_LTR call 11885081-11890067 (0-based): strand / LTR ends / TSDs / domains	+ / 11885346,11889802 / [(11885076, 11885081), (11890067, 11890072)] / GAG 11885688-11885967, PROT 11886588-11886804, INT 11886990-11887590, RT 11888301-11889044, RH 11889322-11889703	runs/S2_1/dante_ltr/
 A	broken axis: segments drawn (0-based) and omitted stretch (no truth element, no call of any tool)	chr1:11857500-11869000 | chr1:11884600-11890600; omitted 15600 bp	this script (asserted)
-B	S2 LTRquest host precision (mean of 3 genomes; SD 0.0011)	0.9539	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltrquest system=nesting cls=host precision_mean, precision_sd
-B	S2 LTRquest host recall (mean of 3 genomes; SD 0.0041)	0.9360	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltrquest system=nesting cls=host recall_mean, recall_sd
-B	S2 LTRquest host f1 (mean of 3 genomes; SD 0.0015)	0.9449	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltrquest system=nesting cls=host f1_mean, f1_sd
-B	S2 LTRquest tenant precision (mean of 3 genomes; SD 0.0026)	0.9889	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltrquest system=nesting cls=tenant precision_mean, precision_sd
-B	S2 LTRquest tenant recall (mean of 3 genomes; SD 0.0019)	0.9862	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltrquest system=nesting cls=tenant recall_mean, recall_sd
-B	S2 LTRquest tenant f1 (mean of 3 genomes; SD 0.0023)	0.9875	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltrquest system=nesting cls=tenant f1_mean, f1_sd
-B	S2 LTRquest unnested precision (mean of 3 genomes; SD 0.0029)	0.9670	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltrquest system=nesting cls=unnested precision_mean, precision_sd
-B	S2 LTRquest unnested recall (mean of 3 genomes; SD 0.0007)	0.9670	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltrquest system=nesting cls=unnested recall_mean, recall_sd
-B	S2 LTRquest unnested f1 (mean of 3 genomes; SD 0.0018)	0.9670	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltrquest system=nesting cls=unnested f1_mean, f1_sd
-B	S2 LTRquest coding precision (mean of 3 genomes; SD 0.0007)	0.9781	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltrquest system=protein cls=coding precision_mean, precision_sd
-B	S2 LTRquest coding recall (mean of 3 genomes; SD 0.0003)	0.9757	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltrquest system=protein cls=coding recall_mean, recall_sd
-B	S2 LTRquest coding f1 (mean of 3 genomes; SD 0.0005)	0.9769	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltrquest system=protein cls=coding f1_mean, f1_sd
-B	S2 LTRquest proteinless precision (mean of 3 genomes; SD 0.0132)	0.9410	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltrquest system=protein cls=proteinless precision_mean, precision_sd
-B	S2 LTRquest proteinless recall (mean of 3 genomes; SD 0.0075)	0.9072	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltrquest system=protein cls=proteinless recall_mean, recall_sd
-B	S2 LTRquest proteinless f1 (mean of 3 genomes; SD 0.0087)	0.9238	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltrquest system=protein cls=proteinless f1_mean, f1_sd
+B	S2 LTR_peel host precision (mean of 3 genomes; SD 0.0011)	0.9539	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_peel system=nesting cls=host precision_mean, precision_sd
+B	S2 LTR_peel host recall (mean of 3 genomes; SD 0.0041)	0.9360	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_peel system=nesting cls=host recall_mean, recall_sd
+B	S2 LTR_peel host f1 (mean of 3 genomes; SD 0.0015)	0.9449	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_peel system=nesting cls=host f1_mean, f1_sd
+B	S2 LTR_peel tenant precision (mean of 3 genomes; SD 0.0026)	0.9889	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_peel system=nesting cls=tenant precision_mean, precision_sd
+B	S2 LTR_peel tenant recall (mean of 3 genomes; SD 0.0019)	0.9862	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_peel system=nesting cls=tenant recall_mean, recall_sd
+B	S2 LTR_peel tenant f1 (mean of 3 genomes; SD 0.0023)	0.9875	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_peel system=nesting cls=tenant f1_mean, f1_sd
+B	S2 LTR_peel unnested precision (mean of 3 genomes; SD 0.0029)	0.9670	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_peel system=nesting cls=unnested precision_mean, precision_sd
+B	S2 LTR_peel unnested recall (mean of 3 genomes; SD 0.0007)	0.9670	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_peel system=nesting cls=unnested recall_mean, recall_sd
+B	S2 LTR_peel unnested f1 (mean of 3 genomes; SD 0.0018)	0.9670	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_peel system=nesting cls=unnested f1_mean, f1_sd
+B	S2 LTR_peel coding precision (mean of 3 genomes; SD 0.0007)	0.9781	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_peel system=protein cls=coding precision_mean, precision_sd
+B	S2 LTR_peel coding recall (mean of 3 genomes; SD 0.0003)	0.9757	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_peel system=protein cls=coding recall_mean, recall_sd
+B	S2 LTR_peel coding f1 (mean of 3 genomes; SD 0.0005)	0.9769	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_peel system=protein cls=coding f1_mean, f1_sd
+B	S2 LTR_peel proteinless precision (mean of 3 genomes; SD 0.0132)	0.9410	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_peel system=protein cls=proteinless precision_mean, precision_sd
+B	S2 LTR_peel proteinless recall (mean of 3 genomes; SD 0.0075)	0.9072	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_peel system=protein cls=proteinless recall_mean, recall_sd
+B	S2 LTR_peel proteinless f1 (mean of 3 genomes; SD 0.0087)	0.9238	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_peel system=protein cls=proteinless f1_mean, f1_sd
 B	S2 LTR_retriever host precision (mean of 3 genomes; SD 0.0039)	0.9618	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_retriever system=nesting cls=host precision_mean, precision_sd
 B	S2 LTR_retriever host recall (mean of 3 genomes; SD 0.0088)	0.3156	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_retriever system=nesting cls=host recall_mean, recall_sd
 B	S2 LTR_retriever host f1 (mean of 3 genomes; SD 0.0099)	0.4752	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 tool=ltr_retriever system=nesting cls=host f1_mean, f1_sd
@@ -175,7 +175,7 @@ B	true elements in class tenants (S2, 3 genomes summed; header n)	7825	experimen
 B	true elements in class hosts (S2, 3 genomes summed; header n)	6059	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 n_truth (system nesting, cls host)
 B	true elements in class coding (S2, 3 genomes summed; header n)	37895	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 n_truth (system protein, cls coding)
 B	true elements in class protein-less (S2, 3 genomes summed; header n)	6048	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 n_truth (system protein, cls proteinless)
-B	S2 LTRquest largest across-genome SD over the drawn classes and metrics	0.0132	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 *_sd
+B	S2 LTR_peel largest across-genome SD over the drawn classes and metrics	0.0132	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 *_sd
 B	S2 LTR_retriever largest across-genome SD over the drawn classes and metrics	0.0099	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 *_sd
 B	S2 LTRharvest largest across-genome SD over the drawn classes and metrics	0.0174	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 *_sd
 B	S2 LTR_Finder largest across-genome SD over the drawn classes and metrics	0.0108	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 *_sd
@@ -184,19 +184,19 @@ B	S2 HiRepEat largest across-genome SD over the drawn classes and metrics	0.0143
 B	S2 HiTE largest across-genome SD over the drawn classes and metrics	0.0203	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 *_sd
 B	S2 LTRpred largest across-genome SD over the drawn classes and metrics	0.0990	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 *_sd
 B	S2 DANTE_LTR largest across-genome SD over the drawn classes and metrics	0.0124	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 *_sd
-C	LTRquest coding pooled d50 (K2P at which pooled recall halves; dot)	0.3321	computed: scripts/div_score.d50 on pooled coding counts (experiments/nonauto/div_elements.tsv)
-C	LTRquest coding d50 in div_d50.tsv [95% CI] (x = class median over seeds), for comparison	0.3320 [0.3274, 0.3368]	experiments/nonauto/div_d50.tsv
-C	LTRquest timepoint 0 coding pooled recall [95% CI] at median K2P 0.0000	0.9996 [0.9989, 1.0000] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
-C	LTRquest timepoint 1 coding pooled recall [95% CI] at median K2P 0.0100	0.9980 [0.9967, 0.9991] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
-C	LTRquest timepoint 2 coding pooled recall [95% CI] at median K2P 0.0518	0.9963 [0.9940, 0.9983] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
-C	LTRquest timepoint 3 coding pooled recall [95% CI] at median K2P 0.0925	0.9934 [0.9904, 0.9963] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
-C	LTRquest timepoint 4 coding pooled recall [95% CI] at median K2P 0.1330	0.9871 [0.9826, 0.9915] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
-C	LTRquest timepoint 5 coding pooled recall [95% CI] at median K2P 0.1734	0.9630 [0.9558, 0.9699] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
-C	LTRquest timepoint 6 coding pooled recall [95% CI] at median K2P 0.2136	0.9061 [0.8942, 0.9183] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
-C	LTRquest timepoint 7 coding pooled recall [95% CI] at median K2P 0.2540	0.8016 [0.7844, 0.8188] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
-C	LTRquest timepoint 8 coding pooled recall [95% CI] at median K2P 0.2941	0.6602 [0.6395, 0.6805] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
-C	LTRquest timepoint 9 coding pooled recall [95% CI] at median K2P 0.3333	0.4949 [0.4750, 0.5161] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
-C	LTRquest timepoint 10 coding pooled recall [95% CI] at median K2P 0.3732	0.3236 [0.3065, 0.3418] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
+C	LTR_peel coding pooled d50 (K2P at which pooled recall halves; dot)	0.3321	computed: scripts/div_score.d50 on pooled coding counts (experiments/nonauto/div_elements.tsv)
+C	LTR_peel coding d50 in div_d50.tsv [95% CI] (x = class median over seeds), for comparison	0.3320 [0.3274, 0.3368]	experiments/nonauto/div_d50.tsv
+C	LTR_peel timepoint 0 coding pooled recall [95% CI] at median K2P 0.0000	0.9996 [0.9989, 1.0000] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
+C	LTR_peel timepoint 1 coding pooled recall [95% CI] at median K2P 0.0100	0.9980 [0.9967, 0.9991] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
+C	LTR_peel timepoint 2 coding pooled recall [95% CI] at median K2P 0.0518	0.9963 [0.9940, 0.9983] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
+C	LTR_peel timepoint 3 coding pooled recall [95% CI] at median K2P 0.0925	0.9934 [0.9904, 0.9963] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
+C	LTR_peel timepoint 4 coding pooled recall [95% CI] at median K2P 0.1330	0.9871 [0.9826, 0.9915] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
+C	LTR_peel timepoint 5 coding pooled recall [95% CI] at median K2P 0.1734	0.9630 [0.9558, 0.9699] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
+C	LTR_peel timepoint 6 coding pooled recall [95% CI] at median K2P 0.2136	0.9061 [0.8942, 0.9183] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
+C	LTR_peel timepoint 7 coding pooled recall [95% CI] at median K2P 0.2540	0.8016 [0.7844, 0.8188] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
+C	LTR_peel timepoint 8 coding pooled recall [95% CI] at median K2P 0.2941	0.6602 [0.6395, 0.6805] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
+C	LTR_peel timepoint 9 coding pooled recall [95% CI] at median K2P 0.3333	0.4949 [0.4750, 0.5161] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
+C	LTR_peel timepoint 10 coding pooled recall [95% CI] at median K2P 0.3732	0.3236 [0.3065, 0.3418] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
 C	LTR_retriever coding pooled d50 (K2P at which pooled recall halves; dot)	0.0503	computed: scripts/div_score.d50 on pooled coding counts (experiments/nonauto/div_elements.tsv)
 C	LTR_retriever coding d50 in div_d50.tsv [95% CI] (x = class median over seeds), for comparison	0.0503 [0.0481, 0.0526]	experiments/nonauto/div_d50.tsv
 C	LTR_retriever timepoint 0 coding pooled recall [95% CI] at median K2P 0.0000	0.8761 [0.8532, 0.8979] (n 4567)	computed from experiments/nonauto/div_elements.tsv cls=coding (= div_class.tsv sums)
@@ -305,19 +305,19 @@ C	coding element families (unit of the resampling)	587	experiments/nonauto/div_e
 C	coding elements per timepoint (3 genomes pooled)	4567	experiments/nonauto/div_elements.tsv
 C	documented identity floor 85% as K2P (simulation model)	0.168	computed (substitutions only, transitions = transversions); fig2_divergence memo
 C	documented identity floor 70% as K2P (simulation model)	0.388	computed (substitutions only, transitions = transversions); fig2_divergence memo
-D	LTRquest protein-less pooled d50 (K2P at which pooled recall halves; dot)	0.1453	computed: scripts/div_score.d50 on pooled proteinless counts (experiments/nonauto/div_elements.tsv)
-D	LTRquest protein-less d50 in div_d50.tsv [95% CI] (x = class median over seeds), for comparison	0.1454 [0.1249, 0.1659]	experiments/nonauto/div_d50.tsv
-D	LTRquest timepoint 0 protein-less pooled recall [95% CI] at median K2P 0.0000	0.9801 [0.9649, 0.9915] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
-D	LTRquest timepoint 1 protein-less pooled recall [95% CI] at median K2P 0.0106	0.9188 [0.8840, 0.9502] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
-D	LTRquest timepoint 2 protein-less pooled recall [95% CI] at median K2P 0.0519	0.8213 [0.7622, 0.8724] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
-D	LTRquest timepoint 3 protein-less pooled recall [95% CI] at median K2P 0.0920	0.7040 [0.6305, 0.7688] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
-D	LTRquest timepoint 4 protein-less pooled recall [95% CI] at median K2P 0.1334	0.5325 [0.4446, 0.6163] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
-D	LTRquest timepoint 5 protein-less pooled recall [95% CI] at median K2P 0.1745	0.3863 [0.3098, 0.4596] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
-D	LTRquest timepoint 6 protein-less pooled recall [95% CI] at median K2P 0.2132	0.2834 [0.2072, 0.3552] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
-D	LTRquest timepoint 7 protein-less pooled recall [95% CI] at median K2P 0.2538	0.1877 [0.1319, 0.2386] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
-D	LTRquest timepoint 8 protein-less pooled recall [95% CI] at median K2P 0.2919	0.1245 [0.0716, 0.1718] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
-D	LTRquest timepoint 9 protein-less pooled recall [95% CI] at median K2P 0.3312	0.0433 [0.0229, 0.0653] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
-D	LTRquest timepoint 10 protein-less pooled recall [95% CI] at median K2P 0.3706	0.0181 [0.0076, 0.0300] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
+D	LTR_peel protein-less pooled d50 (K2P at which pooled recall halves; dot)	0.1453	computed: scripts/div_score.d50 on pooled proteinless counts (experiments/nonauto/div_elements.tsv)
+D	LTR_peel protein-less d50 in div_d50.tsv [95% CI] (x = class median over seeds), for comparison	0.1454 [0.1249, 0.1659]	experiments/nonauto/div_d50.tsv
+D	LTR_peel timepoint 0 protein-less pooled recall [95% CI] at median K2P 0.0000	0.9801 [0.9649, 0.9915] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
+D	LTR_peel timepoint 1 protein-less pooled recall [95% CI] at median K2P 0.0106	0.9188 [0.8840, 0.9502] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
+D	LTR_peel timepoint 2 protein-less pooled recall [95% CI] at median K2P 0.0519	0.8213 [0.7622, 0.8724] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
+D	LTR_peel timepoint 3 protein-less pooled recall [95% CI] at median K2P 0.0920	0.7040 [0.6305, 0.7688] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
+D	LTR_peel timepoint 4 protein-less pooled recall [95% CI] at median K2P 0.1334	0.5325 [0.4446, 0.6163] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
+D	LTR_peel timepoint 5 protein-less pooled recall [95% CI] at median K2P 0.1745	0.3863 [0.3098, 0.4596] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
+D	LTR_peel timepoint 6 protein-less pooled recall [95% CI] at median K2P 0.2132	0.2834 [0.2072, 0.3552] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
+D	LTR_peel timepoint 7 protein-less pooled recall [95% CI] at median K2P 0.2538	0.1877 [0.1319, 0.2386] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
+D	LTR_peel timepoint 8 protein-less pooled recall [95% CI] at median K2P 0.2919	0.1245 [0.0716, 0.1718] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
+D	LTR_peel timepoint 9 protein-less pooled recall [95% CI] at median K2P 0.3312	0.0433 [0.0229, 0.0653] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
+D	LTR_peel timepoint 10 protein-less pooled recall [95% CI] at median K2P 0.3706	0.0181 [0.0076, 0.0300] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
 D	LTR_retriever protein-less pooled d50 (K2P at which pooled recall halves; dot)	0.0450	computed: scripts/div_score.d50 on pooled proteinless counts (experiments/nonauto/div_elements.tsv)
 D	LTR_retriever protein-less d50 in div_d50.tsv [95% CI] (x = class median over seeds), for comparison	0.0452 [0.0393, 0.0517]	experiments/nonauto/div_d50.tsv
 D	LTR_retriever timepoint 0 protein-less pooled recall [95% CI] at median K2P 0.0000	0.6841 [0.5909, 0.7746] (n 554)	computed from experiments/nonauto/div_elements.tsv cls=proteinless (= div_class.tsv sums)
@@ -451,6 +451,9 @@ E	arab Look4LTRs masking f1 [95% CI 0.2462, 0.4307]	0.3575	report/tables/masking
 E	arab LTR_Finder masking precision	0.6832	report/tables/masking.tsv prec (role primary, ltr_finder.intact)
 E	arab LTR_Finder masking recall	0.9109	report/tables/masking.tsv sens (role primary, ltr_finder.intact)
 E	arab LTR_Finder masking f1 [95% CI 0.7535, 0.7983]	0.7808	report/tables/masking.tsv F1 (role primary, ltr_finder.intact)
+E	arab LTR_peel masking precision	0.4171	report/tables/masking.tsv prec (role primary, ltr_peel.intact)
+E	arab LTR_peel masking recall	0.9969	report/tables/masking.tsv sens (role primary, ltr_peel.intact)
+E	arab LTR_peel masking f1 [95% CI 0.5026, 0.6316]	0.5882	report/tables/masking.tsv F1 (role primary, ltr_peel.intact)
 E	arab LTR_retriever masking precision	0.8588	report/tables/masking.tsv prec (role primary, ltr_retriever.intact)
 E	arab LTR_retriever masking recall	0.9223	report/tables/masking.tsv sens (role primary, ltr_retriever.intact)
 E	arab LTR_retriever masking f1 [95% CI 0.8726, 0.8995]	0.8894	report/tables/masking.tsv F1 (role primary, ltr_retriever.intact)
@@ -460,9 +463,6 @@ E	arab LTRharvest masking f1 [95% CI 0.2755, 0.4712]	0.3940	report/tables/maskin
 E	arab LTRpred masking precision	0.4152	report/tables/masking.tsv prec (role primary, ltrpred.intact)
 E	arab LTRpred masking recall	0.9333	report/tables/masking.tsv sens (role primary, ltrpred.intact)
 E	arab LTRpred masking f1 [95% CI 0.4684, 0.6330]	0.5747	report/tables/masking.tsv F1 (role primary, ltrpred.intact)
-E	arab LTRquest masking precision	0.4171	report/tables/masking.tsv prec (role primary, ltrquest.intact)
-E	arab LTRquest masking recall	0.9969	report/tables/masking.tsv sens (role primary, ltrquest.intact)
-E	arab LTRquest masking f1 [95% CI 0.5026, 0.6316]	0.5882	report/tables/masking.tsv F1 (role primary, ltrquest.intact)
 E	finch HiTE masking precision	0.6232	report/tables/masking.tsv prec (role primary, hite.intact)
 E	finch HiTE masking recall	0.7772	report/tables/masking.tsv sens (role primary, hite.intact)
 E	finch HiTE masking f1 [95% CI 0.6416, 0.7347]	0.6917	report/tables/masking.tsv F1 (role primary, hite.intact)
@@ -472,15 +472,15 @@ E	finch Look4LTRs masking f1 [95% CI 0.3286, 0.4217]	0.3739	report/tables/maskin
 E	finch LTR_Finder masking precision	0.3367	report/tables/masking.tsv prec (role primary, ltr_finder.intact)
 E	finch LTR_Finder masking recall	0.9356	report/tables/masking.tsv sens (role primary, ltr_finder.intact)
 E	finch LTR_Finder masking f1 [95% CI 0.4403, 0.5519]	0.4952	report/tables/masking.tsv F1 (role primary, ltr_finder.intact)
+E	finch LTR_peel masking precision	0.2920	report/tables/masking.tsv prec (role primary, ltr_peel.intact)
+E	finch LTR_peel masking recall	0.9895	report/tables/masking.tsv sens (role primary, ltr_peel.intact)
+E	finch LTR_peel masking f1 [95% CI 0.4028, 0.5008]	0.4509	report/tables/masking.tsv F1 (role primary, ltr_peel.intact)
 E	finch LTRharvest masking precision	0.2507	report/tables/masking.tsv prec (role primary, ltrharvest.intact)
 E	finch LTRharvest masking recall	0.9912	report/tables/masking.tsv sens (role primary, ltrharvest.intact)
 E	finch LTRharvest masking f1 [95% CI 0.3520, 0.4508]	0.4002	report/tables/masking.tsv F1 (role primary, ltrharvest.intact)
 E	finch LTRpred masking precision	0.2874	report/tables/masking.tsv prec (role primary, ltrpred.intact)
 E	finch LTRpred masking recall	0.9928	report/tables/masking.tsv sens (role primary, ltrpred.intact)
 E	finch LTRpred masking f1 [95% CI 0.3960, 0.4969]	0.4458	report/tables/masking.tsv F1 (role primary, ltrpred.intact)
-E	finch LTRquest masking precision	0.2920	report/tables/masking.tsv prec (role primary, ltrquest.intact)
-E	finch LTRquest masking recall	0.9895	report/tables/masking.tsv sens (role primary, ltrquest.intact)
-E	finch LTRquest masking f1 [95% CI 0.4028, 0.5008]	0.4509	report/tables/masking.tsv F1 (role primary, ltrquest.intact)
 E	rice DANTE_LTR masking precision	0.7781	report/tables/masking.tsv prec (role primary, dante_ltr.intact)
 E	rice DANTE_LTR masking recall	0.9309	report/tables/masking.tsv sens (role primary, dante_ltr.intact)
 E	rice DANTE_LTR masking f1 [95% CI 0.8326, 0.8603]	0.8476	report/tables/masking.tsv F1 (role primary, dante_ltr.intact)
@@ -496,6 +496,9 @@ E	rice Look4LTRs masking f1 [95% CI 0.5281, 0.5901]	0.5601	report/tables/masking
 E	rice LTR_Finder masking precision	0.6852	report/tables/masking.tsv prec (role primary, ltr_finder.intact)
 E	rice LTR_Finder masking recall	0.9728	report/tables/masking.tsv sens (role primary, ltr_finder.intact)
 E	rice LTR_Finder masking f1 [95% CI 0.7860, 0.8203]	0.8041	report/tables/masking.tsv F1 (role primary, ltr_finder.intact)
+E	rice LTR_peel masking precision	0.5205	report/tables/masking.tsv prec (role primary, ltr_peel.intact)
+E	rice LTR_peel masking recall	0.9942	report/tables/masking.tsv sens (role primary, ltr_peel.intact)
+E	rice LTR_peel masking f1 [95% CI 0.6566, 0.7076]	0.6833	report/tables/masking.tsv F1 (role primary, ltr_peel.intact)
 E	rice LTR_retriever masking precision	0.8098	report/tables/masking.tsv prec (role primary, ltr_retriever.intact)
 E	rice LTR_retriever masking recall	0.9702	report/tables/masking.tsv sens (role primary, ltr_retriever.intact)
 E	rice LTR_retriever masking f1 [95% CI 0.8699, 0.8937]	0.8828	report/tables/masking.tsv F1 (role primary, ltr_retriever.intact)
@@ -505,10 +508,7 @@ E	rice LTRharvest masking f1 [95% CI 0.5650, 0.6269]	0.5970	report/tables/maskin
 E	rice LTRpred masking precision	0.4687	report/tables/masking.tsv prec (role primary, ltrpred.intact)
 E	rice LTRpred masking recall	0.9805	report/tables/masking.tsv sens (role primary, ltrpred.intact)
 E	rice LTRpred masking f1 [95% CI 0.6033, 0.6628]	0.6343	report/tables/masking.tsv F1 (role primary, ltrpred.intact)
-E	rice LTRquest masking precision	0.5205	report/tables/masking.tsv prec (role primary, ltrquest.intact)
-E	rice LTRquest masking recall	0.9942	report/tables/masking.tsv sens (role primary, ltrquest.intact)
-E	rice LTRquest masking f1 [95% CI 0.6566, 0.7076]	0.6833	report/tables/masking.tsv F1 (role primary, ltrquest.intact)
-F	arab LTRquest share of curated LTR entries perfect or good	0.8900	report/tables/bm_rm2.tsv frac_perfect_or_good
+F	arab LTR_peel share of curated LTR entries perfect or good	0.8900	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	arab LTR_retriever share of curated LTR entries perfect or good	0.4502	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	arab LTRharvest share of curated LTR entries perfect or good	0.8454	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	arab LTR_Finder share of curated LTR entries perfect or good	0.3127	report/tables/bm_rm2.tsv frac_perfect_or_good
@@ -517,17 +517,17 @@ F	arab HiRepEat share of curated LTR entries perfect or good	0.8247	report/table
 F	arab HiTE share of curated LTR entries perfect or good	0.4948	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	arab LTRpred share of curated LTR entries perfect or good	0.5773	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	arab DANTE_LTR share of curated LTR entries perfect or good	0.6289	report/tables/bm_rm2.tsv frac_perfect_or_good
-F	finch LTRquest share of curated LTR entries perfect or good	0.5103	report/tables/bm_rm2.tsv frac_perfect_or_good
+F	finch LTR_peel share of curated LTR entries perfect or good	0.5103	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	finch LTRharvest share of curated LTR entries perfect or good	0.5137	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	finch LTR_Finder share of curated LTR entries perfect or good	0.3596	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	finch Look4LTRs share of curated LTR entries perfect or good	0.5959	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	finch HiRepEat share of curated LTR entries perfect or good	0.5171	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	finch HiTE share of curated LTR entries perfect or good	0.2808	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	finch LTRpred share of curated LTR entries perfect or good	0.4384	report/tables/bm_rm2.tsv frac_perfect_or_good
-F	gorilla LTRquest share of curated LTR entries perfect or good	0.0742	report/tables/bm_rm2.tsv frac_perfect_or_good
+F	gorilla LTR_peel share of curated LTR entries perfect or good	0.0742	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	gorilla LTR_Finder share of curated LTR entries perfect or good	0.0403	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	gorilla HiTE share of curated LTR entries perfect or good	0.0484	report/tables/bm_rm2.tsv frac_perfect_or_good
-F	maize LTRquest share of curated LTR entries perfect or good	0.8024	report/tables/bm_rm2.tsv frac_perfect_or_good
+F	maize LTR_peel share of curated LTR entries perfect or good	0.8024	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	maize LTRharvest share of curated LTR entries perfect or good	0.7238	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	maize LTR_Finder share of curated LTR entries perfect or good	0.6591	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	maize Look4LTRs share of curated LTR entries perfect or good	0.6538	report/tables/bm_rm2.tsv frac_perfect_or_good
@@ -535,7 +535,7 @@ F	maize HiRepEat share of curated LTR entries perfect or good	0.7483	report/tabl
 F	maize HiTE share of curated LTR entries perfect or good	0.5052	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	maize LTRpred share of curated LTR entries perfect or good	0.4528	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	maize DANTE_LTR share of curated LTR entries perfect or good	0.4843	report/tables/bm_rm2.tsv frac_perfect_or_good
-F	rice LTRquest share of curated LTR entries perfect or good	0.8172	report/tables/bm_rm2.tsv frac_perfect_or_good
+F	rice LTR_peel share of curated LTR entries perfect or good	0.8172	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	rice LTR_retriever share of curated LTR entries perfect or good	0.6054	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	rice LTRharvest share of curated LTR entries perfect or good	0.7871	report/tables/bm_rm2.tsv frac_perfect_or_good
 F	rice LTR_Finder share of curated LTR entries perfect or good	0.5953	report/tables/bm_rm2.tsv frac_perfect_or_good
@@ -556,15 +556,15 @@ G	A. thaliana protein-confirmed loci, K2P >=0.1: n, library-supported share	173,
 G	moved spans: each locus shifted 20-200 kb (chance)	20-200 kb	eval/adj/arab/<tool>.calls.tsv null_shift (approach 4 null; figS3_library_age memo)
 G	A. thaliana protein-confirmed bases outside the curated annotation (Mb, all calls)	2.2	experiments/a4_diagnostics/annotation_gap.tsv gap_mb (arab, all)
 H	camara_hap2 loci nominated by two or more callers / by one caller only	648 / 48	experiments/figpub/ltrkin_locus_class.tsv nominators
-H	camara_hap2 LTRquest all loci genotyped correctly [95% CI] (n of 696)	0.9296 [0.9036, 0.9532] (647)	experiments/figpub/ltrkin_outcomes_all.tsv share_correct, correct_lo, correct_hi (= ltrkin_yield.tsv)
-H	camara_hap2 LTRquest all: genotyped correctly, of them nominated by this caller alone (n loci)	0.9296: 647, 38 (n 696)	experiments/figpub/ltrkin_locus_class.tsv out_ltrquest = correct; nominators = ltrquest only
-H	camara_hap2 LTRquest non-nested: genotyped correctly, of them nominated by this caller alone (n loci)	0.9331: 572, 30 (n 613)	experiments/figpub/ltrkin_locus_class.tsv out_ltrquest = correct; nominators = ltrquest only
-H	camara_hap2 LTRquest tenants: genotyped correctly, of them nominated by this caller alone (n loci)	0.9302: 40, 2 (n 43)	experiments/figpub/ltrkin_locus_class.tsv out_ltrquest = correct; nominators = ltrquest only
-H	camara_hap2 LTRquest hosts: genotyped correctly, of them nominated by this caller alone (n loci)	0.8750: 35, 6 (n 40)	experiments/figpub/ltrkin_locus_class.tsv out_ltrquest = correct; nominators = ltrquest only
-H	camara_hap2 LTRquest coding: genotyped correctly, of them nominated by this caller alone (n loci)	0.9475: 559, 11 (n 590)	experiments/figpub/ltrkin_locus_class.tsv out_ltrquest = correct; nominators = ltrquest only
-H	camara_hap2 LTRquest protein-less: genotyped correctly, of them nominated by this caller alone (n loci)	0.8312: 64, 27 (n 77)	experiments/figpub/ltrkin_locus_class.tsv out_ltrquest = correct; nominators = ltrquest only
-H	camara_hap2 LTRquest loci nominated by this caller alone (genotyped correctly)	39 (38)	experiments/figpub/ltrkin_locus_class.tsv nominators
-H	camara_hap2 LTRquest share genotyped correctly on loci two or more callers nominated	0.9383 (608 of 648)	experiments/figpub/ltrkin_locus_class.tsv nominators, out_ltrquest
+H	camara_hap2 LTR_peel all loci genotyped correctly [95% CI] (n of 696)	0.9296 [0.9036, 0.9532] (647)	experiments/figpub/ltrkin_outcomes_all.tsv share_correct, correct_lo, correct_hi (= ltrkin_yield.tsv)
+H	camara_hap2 LTR_peel all: genotyped correctly, of them nominated by this caller alone (n loci)	0.9296: 647, 38 (n 696)	experiments/figpub/ltrkin_locus_class.tsv out_ltr_peel = correct; nominators = ltr_peel only
+H	camara_hap2 LTR_peel non-nested: genotyped correctly, of them nominated by this caller alone (n loci)	0.9331: 572, 30 (n 613)	experiments/figpub/ltrkin_locus_class.tsv out_ltr_peel = correct; nominators = ltr_peel only
+H	camara_hap2 LTR_peel tenants: genotyped correctly, of them nominated by this caller alone (n loci)	0.9302: 40, 2 (n 43)	experiments/figpub/ltrkin_locus_class.tsv out_ltr_peel = correct; nominators = ltr_peel only
+H	camara_hap2 LTR_peel hosts: genotyped correctly, of them nominated by this caller alone (n loci)	0.8750: 35, 6 (n 40)	experiments/figpub/ltrkin_locus_class.tsv out_ltr_peel = correct; nominators = ltr_peel only
+H	camara_hap2 LTR_peel coding: genotyped correctly, of them nominated by this caller alone (n loci)	0.9475: 559, 11 (n 590)	experiments/figpub/ltrkin_locus_class.tsv out_ltr_peel = correct; nominators = ltr_peel only
+H	camara_hap2 LTR_peel protein-less: genotyped correctly, of them nominated by this caller alone (n loci)	0.8312: 64, 27 (n 77)	experiments/figpub/ltrkin_locus_class.tsv out_ltr_peel = correct; nominators = ltr_peel only
+H	camara_hap2 LTR_peel loci nominated by this caller alone (genotyped correctly)	39 (38)	experiments/figpub/ltrkin_locus_class.tsv nominators
+H	camara_hap2 LTR_peel share genotyped correctly on loci two or more callers nominated	0.9383 (608 of 648)	experiments/figpub/ltrkin_locus_class.tsv nominators, out_ltr_peel
 H	camara_hap2 LTR_retriever all loci genotyped correctly [95% CI] (n of 696)	0.6264 [0.5873, 0.6625] (436)	experiments/figpub/ltrkin_outcomes_all.tsv share_correct, correct_lo, correct_hi (= ltrkin_yield.tsv)
 H	camara_hap2 LTR_retriever all: genotyped correctly, of them nominated by this caller alone (n loci)	0.6264: 436, 0 (n 696)	experiments/figpub/ltrkin_locus_class.tsv out_ltr_retriever = correct; nominators = ltr_retriever only
 H	camara_hap2 LTR_retriever non-nested: genotyped correctly, of them nominated by this caller alone (n loci)	0.6411: 393, 0 (n 613)	experiments/figpub/ltrkin_locus_class.tsv out_ltr_retriever = correct; nominators = ltr_retriever only
@@ -636,15 +636,15 @@ H	camara_hap2 loci in class hosts (header n)	40	experiments/figpub/ltrkin_locus_
 H	camara_hap2 loci in class coding (header n)	590	experiments/figpub/ltrkin_locus_class.tsv nesting / protein_class
 H	camara_hap2 loci in class protein-less (header n)	77	experiments/figpub/ltrkin_locus_class.tsv nesting / protein_class
 H	camara_hap1 loci nominated by two or more callers / by one caller only	633 / 31	experiments/figpub/ltrkin_locus_class.tsv nominators
-H	camara_hap1 LTRquest all loci genotyped correctly [95% CI] (n of 664)	0.9127 [0.8813, 0.9421] (606)	experiments/figpub/ltrkin_outcomes_all.tsv share_correct, correct_lo, correct_hi (= ltrkin_yield.tsv)
-H	camara_hap1 LTRquest all: genotyped correctly, of them nominated by this caller alone (n loci)	0.9127: 606, 23 (n 664)	experiments/figpub/ltrkin_locus_class.tsv out_ltrquest = correct; nominators = ltrquest only
-H	camara_hap1 LTRquest non-nested: genotyped correctly, of them nominated by this caller alone (n loci)	0.9318: 519, 18 (n 557)	experiments/figpub/ltrkin_locus_class.tsv out_ltrquest = correct; nominators = ltrquest only
-H	camara_hap1 LTRquest tenants: genotyped correctly, of them nominated by this caller alone (n loci)	0.8507: 57, 2 (n 67)	experiments/figpub/ltrkin_locus_class.tsv out_ltrquest = correct; nominators = ltrquest only
-H	camara_hap1 LTRquest hosts: genotyped correctly, of them nominated by this caller alone (n loci)	0.7500: 30, 3 (n 40)	experiments/figpub/ltrkin_locus_class.tsv out_ltrquest = correct; nominators = ltrquest only
-H	camara_hap1 LTRquest coding: genotyped correctly, of them nominated by this caller alone (n loci)	0.9217: 530, 6 (n 575)	experiments/figpub/ltrkin_locus_class.tsv out_ltrquest = correct; nominators = ltrquest only
-H	camara_hap1 LTRquest protein-less: genotyped correctly, of them nominated by this caller alone (n loci)	0.8113: 43, 14 (n 53)	experiments/figpub/ltrkin_locus_class.tsv out_ltrquest = correct; nominators = ltrquest only
-H	camara_hap1 LTRquest loci nominated by this caller alone (genotyped correctly)	26 (23)	experiments/figpub/ltrkin_locus_class.tsv nominators
-H	camara_hap1 LTRquest share genotyped correctly on loci two or more callers nominated	0.9210 (583 of 633)	experiments/figpub/ltrkin_locus_class.tsv nominators, out_ltrquest
+H	camara_hap1 LTR_peel all loci genotyped correctly [95% CI] (n of 664)	0.9127 [0.8813, 0.9421] (606)	experiments/figpub/ltrkin_outcomes_all.tsv share_correct, correct_lo, correct_hi (= ltrkin_yield.tsv)
+H	camara_hap1 LTR_peel all: genotyped correctly, of them nominated by this caller alone (n loci)	0.9127: 606, 23 (n 664)	experiments/figpub/ltrkin_locus_class.tsv out_ltr_peel = correct; nominators = ltr_peel only
+H	camara_hap1 LTR_peel non-nested: genotyped correctly, of them nominated by this caller alone (n loci)	0.9318: 519, 18 (n 557)	experiments/figpub/ltrkin_locus_class.tsv out_ltr_peel = correct; nominators = ltr_peel only
+H	camara_hap1 LTR_peel tenants: genotyped correctly, of them nominated by this caller alone (n loci)	0.8507: 57, 2 (n 67)	experiments/figpub/ltrkin_locus_class.tsv out_ltr_peel = correct; nominators = ltr_peel only
+H	camara_hap1 LTR_peel hosts: genotyped correctly, of them nominated by this caller alone (n loci)	0.7500: 30, 3 (n 40)	experiments/figpub/ltrkin_locus_class.tsv out_ltr_peel = correct; nominators = ltr_peel only
+H	camara_hap1 LTR_peel coding: genotyped correctly, of them nominated by this caller alone (n loci)	0.9217: 530, 6 (n 575)	experiments/figpub/ltrkin_locus_class.tsv out_ltr_peel = correct; nominators = ltr_peel only
+H	camara_hap1 LTR_peel protein-less: genotyped correctly, of them nominated by this caller alone (n loci)	0.8113: 43, 14 (n 53)	experiments/figpub/ltrkin_locus_class.tsv out_ltr_peel = correct; nominators = ltr_peel only
+H	camara_hap1 LTR_peel loci nominated by this caller alone (genotyped correctly)	26 (23)	experiments/figpub/ltrkin_locus_class.tsv nominators
+H	camara_hap1 LTR_peel share genotyped correctly on loci two or more callers nominated	0.9210 (583 of 633)	experiments/figpub/ltrkin_locus_class.tsv nominators, out_ltr_peel
 H	camara_hap1 LTR_retriever all loci genotyped correctly [95% CI] (n of 664)	0.6099 [0.5586, 0.6602] (405)	experiments/figpub/ltrkin_outcomes_all.tsv share_correct, correct_lo, correct_hi (= ltrkin_yield.tsv)
 H	camara_hap1 LTR_retriever all: genotyped correctly, of them nominated by this caller alone (n loci)	0.6099: 405, 0 (n 664)	experiments/figpub/ltrkin_locus_class.tsv out_ltr_retriever = correct; nominators = ltr_retriever only
 H	camara_hap1 LTR_retriever non-nested: genotyped correctly, of them nominated by this caller alone (n loci)	0.6445: 359, 0 (n 557)	experiments/figpub/ltrkin_locus_class.tsv out_ltr_retriever = correct; nominators = ltr_retriever only
@@ -731,21 +731,21 @@ G	loci in K2P class <0.01 (drawn)	165	report/tables/library_age_bias.tsv
 G	loci in K2P class 0.01-0.03 (drawn)	218	report/tables/library_age_bias.tsv
 G	loci in K2P class 0.03-0.1 (drawn)	609	report/tables/library_age_bias.tsv
 G	loci in K2P class >=0.1 (drawn)	173	report/tables/library_age_bias.tsv
-memo	B: LTRquest host / protein-less recall; other tools' ranges (printed in B's cells; legend says only that LTRquest leads on recall and F1 in every class)	0.9360 / 0.9072; 0.2268-0.7881 / 0.0010-0.6929	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 recall_mean
+memo	B: LTR_peel host / protein-less recall; other tools' ranges (printed in B's cells; legend says only that LTR_peel leads on recall and F1 in every class)	0.9360 / 0.9072; 0.2268-0.7881 / 0.0010-0.6929	experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 recall_mean
 legend	B: largest across-genome SD, every tool but LTRpred / LTRpred (drawn classes, P/R/F1)	0.0203 / 0.0990	experiments/figpub/sim_class_prf_joint_summary.tsv *_sd
 legend	B: LTRpred's S2_3 run incomplete (no chr6 calls, chr5 partly; gt ltrdigest HMMER error, recorded ok)	one run of 60	experiments/figpub/memo.md section e (runs/S2_3/ltrpred/run.log)
 legend	C: coding pooled d50 range of the seven other tools (K2P)	0.0447-0.1646	computed (C dots)
 memo	C: DANTE_LTR coding pooled recall at timepoint 0 (legend: never halves)	0.7723	computed (C)
-legend	C/D: pooled d50 LTRquest coding / protein-less; HiRepEat coding / protein-less	0.3321 / 0.1453; 0.1646 / 0.2804	computed (C and D dots)
+legend	C/D: pooled d50 LTR_peel coding / protein-less; HiRepEat coding / protein-less	0.3321 / 0.1453; 0.1646 / 0.2804	computed (C and D dots)
 legend	D: LTRpred protein-less pooled recall at timepoint 0	0.1823	computed (D)
 legend	E: recall range / precision range over the drawn cells (3 genomes)	0.7772-0.9969 / 0.2181-0.8713	report/tables/masking.tsv sens, prec
-legend	E: LTRquest recall / precision (A. thaliana, rice, zebra finch)	0.9969 / 0.9942 / 0.9895; 0.4171 / 0.5205 / 0.2920	report/tables/masking.tsv
-legend	E: 'LTRquest trails the strictest in F1', A. thaliana F1 LTRquest / LTR_retriever / HiTE (also in E's cells)	0.5882 / 0.8894 / 0.8959	report/tables/masking.tsv F1
+legend	E: LTR_peel recall / precision (A. thaliana, rice, zebra finch)	0.9969 / 0.9942 / 0.9895; 0.4171 / 0.5205 / 0.2920	report/tables/masking.tsv
+legend	E: 'LTR_peel trails the strictest in F1', A. thaliana F1 LTR_peel / LTR_retriever / HiTE (also in E's cells)	0.5882 / 0.8894 / 0.8959	report/tables/masking.tsv F1
 legend	G: A. thaliana library-supported share K2P < 0.01 / >= 0.1	0.836 / 0.37	report/tables/library_age_bias.tsv supported_share
-legend	G: protein-confirmed bases outside curated annotation / LTRquest masking false-positive bases	2.2 / 10.96 Mb = 0.201	annotation_gap.tsv gap_mb / masking.tsv FP_mb (arab)
-memo	H: LTRquest hosts correct share without the loci only its calls nominated (hap2, hap1) / best other caller	0.7250, 0.6750 / 0.5250, 0.4000	experiments/figpub/ltrkin_locus_class.tsv (solid part of the bar)
-memo	H: LTRquest protein-less correct share without the loci only its calls nominated (hap2, hap1) / best other caller	0.4805, 0.5472 / 0.3766, 0.5094	experiments/figpub/ltrkin_locus_class.tsv (solid part of the bar)
+legend	G: protein-confirmed bases outside curated annotation / LTR_peel masking false-positive bases	2.2 / 10.96 Mb = 0.201	annotation_gap.tsv gap_mb / masking.tsv FP_mb (arab)
+memo	H: LTR_peel hosts correct share without the loci only its calls nominated (hap2, hap1) / best other caller	0.7250, 0.6750 / 0.5250, 0.4000	experiments/figpub/ltrkin_locus_class.tsv (solid part of the bar)
+memo	H: LTR_peel protein-less correct share without the loci only its calls nominated (hap2, hap1) / best other caller	0.4805, 0.5472 / 0.3766, 0.5094	experiments/figpub/ltrkin_locus_class.tsv (solid part of the bar)
 legend	H: loci nominated by one caller alone, other callers (hatching too thin to see), hap2 / hap1	LTRharvest 2 / 0; LTR_Finder 1 / 0; Look4LTRs failed / 1; HiRepEat 5 / 4; HiTE 1 / 0	experiments/figpub/ltrkin_locus_class.tsv nominators
-legend	H: LTRquest correct share of hosts (hap2, hap1) / other finished callers' range	0.8750, 0.7500 / 0.0000-0.5250	experiments/figpub/ltrkin_locus_class.tsv
-legend	H: LTRquest correct share of protein-less loci (hap2, hap1) / other finished callers' range	0.8312, 0.8113 / 0.0000-0.5094	experiments/figpub/ltrkin_locus_class.tsv
-legend	H: on loci two or more callers nominated, LTRquest / HiRepEat correct share (hap2, hap1; shares memo only); lead (points, legend)	0.9383 / 0.8472, 0.9210 / 0.8436; 9.1, 7.7	experiments/figpub/ltrkin_locus_class.tsv nominators, out_<tool>
+legend	H: LTR_peel correct share of hosts (hap2, hap1) / other finished callers' range	0.8750, 0.7500 / 0.0000-0.5250	experiments/figpub/ltrkin_locus_class.tsv
+legend	H: LTR_peel correct share of protein-less loci (hap2, hap1) / other finished callers' range	0.8312, 0.8113 / 0.0000-0.5094	experiments/figpub/ltrkin_locus_class.tsv
+legend	H: on loci two or more callers nominated, LTR_peel / HiRepEat correct share (hap2, hap1; shares memo only); lead (points, legend)	0.9383 / 0.8472, 0.9210 / 0.8436; 9.1, 7.7	experiments/figpub/ltrkin_locus_class.tsv nominators, out_<tool>

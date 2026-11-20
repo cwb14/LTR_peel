@@ -6,8 +6,8 @@ import gzip
 
 import pytest
 
-from ltrquest import gff3 as gff3_module
-from ltrquest.gff3 import (
+from ltr_peel import gff3 as gff3_module
+from ltr_peel.gff3 import (
     SOURCE,
     Raw,
     SeqidRanker,
@@ -108,7 +108,7 @@ class TestRenderAttributes:
 class TestGffLine:
     def test_the_source_column_names_this_tool(self):
         line = gff_line("chr1", "LTR_retrotransposon", 100, 200, "+", "ID=x")
-        assert line.split("\t")[1] == SOURCE == "LTRquest"
+        assert line.split("\t")[1] == SOURCE == "LTR_peel"
 
     def test_all_nine_columns_are_present(self):
         line = gff_line("chr1", "LTR_retrotransposon", 100, 200, "+", "ID=x")
@@ -235,8 +235,8 @@ class TestBuildElementBlocksColumnLookups:
     '.' in the GFF3."""
 
     def test_renamed_columns_reach_the_emitted_attributes(self, tmp_path):
-        from ltrquest.annotate import DepthTable
-        from ltrquest.detect import DETECT_COLUMNS
+        from ltr_peel.annotate import DepthTable
+        from ltr_peel.detect import DETECT_COLUMNS
 
         row = ["."] * len(DETECT_COLUMNS)
         row[DETECT_COLUMNS.index("seq_id")] = "chr1:100-600#LTR/Copia/Ale"
@@ -271,8 +271,8 @@ class TestBuildElementBlocksColumnLookups:
         """The whole point: this file is read by people, not just parsers."""
         import re
 
-        from ltrquest.annotate import DepthTable
-        from ltrquest.detect import DETECT_COLUMNS
+        from ltr_peel.annotate import DepthTable
+        from ltr_peel.detect import DETECT_COLUMNS
 
         row = ["."] * len(DETECT_COLUMNS)
         row[DETECT_COLUMNS.index("seq_id")] = "chr1:100-600#LTR/Copia/Ale"
@@ -304,7 +304,7 @@ class TestEscapeReporting:
         assert capsys.readouterr().err == ""
 
     def test_an_escape_that_slips_through_is_announced(self, capsys):
-        # An input name LTRquest does not control, e.g. a seqid 'scaf;1'.
+        # An input name LTR_peel does not control, e.g. a seqid 'scaf;1'.
         gff3_module._escaped_chars.clear()
         escape("scaf;1")
         gff3_module.report_escapes()
@@ -314,8 +314,8 @@ class TestEscapeReporting:
 
 
 def _renamed_run(tmp_path, with_map: bool):
-    from ltrquest.kmer2ltr import COLUMNS
-    from ltrquest.reboundary_io import SIDECAR_COLUMNS
+    from ltr_peel.kmer2ltr import COLUMNS
+    from ltr_peel.reboundary_io import SIDECAR_COLUMNS
     tail = ["strand", "family", "domains", "nest_status"]
     old, new = "chr1:150-3000#LTR/Gypsy/Tekay", "chr1:100-3000#LTR/Gypsy/Tekay"
     vals = dict.fromkeys(COLUMNS, "NA")

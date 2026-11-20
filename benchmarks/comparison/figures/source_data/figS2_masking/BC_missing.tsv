@@ -1,0 +1,20 @@
+ds	tool	label	source
+finch	ltr_retriever	tool failed	resources.tsv status=timeout (did not finish within 36 h)
+finch	hirepeat	not evaluated	masking.tsv ci: incomplete: masking projected ~10 days (457/19693 batches in 5.9 h); not run
+finch	dante_ltr	tool failed	resources.tsv status=failed (crashed with no calls)
+maize	ltr_peel	not evaluated	masking.tsv ci: incomplete: library as large as or larger than dante_ltr's (445 Mb, ~260 h); masking > 36 h; not run; library 1110 Mb
+maize	ltr_retriever	tool failed	resources.tsv status=timeout (did not finish within 36 h)
+maize	ltrharvest	not evaluated	masking.tsv ci: incomplete: library as large as or larger than dante_ltr's (445 Mb, ~260 h); masking > 36 h; not run; library 601 Mb
+maize	ltr_finder	not evaluated	masking.tsv ci: incomplete: library as large as or larger than dante_ltr's (445 Mb, ~260 h); masking > 36 h; not run; library 450 Mb
+maize	look4ltrs	not evaluated	masking.tsv ci: incomplete: library as large as or larger than dante_ltr's (445 Mb, ~260 h); masking > 36 h; not run; library 1465 Mb
+maize	hirepeat	not evaluated	masking.tsv ci: incomplete: library as large as or larger than dante_ltr's (445 Mb, ~260 h); masking > 36 h; not run; library 1195 Mb
+maize	hite	not evaluated	masking.tsv ci: incomplete: masking measured at 593 batches/h -> ~64 h > 36 h; not run; library 171 Mb
+maize	dante_ltr	not evaluated	masking.tsv ci: incomplete: masking measured at 146 batches/h -> ~259 h > 36 h; not run; library 445 Mb
+gorilla	ltr_peel	not evaluated	masking.tsv ci: incomplete: masking stopped at the 36 h cap at batch 55,136 of 61,148 (90%; 36 h counted from its 11-14 12:48 restart after the kernel stall); not scored
+gorilla	ltr_retriever	tool failed	resources.tsv status=timeout (did not finish within 36 h)
+gorilla	ltrharvest	tool failed	resources.tsv status=timeout (did not finish within 36 h)
+gorilla	ltr_finder	not evaluated	masking.tsv ci: incomplete: masking stopped at the 36 h cap at batch 26,019 of 61,148 (slow in tandem arrays); not scored
+gorilla	look4ltrs	tool failed	resources.tsv status=mem_guard (exceeded 200 GB of memory)
+gorilla	hirepeat	not evaluated	masking.tsv ci: incomplete: library build stopped at the 36 h cap (near-duplicate removal of 43,620 calls, 395 Mb, by cd-hit-est); library not built, so not masked and no BM_RM2 (calls: 43,695, 827 Mb of span, longest 26.8 Mb)
+gorilla	ltrpred	tool failed	resources.tsv status=timeout (did not finish within 36 h)
+gorilla	dante_ltr	tool failed	resources.tsv status=failed (crashed with no calls)

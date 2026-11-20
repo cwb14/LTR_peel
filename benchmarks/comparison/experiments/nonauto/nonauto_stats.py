@@ -20,7 +20,7 @@ from collections import defaultdict
 import numpy as np
 
 D = os.path.dirname(os.path.abspath(__file__))
-TOOLS = ["ltrquest", "ltrharvest", "ltr_finder", "ltr_retriever", "look4ltrs", "hirepeat", "hite", "ltrpred",
+TOOLS = ["ltr_peel", "ltrharvest", "ltr_finder", "ltr_retriever", "look4ltrs", "hirepeat", "hite", "ltrpred",
          "dante_ltr"]
 LB = [0, 2000, 3000, 4000, 5000, 6000, 8000, 10 ** 9]
 NB = 1000
@@ -98,7 +98,7 @@ def div_d50():
         a[int(r["timepoint"]), 1] += int(r["hit"])
     med = defaultdict(list)
     for r in csv.DictReader(open(f"{D}/div_class.tsv"), delimiter="\t"):
-        if r["tool"] == "ltrquest":
+        if r["tool"] == "ltr_peel":
             med[(r["cls"], int(r["timepoint"]))].append(float(r["cls_median_k2p"]))
     K = {c: np.array([np.median(med[(c, t)]) for t in range(11)]) for c in ("coding", "proteinless")}
     rng = np.random.default_rng(1)

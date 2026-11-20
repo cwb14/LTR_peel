@@ -7,10 +7,10 @@ import os
 
 import pytest
 
-from ltrquest import reboundary_io as rio
-from ltrquest.detect import revcomp as revcomp_record
-from ltrquest.kmer2ltr import COLUMNS
-from ltrquest.reconcile import IUPAC_DEPTH_SEQ
+from ltr_peel import reboundary_io as rio
+from ltr_peel.detect import revcomp as revcomp_record
+from ltr_peel.kmer2ltr import COLUMNS
+from ltr_peel.reconcile import IUPAC_DEPTH_SEQ
 from reboundary_fixtures import build, members
 
 
@@ -396,7 +396,7 @@ def test_a_second_call_in_another_family_is_still_a_merge_partner(fx):
 def test_a_split_pair_inside_a_common_host_is_still_a_merge_partner():
     """The host spans the added bases too; it is the element's host, not a second
     call."""
-    from ltrquest.ltr_model import Member
+    from ltr_peel.ltr_model import Member
 
     def mm(s, e, name, nest, depth):
         return Member(prefix="p", name=f"c:{s}-{e}#{name}", chrom="c", start=s, end=e,
@@ -459,7 +459,7 @@ def test_a_survivor_may_take_its_retired_partners_key(fx):
 def test_mutual_conflicts_do_not_depend_on_input_order_when_starts_tie():
     """Workers finish in any order; two calls sharing a start must not let that order
     pick which one keeps the bases both claim."""
-    from ltrquest.ltr_model import Member
+    from ltr_peel.ltr_model import Member
 
     def mm(s, e):
         return Member(prefix="p", name=f"c:{s}-{e}#x", chrom="c", start=s, end=e, l1=s + 99,
@@ -470,7 +470,7 @@ def test_mutual_conflicts_do_not_depend_on_input_order_when_starts_tie():
 
 
 def test_a_trim_that_would_leave_a_nested_element_outside_is_refused():
-    from ltrquest.ltr_model import Member
+    from ltr_peel.ltr_model import Member
 
     def mm(s, e, name):
         return Member(prefix="p", name=f"c:{s}-{e}#{name}", chrom="c", start=s, end=e,
@@ -483,7 +483,7 @@ def test_a_trim_that_would_leave_a_nested_element_outside_is_refused():
 
 
 def _mm(s, e, name="x"):
-    from ltrquest.ltr_model import Member
+    from ltr_peel.ltr_model import Member
     return Member(prefix="p", name=f"c:{s}-{e}#{name}", chrom="c", start=s, end=e,
                   l1=s + 99, r0=e - 99, strand="+", orientation="+", family="f", depth=0,
                   k2p=0.01, tsd=".")

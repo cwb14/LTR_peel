@@ -7,9 +7,9 @@ import summarize as sm  # noqa: E402
 
 
 def test_roles():
-    assert sm.role("ltrquest") == "primary" and sm.role("hite.intact") == "primary"
-    assert sm.role("hite.native") == "secondary" and sm.role("ltrquest_native") == "secondary"
-    assert sm.role("ltrquest_hc") == "post_hoc" and sm.role("ltrquest_hc.intact") == "post_hoc"
+    assert sm.role("ltr_peel") == "primary" and sm.role("hite.intact") == "primary"
+    assert sm.role("hite.native") == "secondary" and sm.role("ltr_peel_native") == "secondary"
+    assert sm.role("ltr_peel_hc") == "post_hoc" and sm.role("ltr_peel_hc.intact") == "post_hoc"
 
 
 def test_copies_for_80():

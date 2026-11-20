@@ -24,7 +24,10 @@ Coordinates: pool, calls and pysam are 0-based half-open; truth TSVs and ltrkin 
 by the project readers); PAF 0-based half-open; native GFF3 / pass list / scn 1-based closed (start - 1 on reading).
 Outputs (this directory only): figS4_ltrkin.pdf (figure + legend page), figS4_ltrkin.png (300 dpi, figure only),
 figS4_ltrkin_numbers.tsv. Nothing is written in ltrkin_geno/ (sys.dont_write_bytecode; run with PYTHONDONTWRITEBYTECODE=1).
-Usage: figS4_ltrkin.py [-v] [--draft PNG]
+Source data: the default (full) mode writes every value drawn or printed to source_data/figS4_ltrkin/*.tsv and draws
+from those tables read back; --from-source-data redraws from them alone (no BENCH_ROOT, no pysam; the checks against
+the raw data run in full mode only).
+Usage: figS4_ltrkin.py [-v] [--draft PNG] [--from-source-data]
 """
 import argparse
 import collections
@@ -45,17 +48,25 @@ for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
 
 import numpy as np  # noqa: E402
 
-LG = Path(os.environ["BENCH_ROOT"]) / "ltrkin_geno"      # data root of the genotyping benchmark
+BENCH = Path(os.environ["BENCH_ROOT"]) if os.environ.get("BENCH_ROOT") else None
+LG = BENCH / "ltrkin_geno" if BENCH else None           # data root of the genotyping benchmark
 LGM = Path(__file__).resolve().parent.parent / "ltrkin_geno"   # its modules
-sys.path.insert(0, str(LGM / "scripts"))
-import score  # noqa: E402
-import lg_config  # noqa: E402
-from calls_to_gff import gff_id  # noqa: E402
-from lg_io import final_calls_path, read_calls  # noqa: E402
-from pool import read_truth, revcomp  # noqa: E402
+PRIMARY = None                                           # lg_config.TOOLS (full mode)
 
-import parasail  # noqa: E402
-import pysam  # noqa: E402
+
+def import_raw_modules():
+    """Modules needed only to read the full dataset: the ltrkin_geno scripts, pysam and parasail."""
+    global score, lg_config, gff_id, final_calls_path, read_calls, read_truth, revcomp, parasail, pysam, PRIMARY
+    sys.path.insert(0, str(LGM / "scripts"))
+    import score
+    import lg_config
+    from calls_to_gff import gff_id
+    from lg_io import final_calls_path, read_calls
+    from pool import read_truth, revcomp
+    import parasail
+    import pysam
+    PRIMARY = list(lg_config.TOOLS)                      # the secondary row (ltr_peel_hc) is never drawn
+
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # poafig.py sits beside this script
 import poafig  # noqa: E402
@@ -99,25 +110,24 @@ from matplotlib.colors import to_rgb  # noqa: E402
 from matplotlib.patches import Polygon, Rectangle  # noqa: E402
 
 STEM = "figS4_ltrkin"
-BENCH = Path(os.environ["BENCH_ROOT"])
 HERE = Path(__file__).resolve().parent
-FIGPUB = BENCH / "experiments" / "figpub"
-TAB = LG / "report" / "tables"
-CHK = LG / "report" / "checks"
+SRC_DIR = HERE / "source_data" / STEM                # the tables the figure is drawn from
+FIGPUB = BENCH / "experiments" / "figpub" if BENCH else None
+TAB = LG / "report" / "tables" if LG else None
+CHK = LG / "report" / "checks" if LG else None
 MM = poafig.MM
 DS = ["camara_hap2", "camara_hap1"]                  # primary first
 HAPN = {"camara_hap2": "haplotype 2", "camara_hap1": "haplotype 1"}
-NAME = {"ltrquest": "LTRquest", "hirepeat": "HiRepEat", "ltr_retriever": "LTR_retriever", "hite": "HiTE",
+NAME = {"ltr_peel": "LTR_peel", "hirepeat": "HiRepEat", "ltr_retriever": "LTR_retriever", "hite": "HiTE",
         "ltrharvest": "LTRharvest", "ltr_finder": "LTR_Finder", "dante_ltr": "DANTE_LTR", "ltrpred": "LTRpred",
         "look4ltrs": "Look4LTRs"}
-PRIMARY = list(lg_config.TOOLS)                      # the secondary row (ltrquest_hc) is never drawn
 # shared tool order and palette of the publication set
-ORDER = ["ltrquest", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
+ORDER = ["ltr_peel", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
          "dante_ltr"]
-COL = {"ltrquest": "#D55E00", "ltr_retriever": "#0072B2", "ltrharvest": "#56B4E9", "ltr_finder": "#009E73",
+COL = {"ltr_peel": "#D55E00", "ltr_retriever": "#0072B2", "ltrharvest": "#56B4E9", "ltr_finder": "#009E73",
        "look4ltrs": "#CC79A7", "hirepeat": "#E69F00", "hite": "#000000", "ltrpred": "#A6761D", "dante_ltr": "#6A3D9A"}
 
-# colors: the true element in grays (truth context; vermillion names LTRquest in this set); calls in each caller's tool
+# colors: the true element in grays (truth context; vermillion names LTR_peel in this set); calls in each caller's tool
 # color as fig_benchmark A (body = tint, LTR end blocks = full color, TSD = white box, strand = chevron, protein domain =
 # dark box); breakdown bars as fig_benchmark H (correct in the caller's color, rest light gray, tool failed
 # dark gray)
@@ -140,6 +150,7 @@ JX_FLANK, JX_MISM = 30, 3  # empty-site check: 30 bp each side of the TSD, <= 3 
 WIN_CHECK = 5000           # "no other pooled locus" within this many bp of the element
 VIEW_FLANK = 4000          # panel A: flank drawn on each side (clipped to the colinear alignment blocks)
 BIG_INDEL = 30             # alignment indels >= this split the ribbons
+JX_HALF = (16, 6)          # panel B: bp drawn outside | inside the element at each junction
 
 
 
@@ -342,8 +353,8 @@ def select_example(S, verbose):
     med = statistics.median(lens)
     ref, oth = pysam.FastaFile(str(D["ref"])), pysam.FastaFile(str(D["other"]))
     bam = pysam.AlignmentFile(str(D["bam"]))
-    lq_calls = read_calls(final_calls_path(str(LG / "calls" / ds), "ltrquest"), "ltrquest")
-    lq_truth = {r["element_id"]: r for r in read_truth(str(LG / "truth" / ds / "ltrquest.tsv"), "ltrquest")}
+    lq_calls = read_calls(final_calls_path(str(LG / "calls" / ds), "ltr_peel"), "ltr_peel")
+    lq_truth = {r["element_id"]: r for r in read_truth(str(LG / "truth" / ds / "ltr_peel.tsv"), "ltr_peel")}
     rows = []
     for i, p in enumerate(pool):
         if p["basis"] != "true_confirmed" or p["te_flag"] != "ok":
@@ -355,7 +366,7 @@ def select_example(S, verbose):
         r["tgca_win"] = any(ref.fetch(ch, ts - k, ts - k + 2).upper() == "TG"
                             and ref.fetch(ch, te + w - k - 2, te + w - k).upper() == "CA" for k in range(w + 1))
         r["tsd_both"] = ref.fetch(ch, ts - d, ts).upper() == tsd == ref.fetch(ch, te, te + d).upper()
-        st = res["ltrquest"]["status_rows"][i] if "ltrquest" in res and "status_rows" in res["ltrquest"] else None
+        st = res["ltr_peel"]["status_rows"][i] if "ltr_peel" in res and "status_rows" in res["ltr_peel"] else None
         r["ltr_ok"], r["empty"], r["o"] = False, False, None
         if st and st[0] == "found":
             c = lq_calls[st[1]]
@@ -366,7 +377,7 @@ def select_example(S, verbose):
                                    ref.fetch(ch, c["rltr_start"], c["end"]).upper())
                 r.update(l5=l5, l3=l3, ltr_id=ida)
                 r["ltr_ok"] = l5 > 0 and l3 > 0 and abs(l5 - l3) <= LTR_LEN_TOL * max(l5, l3) and ida >= LTR_MIN_ID
-            tr = lq_truth.get(gff_id("ltrquest", st[1]))
+            tr = lq_truth.get(gff_id("ltr_peel", st[1]))
             if tr and tr["o_left"] is not None and tr["o_right"] is not None:
                 r["o"] = (tr["o_chrom"], tr["o_strand"], tr["o_left"], tr["o_right"])
                 hits, _, _, _ = empty_site(oth, r["o"], ref.fetch(ch, ts - d - JX_FLANK, ts - d).upper(), tsd,
@@ -386,7 +397,7 @@ def select_example(S, verbose):
     f = [r for r in rows if r["tgca"] and r["tsd_both"]]
     funnel.append(("TG...CA at the true ends", len(f)))
     f = [r for r in f if r["ltr_ok"]]
-    funnel.append(("both LTRs, lengths within 5%, identity >= 0.95 (LTRquest's LTRs)", len(f)))
+    funnel.append(("both LTRs, lengths within 5%, identity >= 0.95 (LTR_peel's LTRs)", len(f)))
     f = [r for r in f if r["empty"]]
     funnel.append(("TSD once at the haplotype 1 empty site", len(f)))
     f = [r for r in f if reads_ok(r)]
@@ -519,10 +530,10 @@ MIN_CI = 20                # classes with fewer loci: counts only
 
 def load_breakdown(S, verbose):
     """experiments/figpub/ltrkin_breakdown.tsv (per ds x tool x class: counts, shares, block-bootstrap CIs) and
-    ltrkin_locus_class.tsv (per locus: class, nominators, LTRquest-only flag, every caller's outcome). Self-checks
+    ltrkin_locus_class.tsv (per locus: class, nominators, LTR_peel-only flag, every caller's outcome). Self-checks
     (fatal): the class table's per-locus outcomes equal score.score_dataset's for every finished caller; its per-class
     counts equal the breakdown table's; every finished caller's class counts sum to all loci; every nominator is a
-    finished caller; the LTRquest-only flag equals nominators == ltrquest."""
+    finished caller; the LTR_peel-only flag equals nominators == ltr_peel."""
     rows = rd(FIGPUB / "ltrkin_breakdown.tsv")
     lc = rd(FIGPUB / "ltrkin_locus_class.tsv")
     B = {(r["ds"], r["tool"], r["dimension"], r["cls"]): r for r in rows if r["role"] == "primary"}
@@ -543,8 +554,8 @@ def load_breakdown(S, verbose):
             noms = r["nominators"].split(",") if r["nominators"] else []
             if not noms or any(x not in S[ds]["ok"] for x in noms):
                 bad.append(f"{ds} {r['locus_id']}: nominators '{r['nominators']}' empty or not a finished caller")
-            if (r["ltrquest_only"] == "1") != (r["nominators"] == "ltrquest"):
-                bad.append(f"{ds} {r['locus_id']}: ltrquest_only {r['ltrquest_only']} vs nominators {r['nominators']}")
+            if (r["ltr_peel_only"] == "1") != (r["nominators"] == "ltr_peel"):
+                bad.append(f"{ds} {r['locus_id']}: ltr_peel_only {r['ltr_peel_only']} vs nominators {r['nominators']}")
         for dim, (col, classes) in DIMS.items():
             for t in ORDER:
                 tot = 0
@@ -568,16 +579,21 @@ def load_breakdown(S, verbose):
     if bad:
         die("breakdown self-check failed:\n  " + "\n  ".join(bad))
     log("breakdown self-check passed: class table outcomes = score_dataset; class counts = ltrkin_breakdown.tsv; "
-        "nominators are finished callers; ltrquest_only = (nominators == ltrquest)", verbose)
+        "nominators are finished callers; ltr_peel_only = (nominators == ltr_peel)", verbose)
     return B, LC
 
 
-def own_loci(LC, ds, t, col=None, c=None):
+def own_loci_raw(LC, ds, t, col=None, c=None):
     """Hatching rule: (loci whose only nominator is caller t, i.e. nominated by this caller alone,
     of them genotyped correctly from t's call); one class (col == c) or all loci (col None). Nominators = callers with
     a member call at the pooled locus (ltrkin_geno lead_checks.nominators)."""
     sub = [r for r in LC[ds] if r["nominators"] == t and (col is None or r[col] == c)]
     return len(sub), sum(r[f"out_{t}"] == "correct" for r in sub)
+
+
+def own_loci(OWN, ds, t, col=None, c=None):
+    """own_loci_raw's counts as stored in the source data (CD_own_loci.tsv)."""
+    return OWN[(ds, t, col or "", c or "")]
 
 
 
@@ -639,18 +655,18 @@ def reported_features(E, ds=DS[0]):
         seqs = [ref.fetch(ch, a, b).upper() for a, b in fl]
         if all(x in (f["tsd_seq"], revcomp(f["tsd_seq"])) for x in seqs):
             f["tsd_bp"] = fl
-    # LTRquest: strand, LTRs, TSD sequence (calls table <- clean_ltr.tsv, offsets 0,0); domains = protein_match children
-    g = gff_rows(run / "ltrquest" / f"{ds}_LTRs_all_depth_LTR_cleaned.gff3", seq, W0, W1)
+    # LTR_peel: strand, LTRs, TSD sequence (calls table <- clean_ltr.tsv, offsets 0,0); domains = protein_match children
+    g = gff_rows(run / "ltr_peel" / f"{ds}_LTRs_all_depth_LTR_cleaned.gff3", seq, W0, W1)
     ids = {(r["s"], r["e"]): r["att"]["ID"] for r in g if r["type"] == "LTR_retrotransposon"}
-    for f in F["ltrquest"] or []:
+    for f in F["ltr_peel"] or []:
         if f["tsd_seq"]:
             adjacent(f)
         pid = ids.get((f["s"], f["e"]))
         f["dom"] = [(r["s"], r["e"], r["att"].get("Name", "")) for r in g
                     if r["type"] == "protein_match" and r["att"].get("Parent") == pid]
-    SRC["ltrquest"] = dict(strand="calls table (clean_ltr.tsv strand)", LTR="calls table lltr_end / rltr_start",
+    SRC["ltr_peel"] = dict(strand="calls table (clean_ltr.tsv strand)", LTR="calls table lltr_end / rltr_start",
                            TSD="calls table tsd sequence (clean_ltr.tsv, offset 0,0) -> adjacent flanks",
-                           domains=f"runs/{ds}/ltrquest/{ds}_LTRs_all_depth_LTR_cleaned.gff3 protein_match (1-based)")
+                           domains=f"runs/{ds}/ltr_peel/{ds}_LTRs_all_depth_LTR_cleaned.gff3 protein_match (1-based)")
     # LTR_retriever: strand, LTRs (calls table); TSD coordinates from the pass list (5_TSD, 3_TSD; 1-based closed)
     pl = {}
     with open(run / "ltr_retriever" / f"{ds}.fa.mod.pass.list") as fh:
@@ -791,13 +807,13 @@ def lab_left(P, x, y, s, **kw):
 
 
 def tool_lab(P, x, y, t, fontsize=6.0, **kw):
-    """A caller's row label, set-wide style (fig_benchmark): dark name (LTRquest bold) and a 1.3-mm square of the
+    """A caller's row label, set-wide style (fig_benchmark): dark name (LTR_peel bold) and a 1.3-mm square of the
     tool's color; the square's right edge at x (mm)."""
     kw.setdefault("ha", "right")
     kw.setdefault("va", "center")
     P.can.add_patch(Rectangle((x - 1.3, y - 0.65), 1.3, 1.3, fc=COL[t], ec="none", lw=0))
     return P.text(x - 2.0, y, NAME[t], fontsize=fontsize, color=INK,
-                  fontweight="bold" if t == "ltrquest" else "normal", **kw)
+                  fontweight="bold" if t == "ltr_peel" else "normal", **kw)
 
 
 def chevron(ax, x, y, h, strand, col, bp_per_mm):
@@ -873,7 +889,7 @@ def key_C(P, y, x0):
 
     def strip(hatch=None):
         def f(x, yy):
-            for i, t in enumerate(("ltrquest", "ltr_retriever", "dante_ltr")):
+            for i, t in enumerate(("ltr_peel", "ltr_retriever", "dante_ltr")):
                 c.add_patch(Rectangle((x + i * 1.0, yy - 0.75), 1.0, 1.5, fc=COL[t], ec="none", lw=0))
             if hatch:                                  # one hatched patch over the strip: continuous stripes
                 c.add_patch(Rectangle((x, yy - 0.75), 3.0, 1.5, fc="none", ec="none", lw=0, hatch=hatch,
@@ -923,7 +939,7 @@ def draw_A(P, E, FE, S, order, y0, xL, xR, verbose):
     ax.add_collection(PolyCollection(polys, fc=RIBBON, ec="none", lw=0))
     ax.add_patch(Polygon([(hx, y_h1 + 0.6), (te, y_h2 - 2.0), (ts, y_h2 - 2.0)], closed=True, fc="#F7F7F7",
                          ec="#A6A6A6", lw=0.4))
-    # haplotype 2 line, the true element (LTRs from LTRquest's call; same LTR ends as LTR_retriever's and LTR_Finder's)
+    # haplotype 2 line, the true element (LTRs from LTR_peel's call; same LTR ends as LTR_retriever's and LTR_Finder's)
     ax.plot([W0, W1], [y_h2, y_h2], color=INK, lw=0.6, solid_capstyle="butt")
     l5, l3 = E["l5"], E["l3"]
     h = 1.5
@@ -938,10 +954,10 @@ def draw_A(P, E, FE, S, order, y0, xL, xR, verbose):
             ha="center", va="bottom", fontsize=6, color=INK)
     lab_left(P, xL - 1.5, y_h2, "haplotype 2", fontsize=6.5)
     num("A", "element length (bp)", te - ts, "report/tables/pool.tsv true_start/true_end (0-based)", DS[0])
-    num("A", "element classification as labelled", E["cls"], "calls/camara_hap2/ltrquest.tsv class (LTRquest's call)",
-        DS[0], "ltrquest")
-    num("A", "left/right LTR lengths as drawn (bp)", f"{l5}/{l3}", "calls/camara_hap2/ltrquest.tsv lltr_end/rltr_start",
-        DS[0], "ltrquest")
+    num("A", "element classification as labelled", E["cls"], "calls/camara_hap2/ltr_peel.tsv class (LTR_peel's call)",
+        DS[0], "ltr_peel")
+    num("A", "left/right LTR lengths as drawn (bp)", f"{l5}/{l3}", "calls/camara_hap2/ltr_peel.tsv lltr_end/rltr_start",
+        DS[0], "ltr_peel")
     ya = y_h2 + 2.8
     ax.plot([W0, W1], [ya, ya], color=INK, lw=0.5)
     for t in range(math.ceil(W0 / 2000) * 2000, W1 + 1, 2000):
@@ -1044,7 +1060,7 @@ def draw_A(P, E, FE, S, order, y0, xL, xR, verbose):
     return y_bot, X(ts), X(te), nread
 
 
-def draw_B(P, E, FE, order, y0, xA_ts, xA_te, yA_bot, cell=1.36, half=(16, 6)):
+def draw_B(P, E, FE, order, y0, xA_ts, xA_te, yA_bot, cell=1.36, half=JX_HALF):
     """Panel B: both junctions at base-pair resolution; each finding caller's call (its color, LTR end block full
     color, body tint) and the TSDs it reports at placeable positions (white boxes)."""
     r = E["r"]
@@ -1129,7 +1145,7 @@ def draw_B(P, E, FE, order, y0, xA_ts, xA_te, yA_bot, cell=1.36, half=(16, 6)):
     return y_h1 + 1.5
 
 
-def draw_breakdown(P, S, B, LC, dim, pnl, y0, xL, xR, geo, axis_label):
+def draw_breakdown(P, S, B, OWN, dim, pnl, y0, xL, xR, geo, axis_label):
     """Panels C (nesting) and D (protein content), fig_benchmark H's design per class: per caller (shared
     order) one 100% bar per haplotype (2 above 1): genotyped correctly in the caller's color, split into loci other
     callers also nominated (solid) and loci nominated by this caller alone (white hatch over its color, true width;
@@ -1147,7 +1163,7 @@ def draw_breakdown(P, S, B, LC, dim, pnl, y0, xL, xR, geo, axis_label):
     y_end = y_rows + len(ORDER) * pair - pg - (bp - bh)
     for ci, c in enumerate(classes):
         x0 = xL + ci * (cw + geo["cgap"])
-        ns = [int(B[(ds, "ltrquest", dim, c)]["n_loci"]) for ds in DS]
+        ns = [int(B[(ds, "ltr_peel", dim, c)]["n_loci"]) for ds in DS]
         P.text(x0, y_hdr, CLSN[c], ha="left", va="center", fontsize=6.5, fontweight="bold")
         P.text(x0, y_hdr + 2.6, f"n = {ns[0]:,} | {ns[1]:,}", ha="left", va="center", fontsize=6, color=MUTED)
         P.text(x0 + cw, y_hdr + 2.6, "correct (95% CI)", ha="right", va="center", fontsize=6, color=MUTED)
@@ -1174,7 +1190,7 @@ def draw_breakdown(P, S, B, LC, dim, pnl, y0, xL, xR, geo, axis_label):
                     continue
                 w = kc / n_
                 # hatching rule, every caller: its correct loci that no other caller nominated, at true width
-                nown, kown = own_loci(LC, ds, t, col, c)
+                nown, kown = own_loci(OWN, ds, t, col, c)
                 num(pnl, f"{CLSN[c]}: nominated by this caller alone (loci) | of them genotyped correctly (hatched) | "
                     f"genotyped correctly without them (solid, of class n)",
                     f"{nown} | {kown} | {kc - kown}/{n_} = {pct((kc - kown) / n_)}%",
@@ -1196,7 +1212,7 @@ def draw_breakdown(P, S, B, LC, dim, pnl, y0, xL, xR, geo, axis_label):
                 # a zero count's block-bootstrap interval has no width: "0%" alone
                 lab = "0%" if kc == 0 else f"{pct(w)}% ({pct(b['correct_lo'])}–{pct(b['correct_hi'])})"
                 P.text(x0 + bw + 0.8, yc + 0.05, lab, ha="left", va="center", fontsize=6,
-                       fontweight="bold" if t == "ltrquest" else "normal")
+                       fontweight="bold" if t == "ltr_peel" else "normal")
                 num(pnl, f"{CLSN[c]}: genotyped correctly, % (95% CI)", lab,
                     "experiments/figpub/ltrkin_breakdown.tsv share_correct, correct_lo, correct_hi", ds, t)
                 num(pnl, f"{CLSN[c]}: loci correct | wrong genotype | wrong extent | missed (not drawn apart)",
@@ -1230,7 +1246,7 @@ def bshare(B, ds, t, dim, c, k="correct"):
     return int(b[f"n_{k}"]) / int(b["n_loci"])
 
 
-def legend_text(T, S, B, LC, E, FE, order, nread):
+def legend_text(T, S, B, OWN, E, FE, order, nread):
     """Legend page (markup for poafig.write_figure); every number is read from the tables or the per-locus data at
     run time, recorded in the numbers table, and every worded claim is checked first (check_claims)."""
     ds2, ds1 = DS
@@ -1250,26 +1266,26 @@ def legend_text(T, S, B, LC, E, FE, order, nread):
     we = E["calls"][worst]["err"]
     all_ok = all(E["calls"][t]["cat"] == "correct" for t in found_ex)
     fin = {ds: [t for t in order if t in S[ds]["ok"]] for ds in DS}
-    others = {ds: [t for t in fin[ds] if t != "ltrquest"] for ds in DS}
-    host = {ds: pct(bshare(B, ds, "ltrquest", "nesting", "host")) for ds in DS}
+    others = {ds: [t for t in fin[ds] if t != "ltr_peel"] for ds in DS}
+    host = {ds: pct(bshare(B, ds, "ltr_peel", "nesting", "host")) for ds in DS}
     host_next = {ds: max(others[ds], key=lambda t: bshare(B, ds, t, "nesting", "host")) for ds in DS}
     lq_rest = {}
     for dim, c in (("nesting", "host"), ("protein", "proteinless")):
         col = DIMS[dim][0]
         for ds in DS:
-            nlq, klq = own_loci(LC, ds, "ltrquest", col, c)
-            n_ = int(B[(ds, "ltrquest", dim, c)]["n_loci"])
-            lq_rest[(ds, c)] = (int(B[(ds, "ltrquest", dim, c)]["n_correct"]) - klq, n_, nlq, klq)
-    pl = {ds: pct(bshare(B, ds, "ltrquest", "protein", "proteinless")) for ds in DS}
+            nlq, klq = own_loci(OWN, ds, "ltr_peel", col, c)
+            n_ = int(B[(ds, "ltr_peel", dim, c)]["n_loci"])
+            lq_rest[(ds, c)] = (int(B[(ds, "ltr_peel", dim, c)]["n_correct"]) - klq, n_, nlq, klq)
+    pl = {ds: pct(bshare(B, ds, "ltr_peel", "protein", "proteinless")) for ds in DS}
     pl_next = {ds: max(others[ds], key=lambda t: bshare(B, ds, t, "protein", "proteinless")) for ds in DS}
     for ds in DS:
-        num("legend", "host: LTRquest genotyped correctly (%) | best other caller (%)",
+        num("legend", "host: LTR_peel genotyped correctly (%) | best other caller (%)",
             f"{host[ds]} | {NAME[host_next[ds]]} {pct(bshare(B, ds, host_next[ds], 'nesting', 'host'))}",
             "experiments/figpub/ltrkin_breakdown.tsv", ds)
-        num("legend", "protein-less: LTRquest genotyped correctly (%) | best other caller (%)",
+        num("legend", "protein-less: LTR_peel genotyped correctly (%) | best other caller (%)",
             f"{pl[ds]} | {NAME[pl_next[ds]]} {pct(bshare(B, ds, pl_next[ds], 'protein', 'proteinless'))}",
             "experiments/figpub/ltrkin_breakdown.tsv", ds)
-    own_txt, thin_txt = own_sentences(LC, S, order)
+    own_txt, thin_txt = own_sentences(OWN, S, order)
     check_claims(S, B, order, lq_rest, host_next, pl_next)
     gap_txt = ""
     if E["gaps1"]:
@@ -1303,7 +1319,7 @@ def legend_text(T, S, B, LC, E, FE, order, nread):
     hatch_txt = " ".join(x for x in (own_txt, thin_txt) if x)
     pC = (f"**C**, Insertions genotyped correctly by nesting, haplotype 2 above haplotype 1, with 95% confidence "
           f"intervals. {hatch_txt} Hosts contain an element that at least two callers agree on. Every other caller "
-          f"genotypes hosts far less often than non-nested insertions. LTRquest genotypes {host[ds2]}% and {host[ds1]}% of hosts (next best "
+          f"genotypes hosts far less often than non-nested insertions. LTR_peel genotypes {host[ds2]}% and {host[ds1]}% of hosts (next best "
           f"{NAME[host_next[ds2]]} {pct(bshare(B, ds2, host_next[ds2], 'nesting', 'host'))}% and "
           f"{NAME[host_next[ds1]]} {pct(bshare(B, ds1, host_next[ds1], 'nesting', 'host'))}%), still {h2[0]} and "
           f"{h1[0]} of {h2[1]} without its hatched loci.")
@@ -1311,18 +1327,18 @@ def legend_text(T, S, B, LC, E, FE, order, nread):
     pD = (f"**D**, The same by the LTR retrotransposon protein domains DANTE finds in each insertion. Coding "
           f"insertions carry at least two kinds from one superfamily, protein-less ones none, partly coding ones the "
           f"rest. Every caller genotypes protein-less insertions less often than coding ones, and DANTE_LTR, which "
-          f"builds elements from these domains, genotypes none. LTRquest genotypes {pl[ds2]}% and {pl[ds1]}%, but {p2[3]} of "
+          f"builds elements from these domains, genotypes none. LTR_peel genotypes {pl[ds2]}% and {pl[ds1]}%, but {p2[3]} of "
           f"{p2[1]} and {p1[3]} of {p1[1]} are its hatched loci. Without them it reaches {pct(p2[0] / p2[1])}% and "
           f"{pct(p1[0] / p1[1])}%, against {pct(bshare(B, ds2, pl_next[ds2], 'protein', 'proteinless'))}% and "
           f"{pct(bshare(B, ds1, pl_next[ds1], 'protein', 'proteinless'))}% for the best other caller "
-          f"({NAME[pl_next[ds2]]}, {NAME[pl_next[ds1]]}). The genotyper was developed with LTRquest annotations.")
+          f"({NAME[pl_next[ds2]]}, {NAME[pl_next[ds1]]}). The genotyper was developed with LTR_peel annotations.")
     return "\n\n".join([head, pA, pB, pC, pD])
 
 
-def own_sentences(LC, S, order):
+def own_sentences(OWN, S, order):
     """Legend sentences for the hatching rule, worded from the per-locus table and the drawn hatch widths: each
     caller's correctly genotyped loci found by it alone (totals per haplotype), and the hatches too thin to see
-    (< THIN_MM). Exits if the wording no longer fits (another caller with as many own correct loci as LTRquest; the
+    (< THIN_MM). Exits if the wording no longer fits (another caller with as many own correct loci as LTR_peel; the
     thin hatches not exactly the hatches of one or two loci in the classes named)."""
     ds2, ds1 = DS
     k, bad = {}, []
@@ -1332,15 +1348,15 @@ def own_sentences(LC, S, order):
                 num("legend", "nominated by this caller alone, all loci | of them genotyped correctly (hatched)",
                     "tool failed", "report/tables/ltrkin_yield.tsv status", ds, t)
                 continue
-            nown, kown = own_loci(LC, ds, t)
+            nown, kown = own_loci(OWN, ds, t)
             k[(ds, t)] = kown
             num("legend", "nominated by this caller alone, all loci | of them genotyped correctly (hatched)",
                 f"{nown} | {kown}", "experiments/figpub/ltrkin_locus_class.tsv nominators (= this caller only), "
                 "out_<caller>", ds, t)
-    oth = [t for t in order if t != "ltrquest"]
+    oth = [t for t in order if t != "ltr_peel"]
     for ds in DS:
-        if any(k.get((ds, t), 0) >= k[(ds, "ltrquest")] for t in oth):
-            bad.append(f"{ds}: another caller has as many correct own loci as LTRquest")
+        if any(k.get((ds, t), 0) >= k[(ds, "ltr_peel")] for t in oth):
+            bad.append(f"{ds}: another caller has as many correct own loci as LTR_peel")
     both, single, none = [], collections.OrderedDict(), []
     for t in oth:
         a, b = k.get((ds2, t), 0), k.get((ds1, t), 0)
@@ -1352,8 +1368,8 @@ def own_sentences(LC, S, order):
             none.append(t)
     parts = both + [f"{_and_list(ts)} {_num_words(v)}{' each' if len(ts) > 1 else ''} on haplotype {h}"
                     for (h, v), ts in single.items()]
-    own_txt = (f"Hatched, loci genotyped correctly that only this caller's calls pointed to (LTRquest "
-               f"{k[(ds2, 'ltrquest')]} and {k[(ds1, 'ltrquest')]}, " + ", ".join(parts)
+    own_txt = (f"Hatched, loci genotyped correctly that only this caller's calls pointed to (LTR_peel "
+               f"{k[(ds2, 'ltr_peel')]} and {k[(ds1, 'ltr_peel')]}, " + ", ".join(parts)
                + (", the others none)." if none else ")."))
     # "Hatches of one or two non-nested or coding loci are too thin to see": the thin hatches must be exactly the
     # hatches of those classes with that many loci (every one of them thin, no other hatch thin)
@@ -1383,23 +1399,23 @@ def check_claims(S, B, order, lq_rest, host_next, pl_next):
     bad = []
     for ds in DS:
         fin = [t for t in order if t in S[ds]["ok"]]
-        oth = [t for t in fin if t != "ltrquest"]
+        oth = [t for t in fin if t != "ltr_peel"]
         for t in oth:                                  # C: host share < non-nested share - 0.15 ("far less often")
             h, u = bshare(B, ds, t, "nesting", "host"), bshare(B, ds, t, "nesting", "unnested")
             if not h < u - 0.15:
                 bad.append(f"{ds} {t}: host {h:.3f} vs non-nested {u:.3f}, not 'far less often'")
-        lq = int(B[(ds, "ltrquest", "nesting", "host")]["n_correct"])
+        lq = int(B[(ds, "ltr_peel", "nesting", "host")]["n_correct"])
         nx = int(B[(ds, host_next[ds], "nesting", "host")]["n_correct"])
         if not (lq > nx and lq_rest[(ds, "host")][0] > nx):
-            bad.append(f"{ds}: LTRquest host {lq} (without its own loci {lq_rest[(ds, 'host')][0]}) vs next {nx}")
+            bad.append(f"{ds}: LTR_peel host {lq} (without its own loci {lq_rest[(ds, 'host')][0]}) vs next {nx}")
         for t in fin:                                  # D: every caller: protein-less < coding; DANTE_LTR none
             if not bshare(B, ds, t, "protein", "proteinless") < bshare(B, ds, t, "protein", "coding"):
                 bad.append(f"{ds} {t}: protein-less not below coding")
         if "dante_ltr" in fin and int(B[(ds, "dante_ltr", "protein", "proteinless")]["n_correct"]) != 0:
             bad.append(f"{ds}: DANTE_LTR genotypes some protein-less insertions")
-        if not bshare(B, ds, "ltrquest", "protein", "proteinless") > \
+        if not bshare(B, ds, "ltr_peel", "protein", "proteinless") > \
                 bshare(B, ds, pl_next[ds], "protein", "proteinless"):
-            bad.append(f"{ds}: LTRquest not ahead on protein-less insertions")
+            bad.append(f"{ds}: LTR_peel not ahead on protein-less insertions")
     if bad:
         die("a legend claim no longer holds; reword the legend before rebuilding:\n  " + "\n  ".join(bad))
 
@@ -1417,11 +1433,155 @@ def _and_list(xs, conj="and"):
     return xs[0] if len(xs) == 1 else ", ".join(xs[:-1]) + f" {conj} " + xs[-1]
 
 
+# ---------------------------------------------------------------------------------------------------- source data
+# One TSV per table in source_data/figS4_ltrkin/; coordinates 0-based half-open on the named haplotype; empty cell =
+# not reported (None). The figure and the numbers table are drawn from these tables only.
+SCALARS = dict(example_locus=str, chrom=str, true_start=int, true_end=int, tsd_seq=str, tsd_len=int,
+               ltr_identity=float, ltr5_len=int, ltr3_len=int, strand=str, classification=str, window_start=int,
+               window_end=int, hap1_chrom=str, hap1_tsd_start=int, median_locus_len=None)
+FEATS = ("tsd_drawn", "tsd_bp", "domain")            # A_call_features.tsv feature -> FE key tsd, tsd_bp, dom
+
+
+def write_tsv(name, header, rows):
+    """TSV with a header row; None -> empty cell; floats at full precision (repr)."""
+    path = SRC_DIR / name
+    with open(path, "w", newline="") as f:
+        w = csv.writer(f, delimiter="\t", lineterminator="\n")
+        w.writerow(header)
+        for r in rows:
+            w.writerow(["" if x is None else x for x in r])
+    return path
+
+
+def read_tsv(name):
+    return rd(SRC_DIR / name)
+
+
+def opt_int(s):
+    return None if s == "" else int(s)
+
+
+def num_value(s):
+    """int or float as written (repr), so a value prints the same after reading back"""
+    return int(s) if re.fullmatch(r"-?\d+", s) else float(s)
+
+
+def write_source(T, S, B, LC, ex, E, FE, SRC):
+    """Every value the figure, legend and numbers table use, from the full dataset, to SRC_DIR."""
+    SRC_DIR.mkdir(parents=True, exist_ok=True)
+    for p in SRC_DIR.glob("*.tsv*"):
+        p.unlink()
+    ds2 = DS[0]
+    r = E["r"]
+    sc = dict(example_locus=r["locus"], chrom=r["chrom"], true_start=r["ts"], true_end=r["te"], tsd_seq=r["tsd"],
+              tsd_len=r["d"], ltr_identity=r["ltr_id"], ltr5_len=E["l5"], ltr3_len=E["l3"], strand=E["strand"],
+              classification=E["cls"], window_start=E["W0"], window_end=E["W1"], hap1_chrom=E["ochrom"],
+              hap1_tsd_start=E["h_tsd"], median_locus_len=ex["median"])
+    write_tsv("scalars.tsv", ["name", "value"], [(k, repr(sc[k]) if isinstance(sc[k], float) else sc[k])
+                                                  for k in SCALARS])
+    write_tsv("A_funnel.tsv", ["step", "loci"], ex["funnel"])
+    write_tsv("A_eligible.tsv", ["locus", "length_bp", "reads_carry", "reads_skip"],
+              [(x["locus"], x["len"], x["carry"], x["skip"]) for x in ex["eligible"]])
+    write_tsv("A_aligned_blocks.tsv", ["hap2_start", "hap2_end", "hap1_start", "hap1_end"], E["blocks"])
+    write_tsv("A_hap1_only_indels.tsv", ["hap2_pos", "length_bp"], E["gaps1"])
+    write_tsv("A_reads.tsv", ["read", "kind", "start", "end"],
+              [(k, kind, s, e) for k, (kind, parts) in enumerate(E["reads"].values()) for s, e in parts])
+    write_tsv("callers.tsv", ["dataset", "caller", "run_status", "finished"],
+              [(ds, t, S[ds]["res"][t]["status"], int(t in S[ds]["ok"])) for ds in DS for t in PRIMARY])
+    rows = []
+    for t in ORDER:
+        info = E["calls"][t]
+        if info is not None:
+            err = info["err"]
+            rows.append((t, info["status"], info["cat"], info["geno"][0], err and err["left"], err and err["right"]))
+    write_tsv("A_caller_outcomes.tsv", ["caller", "status", "outcome", "genotype", "end_err_left", "end_err_right"],
+              rows)
+    calls, feats = [], []
+    for t in ORDER:
+        for k, f in enumerate(FE[t] or []):
+            calls.append((t, k, f["s"], f["e"], int(f["matched"]), f["strand"], f["lltr"], f["rltr"]))
+            for name, key in zip(FEATS, ("tsd", "tsd_bp", "dom")):
+                for x in f[key]:
+                    feats.append((t, k, name, x[0], x[1], x[2] if len(x) > 2 else None))
+    write_tsv("A_calls.tsv", ["caller", "call", "start", "end", "at_locus", "strand", "lltr_end", "rltr_start"], calls)
+    write_tsv("A_call_features.tsv", ["caller", "call", "feature", "start", "end", "name"], feats)
+    write_tsv("A_feature_sources.tsv", ["caller", "feature", "source"],
+              [(t, k, v) for t in ORDER if t in SRC for k, v in SRC[t].items()])
+    h, d, nb = JX_HALF, r["d"], sum(JX_HALF)
+    seqs = [("2", r["chrom"], a, a + nb) for a in (r["ts"] - h[0], r["te"] - h[1])]
+    seqs += [("1", E["ochrom"], E["h_tsd"] - (h[0] - d), E["h_tsd"] + d),
+             ("1", E["ochrom"], E["h_tsd"] + d, E["h_tsd"] + d + (h[0] - d))]
+    write_tsv("B_junction_seqs.tsv", ["haplotype", "chrom", "start", "end", "seq"],
+              [(hp, ch, a, b, (E["seq2"] if hp == "2" else E["seq1"])(a, b)) for hp, ch, a, b in seqs])
+    cols = ["status", "n_loci", "n_correct", "n_wrong", "n_partial", "n_missed", "share_correct", "correct_lo",
+            "correct_hi"]
+    write_tsv("CD_breakdown.tsv", ["dataset", "caller", "dimension", "class"] + cols,
+              [(ds, t, dim, c) + tuple(B[(ds, t, dim, c)][k] for k in cols)
+               for ds in DS for t in ORDER for dim in DIMS for c in DIMS[dim][1]])
+    write_tsv("CD_own_loci.tsv", ["dataset", "caller", "class_column", "class", "n_own", "n_own_correct"],
+              [(ds, t, col or "", c or "") + own_loci_raw(LC, ds, t, col, c) for ds in DS for t in ORDER
+               for col, c in [(None, None)] + [(DIMS[dim][0], c) for dim in DIMS for c in DIMS[dim][1]]])
+    write_tsv("legend_yield.tsv", ["dataset", "caller", "run", "status", "share_missed"],
+              [(ds2, t, "e2e", T["Y"][(ds2, t, "e2e")]["status"], T["Y"][(ds2, t, "e2e")]["share_missed"])
+               for t in ORDER if (ds2, t, "e2e") in T["Y"]])
+
+
+def read_source():
+    """The objects the drawing code uses, rebuilt from SRC_DIR only."""
+    if not SRC_DIR.is_dir():
+        die(f"source data not found: {SRC_DIR}")
+    sc = {x["name"]: x["value"] for x in read_tsv("scalars.tsv")}
+    sc = {k: (num_value(sc[k]) if ty is None else ty(sc[k])) for k, ty in SCALARS.items()}
+    funnel = [(x["step"], int(x["loci"])) for x in read_tsv("A_funnel.tsv")]
+    elig = [dict(locus=x["locus"], len=int(x["length_bp"]), carry=int(x["reads_carry"]), skip=int(x["reads_skip"]))
+            for x in read_tsv("A_eligible.tsv")]
+    ex = dict(funnel=funnel, eligible=elig, median=sc["median_locus_len"])
+    S = {ds: dict(ok=[], res={}) for ds in DS}
+    for x in read_tsv("callers.tsv"):
+        S[x["dataset"]]["res"][x["caller"]] = dict(status=x["run_status"])
+        if x["finished"] == "1":
+            S[x["dataset"]]["ok"].append(x["caller"])
+    reads = {}
+    for x in read_tsv("A_reads.tsv"):
+        reads.setdefault(int(x["read"]), (x["kind"], []))[1].append((int(x["start"]), int(x["end"])))
+    calls = {t: None for t in ORDER}
+    for x in read_tsv("A_caller_outcomes.tsv"):
+        err = None if x["end_err_left"] == "" else dict(left=int(x["end_err_left"]), right=int(x["end_err_right"]))
+        calls[x["caller"]] = dict(status=x["status"], cat=x["outcome"], geno=(x["genotype"],), err=err)
+    FE = {t: (None if t not in S[DS[0]]["ok"] else []) for t in ORDER}
+    for x in read_tsv("A_calls.tsv"):
+        FE[x["caller"]].append(dict(s=int(x["start"]), e=int(x["end"]), matched=x["at_locus"] == "1",
+                                    strand=x["strand"] or None, lltr=opt_int(x["lltr_end"]),
+                                    rltr=opt_int(x["rltr_start"]), tsd=[], tsd_bp=[], dom=[]))
+    for x in read_tsv("A_call_features.tsv"):
+        f = FE[x["caller"]][int(x["call"])]
+        iv = (int(x["start"]), int(x["end"]))
+        f[dict(zip(FEATS, ("tsd", "tsd_bp", "dom")))[x["feature"]]].append(
+            iv + (x["name"],) if x["feature"] == "domain" else iv)
+    FE["_src"] = {}
+    for x in read_tsv("A_feature_sources.tsv"):
+        FE["_src"].setdefault(x["caller"], {})[x["feature"]] = x["source"]
+    seqs = {(x["haplotype"], int(x["start"]), int(x["end"])): x["seq"] for x in read_tsv("B_junction_seqs.tsv")}
+    r = dict(locus=sc["example_locus"], chrom=sc["chrom"], ts=sc["true_start"], te=sc["true_end"], d=sc["tsd_len"],
+             tsd=sc["tsd_seq"], ltr_id=sc["ltr_identity"])
+    E = dict(r=r, W0=sc["window_start"], W1=sc["window_end"], h_tsd=sc["hap1_tsd_start"], ochrom=sc["hap1_chrom"],
+             blocks=[tuple(int(x[k]) for k in ("hap2_start", "hap2_end", "hap1_start", "hap1_end"))
+                     for x in read_tsv("A_aligned_blocks.tsv")],
+             gaps1=[(int(x["hap2_pos"]), int(x["length_bp"])) for x in read_tsv("A_hap1_only_indels.tsv")],
+             calls=calls, reads=reads, l5=sc["ltr5_len"], l3=sc["ltr3_len"], strand=sc["strand"],
+             cls=sc["classification"], seq2=lambda a, b: seqs[("2", a, b)], seq1=lambda a, b: seqs[("1", a, b)])
+    B = {(x["dataset"], x["caller"], x["dimension"], x["class"]): x for x in read_tsv("CD_breakdown.tsv")}
+    OWN = {(x["dataset"], x["caller"], x["class_column"], x["class"]): (int(x["n_own"]), int(x["n_own_correct"]))
+           for x in read_tsv("CD_own_loci.tsv")}
+    T = dict(Y={(x["dataset"], x["caller"], x["run"]): x for x in read_tsv("legend_yield.tsv")})
+    return T, S, B, OWN, ex, E, FE
+
+
 # ---------------------------------------------------------------------------------------------------- main
 GEO = dict(cgap=3.0, tw=14.6, bar_pitch=2.1, bar_h=1.6, pair_gap=0.45, hdr=5.4)
 
 
-def build(H, T, S, B, LC, E, FE, order, base, v):
+def build(H, T, S, B, OWN, E, FE, order, base, v):
     """Draw the figure page at height H (mm); returns (Page, content bottom in mm, read counts)."""
     NUMS[:] = base
     HATCH_MM.clear()
@@ -1439,10 +1599,10 @@ def build(H, T, S, B, LC, E, FE, order, base, v):
     key_C(P, yK, xL)
     yC = yK + 2.6
     P.letter(0.5, yC - 1.0, "C")
-    yC_bot = draw_breakdown(P, S, B, LC, "nesting", "C", yC, xL, xR, GEO, False)
+    yC_bot = draw_breakdown(P, S, B, OWN, "nesting", "C", yC, xL, xR, GEO, False)
     yD = yC_bot + 1.6
     P.letter(0.5, yD, "D")
-    yD_bot = draw_breakdown(P, S, B, LC, "protein", "D", yD, xL, xR, GEO, True)
+    yD_bot = draw_breakdown(P, S, B, OWN, "protein", "D", yD, xL, xR, GEO, True)
     log(f"layout: A {yA:.1f}-{yA_bot:.1f}, B -{yB_bot:.1f}, C {yC:.1f}-{yC_bot:.1f}, D -{yD_bot:.1f} of {H} mm", v)
     return P, yD_bot, nread
 
@@ -1452,21 +1612,30 @@ def main():
     ap.add_argument("-v", "--verbose", action="store_true", help="per-step progress and the example funnel on stderr")
     ap.add_argument("--draft", metavar="PNG", help="write only a figure PNG at this path (inside this directory) "
                     "and stop; no PDF, PNG or numbers table")
+    ap.add_argument("--from-source-data", action="store_true", help="redraw from source_data/figS4_ltrkin/ in "
+                    "this directory alone (no BENCH_ROOT, no raw-data checks)")
     a = ap.parse_args()
     v = a.verbose
     if a.draft and not os.path.abspath(a.draft).startswith(str(HERE) + os.sep):
         die(f"--draft must write inside {HERE}")
     log(f"{STEM}: start", True)
-    T = load_tables()
-    running = running_set(T)
-    log(f"runs still in progress (from ltrkin_yield.tsv): {sorted(running) or 'none'}", v)
-    S = score_all(T, running, v)
-    order = caller_order(T, S)
-    B, LC = load_breakdown(S, v)
-    ex = select_example(S, v)
-    E = example_data(S, ex, v)
-    FE, SRC = reported_features(E)
-    FE["_src"] = SRC
+    if not a.from_source_data:
+        if BENCH is None:
+            die("BENCH_ROOT is not set (the full dataset is needed unless --from-source-data)")
+        import_raw_modules()
+        T = load_tables()
+        running = running_set(T)
+        log(f"runs still in progress (from ltrkin_yield.tsv): {sorted(running) or 'none'}", v)
+        S = score_all(T, running, v)
+        caller_order(T, S)
+        B, LC = load_breakdown(S, v)
+        ex = select_example(S, v)
+        E = example_data(S, ex, v)
+        FE, SRC = reported_features(E)
+        write_source(T, S, B, LC, ex, E, FE, SRC)
+        log(f"{STEM}: wrote the source data to {SRC_DIR}", True)
+    T, S, B, OWN, ex, E, FE = read_source()
+    order = list(ORDER)
     for k, val in ex["funnel"]:
         num("A", f"example funnel: {k}", val, "selection rule in this script (memo.md)", DS[0])
     num("A", "median length of all haplotype 2 pooled loci (bp)", ex["median"], "report/tables/pool.tsv match span",
@@ -1477,23 +1646,24 @@ def main():
     num("A", "example locus", f"{E['r']['locus']} {E['r']['chrom']}:{E['r']['ts']}-{E['r']['te']} (0-based)",
         "selection rule (memo.md)", DS[0])
     num("A", "LTR identity, left vs right LTR (matches / longer LTR)", round(E["r"]["ltr_id"], 4),
-        "parasail global alignment of LTRquest's two LTRs (hap2 assembly)", DS[0], "ltrquest")
+        "parasail global alignment of LTR_peel's two LTRs (hap2 assembly)", DS[0], "ltr_peel")
     num("A", "haplotype 1 empty site: TSD start (0-based)", f"{E['ochrom']}:{E['h_tsd']}",
         "Camara_hap1.fa, junction check (30 bp each side, <= 3 mismatches, TSD exact, one hit)", DS[1])
     if E["r"]["locus"] != "camara_hap2_L00918":
         die(f"example locus changed to {E['r']['locus']} (source figure: camara_hap2_L00918); check before drawing")
     base = list(NUMS)
-    P, bot, nread = build(240.0, T, S, B, LC, E, FE, order, base, v)
+    P, bot, nread = build(240.0, T, S, B, OWN, E, FE, order, base, v)
     H = math.ceil(bot + 1.0)
     plt.close(P.fig)
-    P, bot, nread = build(H, T, S, B, LC, E, FE, order, base, v)
-    legend = legend_text(T, S, B, LC, E, FE, order, nread)
+    P, bot, nread = build(H, T, S, B, OWN, E, FE, order, base, v)
+    legend = legend_text(T, S, B, OWN, E, FE, order, nread)
     if a.draft:
         P.fig.savefig(a.draft, dpi=300)
         log(f"{STEM}: draft {a.draft} ({H} mm tall)", True)
         print(legend)
         return
-    out = poafig.write_figure(STEM, P.fig, legend, None, HERE, str(BENCH), str(HERE / f"{STEM}.py"))
+    out = poafig.write_figure(STEM, P.fig, legend, None, HERE, str(SRC_DIR if a.from_source_data else BENCH),
+                              str(HERE / f"{STEM}.py"))
     with open(HERE / f"{STEM}_numbers.tsv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=["panel", "item", "dataset", "caller", "value", "source"], delimiter="\t",
                            lineterminator="\n")

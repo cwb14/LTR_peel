@@ -1,6 +1,6 @@
 """Every tool parser on fixture records cut from real smoke-test outputs (A. thaliana chr2, normalized ID c0001).
 
-The same element (1-based 16330..24007) is reported identically by LTRquest, LTR_Finder, LTR_retriever and DANTE_LTR,
+The same element (1-based 16330..24007) is reported identically by LTR_peel, LTR_Finder, LTR_retriever and DANTE_LTR,
 so its 0-based span must be 16329..24007 from each; solo LTRs (Look4LTRs) and domain-only DANTE elements are dropped.
 """
 import csv
@@ -26,19 +26,19 @@ def spans(rows):
 
 
 def test_shared_element_identical_across_tools():
-    for tool in ("ltrquest", "ltr_finder", "ltr_retriever", "dante_ltr"):
+    for tool in ("ltr_peel", "ltr_finder", "ltr_retriever", "dante_ltr"):
         assert ("Chr2", 16329, 24007) in spans(parse(tool)), tool
 
 
-def test_ltrquest_nest_link_and_ltrs():
-    rows = {r["id"]: r for r in parse("ltrquest")}
+def test_ltr_peel_nest_link_and_ltrs():
+    rows = {r["id"]: r for r in parse("ltr_peel")}
     t = rows["c0001:16330-24007"]
     assert t["parent"] == "c0001:13072-28021" and t["parent"] in rows
     assert (int(t["lltr_end"]), int(t["rltr_start"])) == (17647, 22689)
 
 
-def test_ltrquest_hc_subset_drops_link_to_excluded_host():
-    rows = parse("ltrquest_hc", rundir="ltrquest")      # tenant is high confidence, its host medium
+def test_ltr_peel_hc_subset_drops_link_to_excluded_host():
+    rows = parse("ltr_peel_hc", rundir="ltr_peel")      # tenant is high confidence, its host medium
     assert spans(rows) == [("Chr2", 16329, 24007)]
     assert rows[0]["parent"] == "."
 

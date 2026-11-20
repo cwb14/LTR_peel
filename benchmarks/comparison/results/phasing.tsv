@@ -1,5 +1,5 @@
 ds	tool	role	n_subgenomes	correct	accuracy	replicability	strength	margin	n_copies	k80
-asue	ltrquest	primary	2	1	1.0	1.0	1.757	19.284	2927	<=500
+asue	ltr_peel	primary	2	1	1.0	1.0	1.757	19.284	2927	<=500
 asue	ltr_retriever	primary	2	1	1.0	0.975	1.149	12.827	1004	1000
 asue	ltrharvest	primary	2	1	1.0	1.0	1.249	36.66	4820	1000
 asue	ltr_finder	primary	2	1	1.0	0.988	1.531	13.232	914	all (914)
@@ -8,9 +8,9 @@ asue	hirepeat	primary	2	1	1.0	1.0	1.142	15.483	6951	2000
 asue	hite	primary	2	1	1.0	0.988	1.156	12.584	749	all (749)
 asue	ltrpred	primary	2	1	1.0	0.94	1.075	6.715	1083	1000
 asue	dante_ltr	primary	2	1	1.0	1.0	1.399	10.079	835	all (835)
-asue	ltrquest_hc	post_hoc	2	1	1.0	1.0	1.739	16.468	1086	1000
-asue	ltrquest_native	secondary	2	1	1.0	1.0	1.735	19.609	2933	1000
-pann	ltrquest	primary	2	1	1.0	1.0	1.867	41.305	67502	<=500
+asue	ltr_peel_hc	post_hoc	2	1	1.0	1.0	1.739	16.468	1086	1000
+asue	ltr_peel_native	secondary	2	1	1.0	1.0	1.735	19.609	2933	1000
+pann	ltr_peel	primary	2	1	1.0	1.0	1.867	41.305	67502	<=500
 pann	ltr_retriever	primary	2	1	1.0	1.0	1.976	54.996	26780	<=500
 pann	ltrharvest	primary	2	1	1.0	1.0	1.726	35.067	57157	1000
 pann	ltr_finder	primary	2	1	1.0	1.0	1.99	47.101	31307	<=500
@@ -19,5 +19,5 @@ pann	hirepeat	primary	2	1	1.0	1.0	1.839	38.401	92860	<=500
 pann	hite	primary	2	1	1.0	1.0	1.943	45.782	16551	<=500
 pann	ltrpred	primary	2	1	1.0	1.0	1.651	31.744	11846	<=500
 pann	dante_ltr	primary	2	1	1.0	1.0	2.029	50.372	22258	<=500
-pann	ltrquest_hc	post_hoc	2	1	1.0	1.0	1.999	49.128	41885	<=500
-pann	ltrquest_native	secondary	2	1	1.0	1.0	1.852	39.725	67804	<=500
+pann	ltr_peel_hc	post_hoc	2	1	1.0	1.0	1.999	49.128	41885	<=500
+pann	ltr_peel_native	secondary	2	1	1.0	1.0	1.852	39.725	67804	<=500

@@ -42,7 +42,7 @@ def test_bad_timeout_rejected(driver, toy_genome, tmp_path, value):
 
 def test_missing_blast_names_the_off_switches(driver, toy_genome, tmp_path):
     result = run("bash", str(driver), "--genome", str(toy_genome),
-                 env={"PATH": "/usr/bin:/bin", "LTRQUEST_PYTHON": "/nonexistent/python"},
+                 env={"PATH": "/usr/bin:/bin", "LTR_PEEL_PYTHON": "/nonexistent/python"},
                  cwd=tmp_path)
     assert result.returncode != 0
     assert "--strand-recovery off" in result.stderr and "--no-reboundary" in result.stderr
@@ -55,8 +55,8 @@ def test_detect_gets_the_timeout_before_extra_args(driver):
 
 
 def test_detect_default_is_300(driver):
-    """ltrquest-detect's own default matches the driver's, so every route caps chunks at 300 s."""
-    help_text = subprocess.run([sys.executable, "-m", "ltrquest.detect", "--help"],
+    """ltr_peel-detect's own default matches the driver's, so every route caps chunks at 300 s."""
+    help_text = subprocess.run([sys.executable, "-m", "ltr_peel.detect", "--help"],
                                capture_output=True, text=True).stdout
     assert "default 300" in " ".join(help_text.split())
 
@@ -69,10 +69,10 @@ def test_timeout_is_a_detection_setting(driver):
 
 def test_a_relative_tools_dir_from_the_environment_is_made_absolute(driver, toy_genome, tmp_path):
     """Workers run inside round<N>/ and the merged stage in its own folder: a relative
-    LTRQUEST_TOOLS_DIR would put the tools there, and promoting the results removes a
+    LTR_PEEL_TOOLS_DIR would put the tools there, and promoting the results removes a
     folder of that name from the run folder."""
-    env = {"PATH": "/usr/bin:/bin", "LTRQUEST_PYTHON": "/nonexistent/python",
-           "LTRQUEST_TOOLS_DIR": "./rel_tools"}
+    env = {"PATH": "/usr/bin:/bin", "LTR_PEEL_PYTHON": "/nonexistent/python",
+           "LTR_PEEL_TOOLS_DIR": "./rel_tools"}
     result = run("bash", str(driver), "--genome", str(toy_genome), "--strand-recovery", "off",
                  "--no-reboundary", env=env, cwd=tmp_path)
     assert f"Tools directory: {tmp_path / 'rel_tools'}\n" in result.stdout
@@ -80,6 +80,6 @@ def test_a_relative_tools_dir_from_the_environment_is_made_absolute(driver, toy_
 
 def test_the_orchestrator_exports_the_absolute_environment_tools_dir(driver):
     text = driver.read_text()
-    block = text[text.index('elif [[ -n "${LTRQUEST_TOOLS_DIR:-}" && -z "${_LTRQUEST_WORKER:-}" ]]'):]
+    block = text[text.index('elif [[ -n "${LTR_PEEL_TOOLS_DIR:-}" && -z "${_LTR_PEEL_WORKER:-}" ]]'):]
     block = block[:block.index("\nfi\n")]
-    assert '"${PWD}/${LTRQUEST_TOOLS_DIR#./}"' in block and "export LTRQUEST_TOOLS_DIR" in block
+    assert '"${PWD}/${LTR_PEEL_TOOLS_DIR#./}"' in block and "export LTR_PEEL_TOOLS_DIR" in block

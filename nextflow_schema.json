@@ -1,7 +1,7 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/cwb14/LTRquest/main/nextflow_schema.json",
-    "title": "cwb14/LTRquest pipeline parameters",
+    "$id": "https://raw.githubusercontent.com/cwb14/LTR_peel/main/nextflow_schema.json",
+    "title": "cwb14/LTR_peel pipeline parameters",
     "description": "Iterative detection of nested LTR retrotransposons",
     "type": "object",
     "$defs": {
@@ -81,7 +81,7 @@
                     "default": "rescue",
                     "enum": ["rescue", "all", "off"],
                     "description": "Third LTR caller next to LTRharvest and LTR_FINDER: FastLTR, run only on chunks --ltr_timeout cut the other two short on (rescue), on every chunk (all), or never (off).",
-                    "help_text": "LTRquest's adaptation of FastLTR (FASTAN, as used by HiRepEat) pairs direct repeats 100 bp - 20 kb apart without stalling on satellite, telomere or rDNA arrays. Its candidates join the pool before Kmer2LTR; every later stage treats them like the other two callers'. See the README section 'Complete assemblies: capped chunks and FastLTR'.",
+                    "help_text": "LTR_peel's adaptation of FastLTR (FASTAN, as used by HiRepEat) pairs direct repeats 100 bp - 20 kb apart without stalling on satellite, telomere or rDNA arrays. Its candidates join the pool before Kmer2LTR; every later stage treats them like the other two callers'. See the README section 'Complete assemblies: capped chunks and FastLTR'.",
                     "fa_icon": "fas fa-bolt"
                 },
                 "ltr_timeout": {
@@ -128,7 +128,7 @@
                     "enum": ["conservative", "balanced", "sensitive", "off"],
                     "default": "off",
                     "description": "Recover strand for the LTR-RTs the annotator's cascade leaves unstranded.",
-                    "help_text": "Off by default; a preset turns it on. Slow on large genomes (about as long as detection). Orientation is transferred onto an unstranded element from the elements that already carry a strand, using dc-megablast and minimap2 views of the whole element and of the internal region between the LTRs; disagreement between views vetoes the locus. Measured against LTRquest's own tesorter strand over 3616 elements, conservative recovers 58% at 0.19% disagreement, balanced 79% at 0.70%, sensitive 84% at 1.06%. Recovered elements read strand_source=homology in the GFF3, and their depth-FASTA records are stored in coding sense like TEsorter2-called ones.",
+                    "help_text": "Off by default; a preset turns it on. Slow on large genomes (about as long as detection). Orientation is transferred onto an unstranded element from the elements that already carry a strand, using dc-megablast and minimap2 views of the whole element and of the internal region between the LTRs; disagreement between views vetoes the locus. Measured against LTR_peel's own tesorter strand over 3616 elements, conservative recovers 58% at 0.19% disagreement, balanced 79% at 0.70%, sensitive 84% at 1.06%. Recovered elements read strand_source=homology in the GFF3, and their depth-FASTA records are stored in coding sense like TEsorter2-called ones.",
                     "fa_icon": "fas fa-compass"
                 },
                 "strand_recovery_ppt": {
@@ -160,7 +160,7 @@
             "properties": {
                 "aws_queue": {
                     "type": "string",
-                    "default": "ltrquest-queue",
+                    "default": "ltr_peel-queue",
                     "description": "AWS Batch job queue to submit to.",
                     "fa_icon": "fas fa-list-ol"
                 },

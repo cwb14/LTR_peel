@@ -1,4 +1,4 @@
-name: ltrquest
+name: ltr_peel
 channels:
   - conda-forge
   - bioconda
@@ -15,7 +15,7 @@ dependencies:
   - mafft=7.526
   - trimal=1.5.1
   - hmmer=3.4                       # hmmsearch/nhmmer (TEsorter2)
-  - blast                           # blastn/makeblastdb (ltrquest-flagfp; TEsorter2 blast pass-2)
+  - blast                           # blastn/makeblastdb (ltr_peel-flagfp; TEsorter2 blast pass-2)
   - minimap2                        # TEsorter2 minimap2 pass-2 (PATH lookup); fallback for tools build
   - miniprot                        # protein mapping; fallback if source build fails
   - sdust                           # the default low-complexity filter; found on PATH, so never built
@@ -28,7 +28,7 @@ dependencies:
   # Without git or a compiler the first real run still dies on
   # `git: not found` or `cc: not found` -- invisible on a workstation that
   # already has build tools, fatal on a clean cluster. TRF-mod's makefile
-  # hardcodes CC=gcc, so LTRquest retries the build with CC=$CC, the compiler
+  # hardcodes CC=gcc, so LTR_peel retries the build with CC=$CC, the compiler
   # this environment installs.
   - git
   - make
@@ -37,7 +37,7 @@ dependencies:
   # --- python libraries ---
   - numpy
   - matplotlib-base
-  - pyfaidx                         # ltrquest-flagfp
+  - pyfaidx                         # ltr_peel-flagfp
   - pyhmmer>=0.10                   # TEsorter2
   - pyfastx                         # TEsorter2
   # --- Kmer2LTR's own runtime deps. `parasail` on Bioconda is the C library;

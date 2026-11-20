@@ -5,7 +5,7 @@ import textwrap
 
 import pytest
 
-from ltrquest import kmer2ltr
+from ltr_peel import kmer2ltr
 
 TSV = textwrap.dedent("""\
     seq_id\tseq_len\tstatus\tltr5_start\tltr3_end\tk2p\ttsd\ttsd_input
@@ -145,7 +145,7 @@ def test_assert_schema_rejects_an_extra_column(tmp_path):
     msg = str(e.value)
     assert "out of step" in msg
     assert "ltr_score" in msg                 # what Kmer2LTR wrote
-    assert "tsd_input" in msg                 # what LTRquest expects
+    assert "tsd_input" in msg                 # what LTR_peel expects
     assert f"{len(kmer2ltr.COLUMNS) + 1} column(s)" in msg
 
 

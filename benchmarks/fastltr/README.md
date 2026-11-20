@@ -129,7 +129,7 @@ check. On a shared machine the 30 s cap cut LTRharvest short on 678 of 6,571
 round-1 chunks and LTR_FINDER on 904: far beyond the satellite arrays, since a
 loaded machine pushes ordinary chunks past 30 s too. With rescue, FastLTR
 searched 1,067 chunks and dropped 23,680 array-unit pairs. Both runs then
-exceeded LTRquest's false-positive threshold (26% of elements in FP families)
+exceeded LTR_peel's false-positive threshold (26% of elements in FP families)
 and re-ran once on an FP-masked genome (FP fraction then 3.6% for `T`, 1.5% for
 `TR`). `run_one.sh` keeps both attempts for CHM13 (`--dev-keep-fp-rounds`), so
 each run is scored on its first attempt and on its final output.
@@ -147,10 +147,10 @@ supported, 60 high-confidence), 25 in satellite arrays (68%), 10 near telomeres
 structure inside the 43 kb rDNA unit: the unit is longer than FastLTR's 20 kb
 reach and than the tandem filter's flank test, so neither recognizes the array.
 LTRharvest and LTR_FINDER make the same calls when they get through an rDNA
-chunk (LTRquest 1.0.1 at a 300 s cap: 86 such calls), so this is a gap in the
+chunk (LTR_peel 1.0.1 at a 300 s cap: 86 such calls), so this is a gap in the
 tandem filter for long-unit arrays rather than in FastLTR.
 
-LTRquest's FP correction removes most of them: TR's final output keeps 146 rDNA
+LTR_peel's FP correction removes most of them: TR's final output keeps 146 rDNA
 calls, and the 101 that RepeatMasker supports are copies of a provirus the rDNA
 unit carries, a HERVIP10FH internal region between MER39B LTRs (5.4 kb; the
 MER39B pairs recur every 38-41 kb). `T`, whose rDNA chunks were capped, has
@@ -176,13 +176,13 @@ bash run_analysis.sh                  # the tables above, into $FASTLTR_BENCH/an
 
 These runs predate the current defaults (a 300 s cap, sdust and re-boundarying on). To
 rerun them with this version, add `--ltr-timeout 0 --no-sdust --no-reboundary` to the
-`ltrquest` command in `run_one.sh`; otherwise `U` and `UA` run under a 300 s cap.
+`ltr_peel` command in `run_one.sh`; otherwise `U` and `UA` run under a 300 s cap.
 
 `inputs/` holds `<genome>.fa` (and proteins, `<genome>.pep[.gz]`) for `athal`,
 `rice`, `chm13`, `sim` and `spike`, the PrinTE truth `sim.truth.bed`, and the
 region sources `make_regions.sh` names; `external/` the CHM13 v2.0 RepeatMasker
 BED (`chm13v2.0_RepeatMasker_4.1.2p1.2022Apr14.bed`); `tools/` a stock FasTAN,
-`ONEview`, and LTRquest's tools directory (`LTRQUEST_TOOLS_DIR`). The planted
+`ONEview`, and LTR_peel's tools directory (`LTR_PEEL_TOOLS_DIR`). The planted
 genome (`inputs/spike.fa`, truth `spike/athal_spike.truth.bed`) comes from
 `spike_in.py` with PrinTE's *A. thaliana* library
 (`data/athrep.updated.fasta_062024.ltr.full.gz` in

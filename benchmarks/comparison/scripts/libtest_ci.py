@@ -9,7 +9,7 @@ LTR-RTs cluster at Mb scale (pericentromeres), so blocks are large (default 5 Mb
 
 Every library under mask/<ds>/ with an eval/lib/<ds>/<lib>.tsv is included (superseded *.uniform skipped); totals are
 checked against lib-test's own TP/FP/FN (column 'check').
-usage: libtest_ci.py DS [--block 5000000] [--reps 2000] [--ref-lib ltrquest.intact]
+usage: libtest_ci.py DS [--block 5000000] [--reps 2000] [--ref-lib ltr_peel.intact]
 """
 import argparse
 import csv
@@ -69,7 +69,7 @@ def main(argv=None):  # noqa: C901
     ap.add_argument("--block", type=int, default=5_000_000, help="block length in bp (default 5 Mb)")
     ap.add_argument("--reps", type=int, default=2000, help="bootstrap draws (default 2000)")
     ap.add_argument("--seed", type=int, default=1, help="random seed (default 1)")
-    ap.add_argument("--ref-lib", default="ltrquest.intact", help="library the paired differences are taken against")
+    ap.add_argument("--ref-lib", default="ltr_peel.intact", help="library the paired differences are taken against")
     ap.add_argument("-o", "--out", help="output TSV (default eval/lib/<ds>.ci.tsv)")
     ap.add_argument("--base", default=None, help="benchmark root (default: this benchmark)")
     ap.add_argument("-v", "--verbose", action="store_true", help="per-library progress")

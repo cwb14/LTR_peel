@@ -2,20 +2,24 @@
 """Fig. S3 figS3_library_age: curated libraries annotate old LTR retrotransposons less completely (approach 4, post hoc).
 
 Panels:
-  A  one old, library-unsupported, protein-confirmed LTRquest element of A. thaliana beside the youngest clean copy of
+  A  one old, library-unsupported, protein-confirmed LTR_peel element of A. thaliana beside the youngest clean copy of
      the same curated family, in element coordinates: LTRs, protein domains, curated hits (family, identity).
   B  every protein-confirmed locus (pooled callers) of rice, zebra finch, maize and gorilla as a row, sorted by LTR
      divergence in four bins: curated LTR coverage along the element scaled to one length, beside the same loci moved
      20-200 kb (chance); mean profiles. The A. thaliana version is in the main figure (fig_benchmark H).
 Numbers: report/tables/library_age_bias.tsv; drawings: eval/adj/<ds>/<tool>.calls.tsv, mask/<ds>/curated/<ds>.fa.out
-(1-based), runs/arab/dante_ltr/dante.gff3 (1-based), eval/k2p/arab/ltrquest/annot.tsv, calls/arab/ltrquest.ids.tsv,
+(1-based), runs/arab/dante_ltr/dante.gff3 (1-based), eval/k2p/arab/ltr_peel/annot.tsv, calls/arab/ltr_peel.ids.tsv,
 data/arab/genome.fa (+ .fai). Frozen rules imported from scripts/adj_summary.py and scripts/proxies.py (unchanged).
 Outputs (this directory): figS3_library_age.{pdf,png}, figS3_library_age_numbers.tsv; caches in tmp/.
-Usage: figS3_library_age.py [--prep-only] [--redo-prep] [-v]
+Source data: source_data/figS3_library_age/ (A_copies, A_hits, A_domains: the two drawn copies; B_profiles: every
+drawn locus row; legend_supported_share). The full mode writes them and draws from the copies read back;
+--from-source-data draws from them without BENCH_ROOT.
+Usage: figS3_library_age.py [--prep-only] [--redo-prep] [--from-source-data] [-v]
 """
 import argparse
 import csv
 import glob
+import gzip
 import math
 import os
 import re
@@ -28,18 +32,26 @@ for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
     os.environ.setdefault(_v, "1")
 
 import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
 
-B = Path(os.environ["BENCH_ROOT"])
+B = Path(os.environ["BENCH_ROOT"]) if os.environ.get("BENCH_ROOT") else None
 HERE = Path(__file__).resolve().parent
 TMP = HERE / "tmp"
 STEM = "figS3_library_age"
-sys.path.insert(0, str(B / "scripts"))
+SD = HERE / "source_data" / STEM
+GZ_OVER = 1 << 20                           # source-data tables larger than this (bytes, uncompressed) are gzipped
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # poafig.py sits beside this script
-import adj_summary as su  # noqa: E402
-import proxies  # noqa: E402
+su = proxies = None                         # frozen rules from BENCH_ROOT/scripts, imported in full mode only
+
+
+def import_frozen():
+    global su, proxies
+    sys.path.insert(0, str(B / "scripts"))
+    import adj_summary as su  # noqa: E402
+    import proxies  # noqa: E402
 
 DS_B = ["rice", "finch", "maize", "gorilla"]          # panel B; A. thaliana is fig_benchmark H
-TOOLS = ["ltrquest", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
+TOOLS = ["ltr_peel", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
          "dante_ltr"]                                 # the locus pool (every primary caller with calls)
 GEN_NAME = {"rice": "rice", "finch": "zebra finch", "maize": "maize", "gorilla": "gorilla"}
 BINS = ["<0.01", "0.01-0.03", "0.03-0.1", ">=0.1"]
@@ -206,11 +218,11 @@ def domains(ds, c, s, e):
 
 
 def example(cid):
-    """one arab LTRquest call: record, Kmer2LTR LTRs and CIGAR, hits, domains, end sequences; structural checks"""
-    rec = next(r for r in csv.DictReader(open(B / "eval/adj/arab/ltrquest.calls.tsv"), delimiter="\t")
+    """one arab LTR_peel call: record, Kmer2LTR LTRs and CIGAR, hits, domains, end sequences; structural checks"""
+    rec = next(r for r in csv.DictReader(open(B / "eval/adj/arab/ltr_peel.calls.tsv"), delimiter="\t")
                if r["id"] == cid)
-    call = next(r for r in csv.DictReader(open(B / "calls/arab/ltrquest.ids.tsv"), delimiter="\t") if r["id"] == cid)
-    k = next(r for r in csv.DictReader(open(B / "eval/k2p/arab/ltrquest/annot.tsv"), delimiter="\t")
+    call = next(r for r in csv.DictReader(open(B / "calls/arab/ltr_peel.ids.tsv"), delimiter="\t") if r["id"] == cid)
+    k = next(r for r in csv.DictReader(open(B / "eval/k2p/arab/ltr_peel/annot.tsv"), delimiter="\t")
              if r["seq_id"] == cid)
     c, s, e = rec["chrom"], int(rec["start"]), int(rec["end"])
     idx = proxies.fai(str(B / "data/arab/genome.fa"))
@@ -253,13 +265,112 @@ def family_name(n):
     return re.sub(r"(_I|_LTR|_INT|I|LTR)$", "", n)
 
 
-# ============================================================================ tables
-def tsv(path):
-    return list(csv.DictReader(open(path), delimiter="\t"))
+# ============================================================================ source data
+BIN_COLS = ([f"ltr5_{i + 1:02d}" for i in range(NB5)] + [f"int_{i + 1:02d}" for i in range(NBI)]
+            + [f"ltr3_{i + 1:02d}" for i in range(NB3)])
+COPY_COLS = ["copy", "id", "chrom", "start", "end", "strand", "k2p", "tsd", "ltr5_start", "ltr5_end", "ltr3_start",
+             "ltr3_end", "coverage"]
+LEGEND_BINS = ("<0.01", ">=0.1")
 
 
-def tables():
-    return {"age": {(r["ds"], r["age_bin"]): r for r in tsv(B / "report/tables/library_age_bias.tsv")}}
+def write_table(df, name):
+    """source_data/<stem>/<name>.tsv, or .tsv.gz (gzip mtime 0, so reruns are byte-identical) above GZ_OVER"""
+    SD.mkdir(parents=True, exist_ok=True)
+    text = df.to_csv(sep="\t", index=False, na_rep="NA", lineterminator="\n").encode()
+    plain, gz = SD / f"{name}.tsv", SD / f"{name}.tsv.gz"
+    if len(text) > GZ_OVER:
+        with open(gz, "wb") as fh, gzip.GzipFile(filename="", mode="wb", fileobj=fh, mtime=0) as z:
+            z.write(text)
+        plain.unlink(missing_ok=True)
+    else:
+        plain.write_bytes(text)
+        gz.unlink(missing_ok=True)
+    log(f"wrote {name} ({len(df):,} rows)")
+
+
+def read_table(name, **kw):
+    p = SD / f"{name}.tsv"
+    if not p.exists():
+        p = SD / f"{name}.tsv.gz"
+    if not p.exists():
+        raise SystemExit(f"{STEM}: source-data table {name}.tsv(.gz) not found in {SD}")
+    return pd.read_csv(p, sep="\t", **kw)
+
+
+def write_source_data():
+    """the drawn and printed values: A, the two example copies (record, curated LTR hits, protein domains; genome
+    coordinates 0-based half-open, LTR bounds relative to the copy start); B, every drawn locus row (K2P measured)
+    in drawing order with its binned coverage profile, observed and moved; the legend's supported shares"""
+    old, young = example(OLD_ID), example(YOUNG_ID)
+    copies, hits, doms = [], [], []
+    for role, ex in (("supported", young), ("unsupported", old)):
+        copies.append(dict(zip(COPY_COLS, (role, ex["id"], ex["chrom"], ex["s"], ex["e"], ex["strand"], ex["k2p"],
+                                           ex["tsd"], *ex["l5"], *ex["l3"], ex["cov"]))))
+        hits += [dict(copy=role, start=h["s"], end=h["e"], name=h["name"], perc_div=h["div"]) for h in ex["hits"]
+                 if proxies.LTR.search(h["cls"])]
+        doms += [dict(copy=role, start=d["s"], end=d["e"], name=d["name"]) for d in ex["doms"]]
+    write_table(pd.DataFrame(copies, columns=COPY_COLS), "A_copies")
+    write_table(pd.DataFrame(hits, columns=["copy", "start", "end", "name", "perc_div"]), "A_hits")
+    write_table(pd.DataFrame(doms, columns=["copy", "start", "end", "name"]), "A_domains")
+    parts = []
+    for ds in DS_B:
+        d = load_prep(ds)
+        ok = ~np.isnan(d["k2p"])
+        order = np.lexsort((d["k2p"][ok],))
+        for track, M in (("loci", d["prof"]), ("moved", d["nprof"])):
+            t = pd.DataFrame(M[ok][order], columns=BIN_COLS)
+            t.insert(0, "ds", ds)
+            t.insert(1, "row", np.arange(1, int(ok.sum()) + 1))
+            t.insert(2, "k2p", d["k2p"][ok][order])
+            t.insert(3, "track", track)
+            parts.append(t)
+    write_table(pd.concat(parts, ignore_index=True), "B_profiles")
+    age = [r for r in csv.DictReader(open(B / "report/tables/library_age_bias.tsv"), delimiter="\t")
+           if r["ds"] in DS_B and r["age_bin"] in LEGEND_BINS]
+    write_table(pd.DataFrame([dict(ds=r["ds"], age_bin=r["age_bin"], supported_share=float(r["supported_share"]))
+                              for r in age]), "legend_supported_share")
+
+
+def read_source_data():
+    """the two example copies (as example() returns them, fields drawn only), the per-genome locus profiles (as
+    load_prep() returns them, drawn rows only) and the legend's supported shares"""
+    cp = read_table("A_copies", keep_default_na=False, dtype={"tsd": str})
+    hits = read_table("A_hits")
+    doms = read_table("A_domains")
+    ex = {}
+    for r in cp.to_dict("records"):
+        role = r["copy"]
+        ex[role] = dict(id=r["id"], chrom=r["chrom"], s=int(r["start"]), e=int(r["end"]), strand=r["strand"],
+                        k2p=float(r["k2p"]), tsd=r["tsd"], l5=(int(r["ltr5_start"]), int(r["ltr5_end"])),
+                        l3=(int(r["ltr3_start"]), int(r["ltr3_end"])), cov=float(r["coverage"]),
+                        hits=[dict(s=int(h["start"]), e=int(h["end"]), name=h["name"], div=float(h["perc_div"]))
+                              for h in hits[hits["copy"] == role].to_dict("records")],
+                        doms=[dict(s=int(d["start"]), e=int(d["end"]), name=d["name"])
+                              for d in doms[doms["copy"] == role].to_dict("records")])
+    bp = read_table("B_profiles", dtype={c: np.float32 for c in BIN_COLS})
+    prof = {}
+    for ds in DS_B:
+        lo, mv = bp[(bp["ds"] == ds) & (bp["track"] == "loci")], bp[(bp["ds"] == ds) & (bp["track"] == "moved")]
+        if len(lo) != len(mv) or not np.array_equal(lo["k2p"].to_numpy(), mv["k2p"].to_numpy()):
+            raise SystemExit(f"{STEM}: B_profiles: {ds} loci and moved rows do not pair up")
+        prof[ds] = dict(k2p=lo["k2p"].to_numpy(np.float64), prof=lo[BIN_COLS].to_numpy(np.float32),
+                        nprof=mv[BIN_COLS].to_numpy(np.float32))
+    sh = read_table("legend_supported_share")
+    share = {(r["ds"], r["age_bin"]): float(r["supported_share"]) for r in sh.to_dict("records")}
+    return dict(old=ex["unsupported"], young=ex["supported"], prof=prof, share=share)
+
+
+def check_read_back(sd):
+    """full mode: the profiles read back equal the caches bit for bit (drawn rows, drawing order)"""
+    for ds in DS_B:
+        d = load_prep(ds)
+        ok = ~np.isnan(d["k2p"])
+        order = np.lexsort((d["k2p"][ok],))
+        r = sd["prof"][ds]
+        if not (np.array_equal(r["k2p"], d["k2p"][ok][order])
+                and np.array_equal(r["prof"], d["prof"][ok][order], equal_nan=True)
+                and np.array_equal(r["nprof"], d["nprof"][ok][order], equal_nan=True)):
+            raise SystemExit(f"{STEM}: B_profiles read back for {ds} differ from tmp/prep_{ds}.npz")
 
 
 # ============================================================================ drawing
@@ -348,8 +459,6 @@ def draw_copy(ax, ex, y, x0, mm_per_bp, label, numbers):
         ax.add_patch(Rectangle((xx, ye - 0.7), max(tl, 0.5), 1.4, fc="white", ec=INK, lw=0.45, zorder=4))
     # curated hits: every hit, labeled with its family part and identity to the consensus (100 - divergence)
     for h in sorted(ex["hits"], key=lambda h: h["s"]):
-        if not proxies.LTR.search(h["cls"]):
-            continue
         a, b = to_elem(ex, max(h["s"], ex["s"] - 200), min(h["e"], ex["e"] + 200))
         ax.add_patch(Rectangle((X(a), yh), X(b) - X(a), 2.0, fc=HITC, ec="white", lw=0.3, zorder=3))
         fam = family_name(h["name"]).replace("_ATH", "")
@@ -369,13 +478,12 @@ def draw_copy(ax, ex, y, x0, mm_per_bp, label, numbers):
         ax.text((X(a) + X(b)) / 2, yd + 2.3, d["name"], ha="center", va="top", fontsize=FSS, color=INK)
 
 
-def build():
+def build(sd, analysis_dir):
     poafig = setup_fonts()
     import matplotlib.pyplot as plt
     from matplotlib.patches import Rectangle
     from matplotlib.colors import LinearSegmentedColormap
     MM = poafig.MM
-    T = tables()
     numbers = []
 
     def num(name, value, source):
@@ -385,7 +493,7 @@ def build():
     fig = plt.figure(figsize=(W * MM, H * MM))
 
     # ------------------------------------------------------------------ A: the example pair
-    old, young = example(OLD_ID), example(YOUNG_ID)
+    old, young = sd["old"], sd["young"]
     yA = 3.0
     axA = poafig.mm_axes(fig, 0, yA, W, 34)
     axA.set_xlim(0, W)
@@ -402,11 +510,11 @@ def build():
     poafig.panel_letter(fig, 1.0, yA - 1.0, "A")
     for nm, ex in (("supported", young), ("unsupported", old)):
         num(f"A {nm} copy K2P (LTR-LTR, substitutions per site)", ex["k2p"],
-            "eval/adj/arab/ltrquest.calls.tsv k2p (Kmer2LTR)")
+            "eval/adj/arab/ltr_peel.calls.tsv k2p (Kmer2LTR)")
         num(f"A {nm} copy curated LTR coverage of the span", round(ex["cov"], 3),
             "computed from mask/arab/curated/arab.fa.out (proxies.ref_ltr rule)")
-        num(f"A {nm} copy length (bp)", ex["e"] - ex["s"], "eval/adj/arab/ltrquest.calls.tsv len")
-        num(f"A {nm} copy TSD (open boxes)", ex["tsd"], "calls/arab/ltrquest.ids.tsv tsd; checked against "
+        num(f"A {nm} copy length (bp)", ex["e"] - ex["s"], "eval/adj/arab/ltr_peel.calls.tsv len")
+        num(f"A {nm} copy TSD (open boxes)", ex["tsd"], "calls/arab/ltr_peel.ids.tsv tsd; checked against "
             "data/arab/genome.fa")
 
     # ------------------------------------------------------------------ B: every locus as a row
@@ -422,7 +530,7 @@ def build():
     yH, hH = yP + hP + 1.4, 48.0                    # heat axes
     for i, ds in enumerate(DS_B):
         first = i == 0
-        d = load_prep(ds)
+        d = sd["prof"][ds]
         k = d["k2p"]
         ok = ~np.isnan(k)
         bins = np.digitize(k[ok], [0.01, 0.03, 0.1])
@@ -514,8 +622,8 @@ def build():
              (poafig.g_line(NULLC, lw=1.0), "moved 20–200 kb")]
     poafig.hkey(axk, items, 50.0, 1.4, XR - x0 - 50, fontsize=FSS)
     log(f"figure bottom at {yK + 2:.0f} mm of {H:.0f}")
-    short = legend(T, numbers, old, young)
-    res = poafig.write_figure(STEM, fig, short, None, HERE, analysis_dir=str(B),
+    short = legend(sd["share"], numbers, old, young)
+    res = poafig.write_figure(STEM, fig, short, None, HERE, analysis_dir=analysis_dir,
                               script=str(HERE / f"{STEM}.py"))
     with open(HERE / f"{STEM}_numbers.tsv", "w") as f:
         f.write("item\tvalue\tsource\n")
@@ -525,13 +633,12 @@ def build():
           f"{res['short_mm']} mm), {res['png'][0]}, {HERE / (STEM + '_numbers.tsv')}", file=sys.stderr)
 
 
-def legend(T, numbers, o, y):
+def legend(share, numbers, o, y):
     """legend page text (poafig markup); every number in it is recorded in numbers"""
     def n(name, value, source):
         numbers.append((name, value, source))
         return value
-    age = T["age"]
-    sh = {(d, b): float(age[(d, b)]["supported_share"]) for d in DS_B for b in ("<0.01", ">=0.1")}
+    sh = {(d, b): share[(d, b)] for d in DS_B for b in LEGEND_BINS}
     lo_y, hi_y = min(sh[(d, "<0.01")] for d in DS_B), max(sh[(d, "<0.01")] for d in DS_B)
     lo_o, hi_o = min(sh[(d, ">=0.1")] for d in DS_B), max(sh[(d, ">=0.1")] for d in DS_B)
     n("legend supported share, youngest class, range over the four genomes of B", f"{lo_y:.2f}-{hi_y:.2f}",
@@ -541,8 +648,8 @@ def legend(T, numbers, o, y):
     n("legend rule: moved-locus shift (kb)", "20-200", "memo.md 'Approach 4' local null")
     n("legend rule: library-supported = annotated share of the span (%)", 80, "memo.md 'Approach 4' (proxies.py)")
     n("legend genomes (B here + A. thaliana in Fig. 1G)", 5, "report/tables/library_age_bias.tsv")
-    hid = [round(100 - h["div"]) for h in o["hits"] if proxies.LTR.search(h["cls"])]
-    yid = [round(100 - h["div"]) for h in y["hits"] if proxies.LTR.search(h["cls"])]
+    hid = [round(100 - h["div"]) for h in o["hits"]]
+    yid = [round(100 - h["div"]) for h in y["hits"]]
     n("legend unsupported copy hit identity range (%)", f"{min(hid)}-{max(hid)}", "mask/arab/curated/arab.fa.out")
     n("legend supported copy hit identity range (%)", f"{min(yid)}-{max(yid)}", "mask/arab/curated/arab.fa.out")
     n("legend unsupported copy annotated share (%)", round(100 * o["cov"]), "computed (proxies.ref_ltr rule)")
@@ -551,7 +658,7 @@ LTR retrotransposons that carry their own protein domains are less completely an
 their two LTRs have diverged, so masking benchmarks count parts of real elements as false positives. The analysis was \
 added after the benchmark design was fixed.
 
-**A**, An *A. thaliana* element called by LTRquest (unsupported copy) carries the protein domains of a coding \
+**A**, An *A. thaliana* element called by LTR_peel (unsupported copy) carries the protein domains of a coding \
 element in their canonical order, yet the library annotates only {round(100 * o['cov'])}% of it, through scattered hits \
 of {min(hid)}–{max(hid)}% identity and none on its LTRs. A clean copy of the same curated family (supported copy) is \
 annotated end to end at {min(yid)}–{max(yid)}% identity. Both are drawn 5′ to 3′, with their target-site duplications \
@@ -568,16 +675,27 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description="Fig. S3 figS3_library_age: figure page, legend page, PNG, numbers.")
     ap.add_argument("--prep-only", action="store_true", help="build the per-genome locus caches in tmp/ and stop")
     ap.add_argument("--redo-prep", action="store_true", help="rebuild the caches even if present")
+    ap.add_argument("--from-source-data", action="store_true",
+                    help=f"redraw from source_data/{STEM}/ only; needs no BENCH_ROOT")
     ap.add_argument("-v", "--verbose", action="store_true", help="progress messages")
     a = ap.parse_args(argv)
     VERBOSE = a.verbose
+    if a.from_source_data:
+        build(read_source_data(), str(SD))
+        return
+    if B is None:
+        raise SystemExit(f"{STEM}: BENCH_ROOT is not set (or use --from-source-data)")
+    import_frozen()
     TMP.mkdir(exist_ok=True)
     for ds in DS_B:
         if a.redo_prep or not (TMP / f"prep_{ds}.npz").exists():
             prep(ds)
     if a.prep_only:
         return
-    build()
+    write_source_data()
+    sd = read_source_data()
+    check_read_back(sd)
+    build(sd, str(B))
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@ which no amount of unit testing can replace.
 
 Run it against the container, where the whole toolchain is present::
 
-    docker run --rm -v "$PWD:/w" -w /w ghcr.io/cwb14/ltrquest:1.0.1 \\
+    docker run --rm -v "$PWD:/w" -w /w ghcr.io/cwb14/ltr_peel:1.0.1 \\
         pytest -m slow tests/test_end_to_end.py
 
 or against a conda environment built from environment.yml::
@@ -44,13 +44,13 @@ MASK_DISTANCE = 15_000
 
 
 def _threads() -> str:
-    return os.environ.get("LTRQUEST_E2E_THREADS", str(min(8, os.cpu_count() or 1)))
+    return os.environ.get("LTR_PEEL_E2E_THREADS", str(min(8, os.cpu_count() or 1)))
 
 
 @pytest.fixture(scope="module")
 def toolchain():
-    if shutil.which("ltrquest") is None:
-        pytest.skip("ltrquest is not on PATH; install the package first (pip install .)")
+    if shutil.which("ltr_peel") is None:
+        pytest.skip("ltr_peel is not on PATH; install the package first (pip install .)")
     missing = [t for t in REQUIRED_TOOLS if shutil.which(t) is None]
     if missing:
         pytest.skip(f"external toolchain not on PATH: {', '.join(missing)}")
@@ -58,7 +58,7 @@ def toolchain():
 
 @pytest.fixture(scope="module")
 def run_dir(tmp_path_factory, toolchain, athal_genome):
-    """A completed LTRquest run over a slice of the real chromosome."""
+    """A completed LTR_peel run over a slice of the real chromosome."""
     work = tmp_path_factory.mktemp("e2e")
 
     genome = work / "athal_slice.fa"
@@ -80,7 +80,7 @@ def run_dir(tmp_path_factory, toolchain, athal_genome):
             dst.write(line)
 
     result = subprocess.run(
-        ["ltrquest",
+        ["ltr_peel",
          "--genome", genome.name,
          "--proteins", proteins.name,
          "--threads", _threads(),
@@ -91,7 +91,7 @@ def run_dir(tmp_path_factory, toolchain, athal_genome):
         cwd=work, capture_output=True, text=True,
     )
     if result.returncode != 0:
-        pytest.fail(f"ltrquest exited {result.returncode}\n--- stderr ---\n{result.stderr[-4000:]}")
+        pytest.fail(f"ltr_peel exited {result.returncode}\n--- stderr ---\n{result.stderr[-4000:]}")
     return work, result.stdout
 
 
@@ -186,7 +186,7 @@ def test_gff3_is_written_and_well_formed(run_dir):
             continue
         cols = line.split("\t")
         assert len(cols) == 9, f"GFF3 line has {len(cols)} columns: {line[:80]}"
-        assert cols[1] == "LTRquest", f"unexpected source column: {cols[1]}"
+        assert cols[1] == "LTR_peel", f"unexpected source column: {cols[1]}"
         assert int(cols[3]) <= int(cols[4]), f"start > end: {line[:80]}"
         assert cols[6] in "+-.", f"bad strand: {cols[6]}"
         features += 1
@@ -238,10 +238,10 @@ def _write_windows(athal_genome, dirs):
         (d / "prot.fa").write_text(proteins)
 
 
-def _ltrquest(cwd, *genomes, extra=()):
+def _ltr_peel(cwd, *genomes, extra=()):
     # Reuse needs the detection records and the files they name.
     return subprocess.run(
-        ["ltrquest", "--genome", *genomes, "--proteins", "prot.fa",
+        ["ltr_peel", "--genome", *genomes, "--proteins", "prot.fa",
          "--threads", _threads(), "--max-rounds", "1", "--terminate_count", "1",
          "--no-plots", "--keep-intermediates", *extra],
         cwd=cwd, capture_output=True, text=True,
@@ -250,7 +250,7 @@ def _ltrquest(cwd, *genomes, extra=()):
 
 def _require(result):
     if result.returncode != 0:
-        pytest.fail(f"ltrquest exited {result.returncode}\n--- stderr ---\n{result.stderr[-4000:]}")
+        pytest.fail(f"ltr_peel exited {result.returncode}\n--- stderr ---\n{result.stderr[-4000:]}")
     return result
 
 
@@ -298,10 +298,10 @@ def incremental(tmp_path_factory, toolchain, athal_genome):
     fresh.mkdir()
     _write_windows(athal_genome, (inc, fresh))
 
-    _require(_ltrquest(inc, "a.fa", "b.fa"))
+    _require(_ltr_peel(inc, "a.fa", "b.fa"))
     before = _detection_digests(inc, ("a_LTRs", "b_LTRs"))
-    second = _require(_ltrquest(inc, "a.fa", "b.fa", "c.fa"))
-    _require(_ltrquest(fresh, "a.fa", "b.fa", "c.fa"))
+    second = _require(_ltr_peel(inc, "a.fa", "b.fa", "c.fa"))
+    _require(_ltr_peel(fresh, "a.fa", "b.fa", "c.fa"))
     return inc, fresh, second.stdout, before
 
 
@@ -341,7 +341,7 @@ def test_gff3_family_attributes_match_a_run_from_scratch(incremental):
 
 def test_a_changed_detection_setting_is_refused(incremental):
     inc, _fresh, _stdout, _before = incremental
-    result = _ltrquest(inc, "a.fa", "b.fa", "c.fa", extra=("--max-rounds", "2"))
+    result = _ltr_peel(inc, "a.fa", "b.fa", "c.fa", extra=("--max-rounds", "2"))
     assert result.returncode != 0
     assert "max_rounds: 1 before, 2 now" in result.stderr
 
@@ -360,7 +360,7 @@ def test_a_default_run_keeps_only_its_results(tmp_path_factory, toolchain, athal
     # Two rounds at most, so there is a second round's work to clean up; the round
     # limits change what is found, not what is kept.
     _require(subprocess.run(
-        ["ltrquest", "--genome", "b.fa", "--proteins", "prot.fa", "--threads", _threads(),
+        ["ltr_peel", "--genome", "b.fa", "--proteins", "prot.fa", "--threads", _threads(),
          "--max-rounds", "2", "--terminate_count", "1"],
         cwd=work, capture_output=True, text=True))
     after = {p.name for p in work.iterdir()}

@@ -11,7 +11,7 @@ import random
 
 import pytest
 
-from ltrquest import flag_fp
+from ltr_peel import flag_fp
 
 LTR = 400
 HEADER = "#seq_id\tseq_len\tstatus\tltr5_start\tltr5_end\tltr3_start\tltr3_end\tnest_status\n"

@@ -33,9 +33,9 @@ B = os.environ["BENCH_ROOT"]
 sys.path.append(f"{B}/scripts")   # appended: scripts/queue.py would shadow the stdlib queue
 from score_elements import Index, anatomy, match, read_bed3, read_calls, read_truth  # noqa: E402
 
-TOOLS = ["ltrquest", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
+TOOLS = ["ltr_peel", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
          "dante_ltr"]
-DIAG = ["ltrquest_hc"]            # developer diagnostic: computed, flagged role=diagnostic, never in figures
+DIAG = ["ltr_peel_hc"]            # developer diagnostic: computed, flagged role=diagnostic, never in figures
 SETS = [f"S{s}_{r}" for s in (1, 2) for r in (1, 2, 3)]
 CLASSES = ["host", "tenant", "unnested"]
 RO = 0.9

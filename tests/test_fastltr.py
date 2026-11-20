@@ -14,8 +14,8 @@ from pathlib import Path
 
 import pytest
 
-from ltrquest import detect
-from ltrquest import fastltr as fl
+from ltr_peel import detect
+from ltr_peel import fastltr as fl
 
 
 def fake_binary(path: Path, usage: str) -> Path:

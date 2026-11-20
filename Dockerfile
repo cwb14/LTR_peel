@@ -1,20 +1,20 @@
 # syntax=docker/dockerfile:1
 #
-# LTRquest — hermetic image.
+# LTR_peel — hermetic image.
 #
 # The detector normally fetches and builds five helper repos into --tools-dir on
 # first use. That is convenient on a workstation and wrong in a container: it
 # makes the image's behaviour depend on what GitHub served that morning. Here
-# they are cloned at pinned commits during the build, and LTRQUEST_TOOLS_DIR
+# they are cloned at pinned commits during the build, and LTR_PEEL_TOOLS_DIR
 # points every run at the result, so a container never reaches the network.
 #
-#   docker build -t ltrquest:1.0.1 .
-#   docker run --rm -v "$PWD:/data" -w /data ltrquest:1.0.1 \
+#   docker build -t ltr_peel:1.0.1 .
+#   docker run --rm -v "$PWD:/data" -w /data ltr_peel:1.0.1 \
 #       --genome genome.fa --proteins prot.fa --threads 8
 #
 # The ENTRYPOINT at the bottom is what lets the arguments be written bare like
 # that, and it is also what Apptainer turns into the SIF's runscript, so a pulled
-# image can be run as `./ltrquest.sif --genome genome.fa`. See bin/entrypoint.sh.
+# image can be run as `./ltr_peel.sif --genome genome.fa`. See bin/entrypoint.sh.
 
 # ---------------------------------------------------------------- build stage
 FROM mambaorg/micromamba:1.5.10-jammy AS build
@@ -31,14 +31,14 @@ ARG TRFMOD_REF=3e891db310124f7e5f7a630a1c006650be9d1f3a
 ARG SDUST_REF=89c42cb41ba598e9cfa07c2ef99ae8c08f769b3e
 ARG FASTAN_REF=843d0ed28b93b05ad428995d986312f02468afcd
 
-# LTRquest's adaptation of FastLTR, compiled against the pinned FASTAN sources
-# below; ltrquest.fastltr builds it the same way outside the container. The last
+# LTR_peel's adaptation of FastLTR, compiled against the pinned FASTAN sources
+# below; ltr_peel.fastltr builds it the same way outside the container. The last
 # line checks the build by the marker in its usage text. Run bare, FastLTR prints
 # that text and exits 1, and this image's build shell sets pipefail, so the exit
 # status is dropped (`|| true`) and grep alone decides.
-COPY src/ltrquest/fastltr/FastLTR.c /tmp/FastLTR.c
+COPY src/ltr_peel/fastltr/FastLTR.c /tmp/FastLTR.c
 
-ENV TOOLS=/opt/ltrquest/tools
+ENV TOOLS=/opt/ltr_peel/tools
 RUN mkdir -p "$TOOLS" \
  && git clone https://github.com/cwb14/Kmer2LTR.git "$TOOLS/Kmer2LTR" \
  && git -C "$TOOLS/Kmer2LTR" checkout --quiet "$KMER2LTR_REF" \
@@ -58,14 +58,14 @@ RUN mkdir -p "$TOOLS" \
  && cd / \
  && find "$TOOLS" -name .git -type d -prune -exec rm -rf {} + \
  && test -x "$TOOLS/TRF-mod/trf-mod" && test -x "$TOOLS/sdust/sdust" \
- && { "$TOOLS/FASTAN/FastLTR" 2>&1 || true; } | grep -q "LTRquest adaptation"
+ && { "$TOOLS/FASTAN/FastLTR" 2>&1 || true; } | grep -q "LTR_peel adaptation"
 
 # --------------------------------------------------------------- runtime stage
 FROM mambaorg/micromamba:1.5.10-jammy
 
-LABEL org.opencontainers.image.title="LTRquest" \
+LABEL org.opencontainers.image.title="LTR_peel" \
       org.opencontainers.image.description="Iterative detection of nested LTR retrotransposons" \
-      org.opencontainers.image.source="https://github.com/cwb14/LTRquest" \
+      org.opencontainers.image.source="https://github.com/cwb14/LTR_peel" \
       org.opencontainers.image.licenses="GPL-3.0-or-later" \
       org.opencontainers.image.version="1.0.1"
 
@@ -83,48 +83,48 @@ RUN micromamba install -y -n base -f /tmp/environment.yml \
  && rm /tmp/environment.yml
 
 ENV PATH=/opt/conda/bin:$PATH \
-    LTRQUEST_TOOLS_DIR=/opt/ltrquest/tools \
+    LTR_PEEL_TOOLS_DIR=/opt/ltr_peel/tools \
     MPLBACKEND=Agg \
     PYTHONNOUSERSITE=1
 
-COPY --from=build /opt/ltrquest/tools /opt/ltrquest/tools
+COPY --from=build /opt/ltr_peel/tools /opt/ltr_peel/tools
 
-COPY . /opt/ltrquest/src
-RUN pip install --no-cache-dir /opt/ltrquest/src \
- && install -D -m 0755 /opt/ltrquest/src/bin/entrypoint.sh \
-        /opt/ltrquest/bin/entrypoint \
- && install -D -m 0755 /opt/ltrquest/src/bin/ltrquest-container \
-        /opt/ltrquest/bin/ltrquest-container \
- && rm -rf /opt/ltrquest/src
+COPY . /opt/ltr_peel/src
+RUN pip install --no-cache-dir /opt/ltr_peel/src \
+ && install -D -m 0755 /opt/ltr_peel/src/bin/entrypoint.sh \
+        /opt/ltr_peel/bin/entrypoint \
+ && install -D -m 0755 /opt/ltr_peel/src/bin/ltr_peel-container \
+        /opt/ltr_peel/bin/ltr_peel-container \
+ && rm -rf /opt/ltr_peel/src
 
 # Fail the build, not the first user, if the image is wired up wrong.
-RUN ltrquest --help > /dev/null \
- && python -c "import ltrquest, matplotlib, numpy; print('ltrquest', ltrquest.__version__)" \
+RUN ltr_peel --help > /dev/null \
+ && python -c "import ltr_peel, matplotlib, numpy; print('ltr_peel', ltr_peel.__version__)" \
  && for t in gt ltr_finder mmseqs hmmsearch blastn minimap2 miniprot mafft; do \
         command -v "$t" > /dev/null || { echo "missing: $t" >&2; exit 1; }; \
     done \
- && test -f "$LTRQUEST_TOOLS_DIR/Kmer2LTR/src/kmer2ltr/cli.py" \
- && test -x "$LTRQUEST_TOOLS_DIR/TRF-mod/trf-mod" \
- && test -x "$LTRQUEST_TOOLS_DIR/FASTAN/FastLTR" \
- && test -x /opt/ltrquest/bin/ltrquest-container
+ && test -f "$LTR_PEEL_TOOLS_DIR/Kmer2LTR/src/kmer2ltr/cli.py" \
+ && test -x "$LTR_PEEL_TOOLS_DIR/TRF-mod/trf-mod" \
+ && test -x "$LTR_PEEL_TOOLS_DIR/FASTAN/FastLTR" \
+ && test -x /opt/ltr_peel/bin/ltr_peel-container
 
 # All three ways the entry point is reached, asserted here so a dispatch
 # regression fails the build rather than the first person to run the image:
 # bare flags, an explicit stage command, and an arbitrary command (which is how
 # Nextflow drives the image).
-RUN /opt/ltrquest/bin/entrypoint --help > /dev/null \
- && /opt/ltrquest/bin/entrypoint ltrquest-gff3 --help > /dev/null \
- && /opt/ltrquest/bin/entrypoint /bin/sh -c 'exit 0'
+RUN /opt/ltr_peel/bin/entrypoint --help > /dev/null \
+ && /opt/ltr_peel/bin/entrypoint ltr_peel-gff3 --help > /dev/null \
+ && /opt/ltr_peel/bin/entrypoint /bin/sh -c 'exit 0'
 
 USER $MAMBA_USER
 WORKDIR /data
 
-# An empty ENTRYPOINT is what broke `./ltrquest.sif --genome x.fa` in 1.0.1:
+# An empty ENTRYPOINT is what broke `./ltr_peel.sif --genome x.fa` in 1.0.1:
 # Apptainer builds the runscript from ENTRYPOINT and CMD, and with only a CMD it
 # *replaces* the command with the user's arguments, so the first flag was run as
 # a program. With an ENTRYPOINT, Apptainer prepends it to the arguments instead.
-# `docker run IMG ltrquest ...` and `apptainer exec IMG ltrquest ...` are
+# `docker run IMG ltr_peel ...` and `apptainer exec IMG ltr_peel ...` are
 # unaffected: the dispatcher runs a first argument that names a command, and
 # `exec` never reaches the entry point at all.
-ENTRYPOINT ["/opt/ltrquest/bin/entrypoint"]
+ENTRYPOINT ["/opt/ltr_peel/bin/entrypoint"]
 CMD ["--help"]

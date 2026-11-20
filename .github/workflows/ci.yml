@@ -62,9 +62,9 @@ jobs:
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
           shellcheck --severity=warning \
-            src/ltrquest/scripts/*.sh \
+            src/ltr_peel/scripts/*.sh \
             bin/entrypoint.sh \
-            bin/ltrquest-container
+            bin/ltr_peel-container
 
   package:
     name: pip install
@@ -88,8 +88,8 @@ jobs:
 
       - name: Entry points resolve
         run: |
-          for cmd in ltrquest ltrquest-plots ltrquest-detect ltrquest-mask \
-                     ltrquest-reconcile ltrquest-annotate ltrquest-gff3; do
+          for cmd in ltr_peel ltr_peel-plots ltr_peel-detect ltr_peel-mask \
+                     ltr_peel-reconcile ltr_peel-annotate ltr_peel-gff3; do
               command -v "$cmd" > /dev/null || { echo "missing: $cmd"; exit 1; }
               "$cmd" --help > /dev/null || { echo "--help failed: $cmd"; exit 1; }
               echo "ok: $cmd"
@@ -141,7 +141,7 @@ jobs:
           nextflow run . -profile test -stub-run --reboundary false \
               --strand_recovery off --outdir results_off
           test -s results_off/test_LTRs/test_LTRs_depth0_clean_ltr.tsv
-          if grep -e LTRQUEST_REBOUNDARY -e LTRQUEST_RECOVERSTRAND \
+          if grep -e LTR_PEEL_REBOUNDARY -e LTR_PEEL_RECOVERSTRAND \
               results_off/pipeline_info/trace.txt; then
             echo "a step that was switched off ran"; exit 1
           fi

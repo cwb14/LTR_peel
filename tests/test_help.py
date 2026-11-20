@@ -56,5 +56,5 @@ def test_help_all_states_new_defaults(driver):
 
 def test_help_all_explains_what_keeping_and_the_tools_dir_do(driver):
     text = " ".join(run(driver, "--help-all").stdout.split())
-    assert "re-plotting with ltrquest-plots" in text
+    assert "re-plotting with ltr_peel-plots" in text
     assert "never removed" in text and "only if this run created it" in text

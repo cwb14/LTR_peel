@@ -1,0 +1,10 @@
+dataset	caller	run	status	share_missed
+camara_hap2	ltr_peel	e2e	ok	0.0158046
+camara_hap2	ltr_retriever	e2e	ok	0.33046
+camara_hap2	ltrharvest	e2e	ok	0.159483
+camara_hap2	ltr_finder	e2e	ok	0.380747
+camara_hap2	look4ltrs	e2e	DNF (timeout)	
+camara_hap2	hirepeat	e2e	ok	0.0804598
+camara_hap2	hite	e2e	ok	0.372126
+camara_hap2	ltrpred	e2e	ok	0.538793
+camara_hap2	dante_ltr	e2e	ok	0.494253

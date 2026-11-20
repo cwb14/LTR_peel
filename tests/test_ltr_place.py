@@ -7,9 +7,9 @@ import random
 
 import pytest
 
-from ltrquest import ltr_model as lm
-from ltrquest import ltr_place as lp
-from ltrquest import templates as tp
+from ltr_peel import ltr_model as lm
+from ltr_peel import ltr_place as lp
+from ltr_peel import templates as tp
 from reboundary_fixtures import FAMILY, build, members
 
 

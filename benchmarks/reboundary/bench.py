@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Benchmarks for ltrquest.reboundary (template re-boundarying).
+"""Benchmarks for ltr_peel.reboundary (template re-boundarying).
 
   b1       planted obstacles with known true ends (B1) plus untouched controls (B3)
   b2       a finished run re-bounded in a scratch copy (B2)
@@ -34,11 +34,11 @@ from dataclasses import asdict, fields, replace
 from multiprocessing import Pool
 from typing import Dict, List, Optional, Sequence
 
-from ltrquest import reboundary as rb
-from ltrquest import templates as tp
-from ltrquest.ltr_model import Genomes, Member
-from ltrquest.ltr_place import Params
-from ltrquest.reboundary_io import load_clean_tables, members_from
+from ltr_peel import reboundary as rb
+from ltr_peel import templates as tp
+from ltr_peel.ltr_model import Genomes, Member
+from ltr_peel.ltr_place import Params
+from ltr_peel.reboundary_io import load_clean_tables, members_from
 
 OBSTACLES = [("none", 0), ("patch", 30), ("del", 10), ("del", 50), ("del", 200),
              ("ins", 50), ("ins", 300), ("ins", 1000), ("ins", 5000),
@@ -464,7 +464,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("mode", choices=("b1", "b2", "collect"))
-    ap.add_argument("--run", help="finished LTRquest run directory (read only)")
+    ap.add_argument("--run", help="finished LTR_peel run directory (read only)")
     ap.add_argument("--prefix", nargs="+")
     ap.add_argument("--genome", nargs="+")
     ap.add_argument("--tools-dir", help="Kmer2LTR checkout with the homology-paired credit "

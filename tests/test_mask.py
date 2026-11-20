@@ -8,7 +8,7 @@ import sys
 
 import pytest
 
-from ltrquest.mask import (
+from ltr_peel.mask import (
     clip_intervals,
     fasta_iter,
     mask_contig,
@@ -128,7 +128,7 @@ class TestMaskContig:
 class TestMaskCli:
     def _run(self, *args):
         return subprocess.run(
-            [sys.executable, "-m", "ltrquest.mask", *args],
+            [sys.executable, "-m", "ltr_peel.mask", *args],
             capture_output=True,
             text=True,
             check=True,

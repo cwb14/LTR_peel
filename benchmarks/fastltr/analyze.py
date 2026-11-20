@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Score LTRquest benchmark runs of one genome against its uncapped reference.
+"""Score LTR_peel benchmark runs of one genome against its uncapped reference.
 
 For every config the clean element set (all depths) is matched to the reference
 config's: two elements match when each LTR overlaps its counterpart by >= 50% of

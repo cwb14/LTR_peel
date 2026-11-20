@@ -1,0 +1,33 @@
+caller	feature	source
+ltr_peel	strand	calls table (clean_ltr.tsv strand)
+ltr_peel	LTR	calls table lltr_end / rltr_start
+ltr_peel	TSD	calls table tsd sequence (clean_ltr.tsv, offset 0,0) -> adjacent flanks
+ltr_peel	domains	runs/camara_hap2/ltr_peel/camara_hap2_LTRs_all_depth_LTR_cleaned.gff3 protein_match (1-based)
+ltr_retriever	strand	calls table (pass.list)
+ltr_retriever	LTR	calls table
+ltr_retriever	domains	none
+ltr_retriever	TSD	runs/camara_hap2/ltr_retriever/camara_hap2.fa.mod.pass.list 5_TSD / 3_TSD (1-based)
+ltrharvest	strand	not reported ('?')
+ltrharvest	LTR	calls table
+ltrharvest	domains	none
+ltrharvest	TSD	runs/camara_hap2/ltrharvest/ltrharvest.gff3 target_site_duplication (seq5; 1-based)
+ltr_finder	strand	calls table (scn Strand)
+ltr_finder	LTR	calls table
+ltr_finder	TSD	scn TSR -> adjacent flanks
+ltr_finder	domains	runs/camara_hap2/ltr_finder/camara_hap2.fa.finder.combine.scn RT / IN / RH columns
+hirepeat	strand	not reported
+hirepeat	LTR	not reported (Kmer2LTR edges are a benchmark instrument)
+hirepeat	TSD	not reported
+hirepeat	domains	none
+hite	strand	not reported ('.')
+hite	LTR	calls table (intact_LTR.list)
+hite	domains	none
+hite	TSD	calls table tsd sequence (intact_LTR.list, coordinates NA) -> adjacent flanks
+ltrpred	strand	-
+ltrpred	LTR	-
+ltrpred	TSD	-
+ltrpred	domains	- (no call in the window)
+dante_ltr	strand	-
+dante_ltr	LTR	-
+dante_ltr	TSD	-
+dante_ltr	domains	- (no call in the window)

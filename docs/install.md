@@ -1,10 +1,10 @@
-# Installing LTRquest
+# Installing LTR_peel
 
 The short route is in the [README](../README.md). This page has the details: the
 container launcher, every install route, and what to do on a cluster without
 internet.
 
-LTRquest drives a stack of external tools (GenomeTools, LTR_finder, MMseqs2,
+LTR_peel drives a stack of external tools (GenomeTools, LTR_finder, MMseqs2,
 HMMER, miniprot, BLAST+, minimap2, and others). You do not have to install any of
 them: the container has them all, and needs neither `sudo` nor a package manager.
 
@@ -14,23 +14,23 @@ The right choice on a shared cluster, where you cannot install Docker and do not
 have root. The whole tool is one file you own, and you run that file:
 
 ```bash
-apptainer pull ltrquest.sif docker://ghcr.io/cwb14/ltrquest:latest
-./ltrquest.sif --help
+apptainer pull ltr_peel.sif docker://ghcr.io/cwb14/ltr_peel:latest
+./ltr_peel.sif --help
 ```
 
 `:latest` is the newest release; for a paper, replace `latest` with the number of
 the release you used.
 
-`./ltrquest.sif` **is** the `ltrquest` command: the flags are the same, and it
+`./ltr_peel.sif` **is** the `ltr_peel` command: the flags are the same, and it
 runs as you, in your own directory:
 
 ```bash
-./ltrquest.sif --genome your_genome.fa --proteins related.pep.fa --threads 20
+./ltr_peel.sif --genome your_genome.fa --proteins related.pep.fa --threads 20
 ```
 
-The individual stages work the same way: `./ltrquest.sif ltrquest-gff3 --help`.
-Every example in the docs is written as plain `ltrquest ...`; with a container,
-read it as `./ltrquest.sif ...`.
+The individual stages work the same way: `./ltr_peel.sif ltr_peel-gff3 --help`.
+Every example in the docs is written as plain `ltr_peel ...`; with a container,
+read it as `./ltr_peel.sif ...`.
 
 On a cluster you may need `module load apptainer` (or `module load singularity`)
 first. `singularity` works identically: swap the command name. If your home
@@ -57,25 +57,25 @@ and misses two common ones:
 Fix either one on the spot: resolve the link, or name the directory to mount.
 
 ```bash
-cd -P . && ./ltrquest.sif --genome hg38.fa --threads 20
+cd -P . && ./ltr_peel.sif --genome hg38.fa --threads 20
 
-apptainer exec -B /scratch ltrquest.sif \
-    ltrquest --genome /scratch/genomes/hg38.fa --threads 20
+apptainer exec -B /scratch ltr_peel.sif \
+    ltr_peel --genome /scratch/genomes/hg38.fa --threads 20
 ```
 
 Or fix it once, with the launcher that ships inside the image. It works the
 mounts out from your command and hands the rest to the container unchanged:
 
 ```bash
-apptainer exec ltrquest.sif cat /opt/ltrquest/bin/ltrquest-container > ltrquest
-chmod +x ltrquest
+apptainer exec ltr_peel.sif cat /opt/ltr_peel/bin/ltr_peel-container > ltr_peel
+chmod +x ltr_peel
 
-./ltrquest --genome /scratch/genomes/hg38.fa --threads 20   # mounts /scratch/genomes
+./ltr_peel --genome /scratch/genomes/hg38.fa --threads 20   # mounts /scratch/genomes
 ```
 
 It is a short shell script with no dependencies: read it before you run it if you
-like. Keep it beside `ltrquest.sif`, or put it on your `PATH` and tell it where
-the image lives with `export LTRQUEST_SIF=/shared/containers/ltrquest.sif`.
+like. Keep it beside `ltr_peel.sif`, or put it on your `PATH` and tell it where
+the image lives with `export LTR_PEEL_SIF=/shared/containers/ltr_peel.sif`.
 
 ## conda / mamba
 
@@ -83,24 +83,24 @@ If you would rather have the tools on your `PATH` than in a container, clone the
 repository and build the environment from it:
 
 ```bash
-git clone https://github.com/cwb14/LTRquest.git
-cd LTRquest
+git clone https://github.com/cwb14/LTR_peel.git
+cd LTR_peel
 
-mamba env create -n ltrquest -f environment.yml   # add --yes to overwrite an existing one
-mamba activate ltrquest
+mamba env create -n ltr_peel -f environment.yml   # add --yes to overwrite an existing one
+mamba activate ltr_peel
 pip install .
 
-ltrquest --help
+ltr_peel --help
 ```
 
-Run these one at a time rather than pasting the block. If an `ltrquest`
+Run these one at a time rather than pasting the block. If an `ltr_peel`
 environment already exists, `mamba env create` stops and asks whether to
 overwrite it, and a question that arrives in the middle of a pasted block is
 answered by whatever line you pasted after it, not by you. For a clean rebuild,
 remove the old environment first:
 
 ```bash
-mamba env remove -n ltrquest
+mamba env remove -n ltr_peel
 ```
 
 `environment.yml` carries `git`, `make` and a C compiler on purpose, mainly for
@@ -118,7 +118,7 @@ recovery (off by default) needs both.
 For your own machine, where you have root.
 
 ```bash
-docker pull ghcr.io/cwb14/ltrquest:latest
+docker pull ghcr.io/cwb14/ltr_peel:latest
 ```
 
 `:latest` is the newest release; for a paper, replace `latest` with the number of
@@ -129,10 +129,10 @@ which user to be, so its commands are longer than the Apptainer equivalents:
 
 ```bash
 docker run --rm -v "$PWD:/data" -w /data -u "$(id -u):$(id -g)" \
-  ghcr.io/cwb14/ltrquest:latest --help
+  ghcr.io/cwb14/ltr_peel:latest --help
 ```
 
-Naming the command explicitly (`... ghcr.io/cwb14/ltrquest:latest ltrquest
+Naming the command explicitly (`... ghcr.io/cwb14/ltr_peel:latest ltr_peel
 --help`) works too, and is how you reach the other stages.
 
 ## pip
@@ -140,15 +140,15 @@ Naming the command explicitly (`... ghcr.io/cwb14/ltrquest:latest ltrquest
 Python parts only; external tools not included.
 
 ```bash
-pip install ltrquest
+pip install ltr_peel
 ```
 
 You then have to supply the external binaries yourself; see
 [`environment.yml`](../environment.yml) for the list. TEsorter2, TRF-mod, sdust
 and FASTAN are fetched into the tools directory on first use. TRF-mod and sdust
-are then compiled, and FastLTR is compiled from FASTAN with LTRquest's own
+are then compiled, and FastLTR is compiled from FASTAN with LTR_peel's own
 `FastLTR.c`; TEsorter2 is not compiled. Kmer2LTR is an ordinary Python package:
-`pip install` it yourself, or let LTRquest fetch the same clone into the tools
+`pip install` it yourself, or let LTR_peel fetch the same clone into the tools
 directory, unbuilt either way. The container prepares all five during its own
 build and never reaches the network.
 
@@ -159,12 +159,12 @@ on a machine with internet, into a folder you name, and give every later run the
 same folder:
 
 ```bash
-ltrquest --genome small.fa --max-rounds 1 --tools-dir /shared/ltrquest_tools   # once, online
-ltrquest --genome big.fa --proteins prot.fa --tools-dir /shared/ltrquest_tools # offline
+ltr_peel --genome small.fa --max-rounds 1 --tools-dir /shared/ltr_peel_tools   # once, online
+ltr_peel --genome big.fa --proteins prot.fa --tools-dir /shared/ltr_peel_tools # offline
 ```
 
 A folder you name with `--tools-dir` (or the environment variable
-`LTRQUEST_TOOLS_DIR`) is reused and never removed. Without it, the folder is
+`LTR_PEEL_TOOLS_DIR`) is reused and never removed. Without it, the folder is
 `<genome>_tools` in the run folder (`merged_tools` for several genomes, `NAME_tools`
 with `--out_prefix NAME`), and a successful run removes it again only if
 that run created it and it holds only helper tools; a folder that already existed
@@ -173,8 +173,8 @@ says so and points at `--tools-dir`. The container needs none of this.
 
 ## Upgrading from 1.0.1
 
-The 1.0.1 README suggested an alias, `alias ltrquest='apptainer exec ...'`. It is
+The 1.0.1 README suggested an alias, `alias ltr_peel='apptainer exec ...'`. It is
 no longer needed, and if you later install with conda it will shadow the real
 command and fail with `apptainer: command not found`. Check with `type -a
-ltrquest`, and drop it with `unalias ltrquest` (and remove it from your shell
+ltr_peel`, and drop it with `unalias ltr_peel` (and remove it from your shell
 startup file, if it is there).

@@ -4,7 +4,7 @@
 # usage: setsid -f nohup bash create_envs.sh > ../logs/create_envs.log 2>&1 < /dev/null
 set -uo pipefail
 source "$(conda info --base)/etc/profile.d/conda.sh"
-BENCH="${BENCH_ROOT:?set BENCH_ROOT to the benchmark working directory}"; ROOT=$(dirname "$BENCH")   # tool clones (LTRquest, PrinTE, HiRepEat, HiTE, ...) sit next to the working directory
+BENCH="${BENCH_ROOT:?set BENCH_ROOT to the benchmark working directory}"; ROOT=$(dirname "$BENCH")   # tool clones (LTR_peel, PrinTE, HiRepEat, HiTE, ...) sit next to the working directory
 ENVDIR=$BENCH/envs
 export TMPDIR=$BENCH/tmp/envs; mkdir -p "$TMPDIR"
 export PIP_NO_CACHE_DIR=1
@@ -20,13 +20,13 @@ mk() {   # mk NAME -- mamba create args...
     if mamba create -y -n "$n" "$@"; then done_msg "$n" "created"; else done_msg "$n" "FAILED"; return 1; fi
 }
 
-# 1. LTRquest from the clone (pinned commit listed on the benchmark page)
-if ! have ltrquest_bench; then
-    done_msg ltrquest_bench creating
-    mamba env create -y -n ltrquest_bench -f $ROOT/LTRquest/environment.yml && \
-    conda run -n ltrquest_bench pip install $ROOT/LTRquest && done_msg ltrquest_bench created || done_msg ltrquest_bench FAILED
+# 1. LTR_peel from the clone (pinned commit listed on the benchmark page)
+if ! have ltr_peel_bench; then
+    done_msg ltr_peel_bench creating
+    mamba env create -y -n ltr_peel_bench -f $ROOT/LTR_peel/environment.yml && \
+    conda run -n ltr_peel_bench pip install $ROOT/LTR_peel && done_msg ltr_peel_bench created || done_msg ltr_peel_bench FAILED
 fi
-export_env ltrquest_bench
+export_env ltr_peel_bench
 
 # 2. PrinTE from the clone
 if ! have printe_bench; then

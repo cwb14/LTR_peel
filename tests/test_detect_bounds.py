@@ -1,6 +1,6 @@
 import pytest
 
-from ltrquest import detect, kmer2ltr
+from ltr_peel import detect, kmer2ltr
 
 HDR = "\t".join(kmer2ltr.COLUMNS)
 

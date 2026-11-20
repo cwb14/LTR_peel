@@ -1,0 +1,84 @@
+process LTR_PEEL_FLAGFP {
+    tag "$meta.id"
+    label 'process_medium'
+
+    conda "${moduleDir}/environment.yml"
+    // One image for every engine. Singularity and Apptainer convert an OCI
+    // image on the fly, so the nf-core habit of pointing them at a separate
+    // `oras://…-singularity` artifact only helps if you actually publish one.
+    container 'ghcr.io/cwb14/ltr_peel:1.0.1'
+
+    input:
+    tuple val(meta), path(consensus_cluster), path(internal_cluster), path(consensus_fasta), path(depth_tsvs), path(depth_fastas), path(genome), path(tandem_genomes, stageAs: 'genomes/g??/*')
+
+    output:
+    tuple val(meta), path("*_depth*_clean_ltr.tsv", arity: '1..*'), emit: tsv
+    tuple val(meta), path("*_depth*_clean_ltr.fa", arity: '1..*') , emit: fasta
+    tuple val(meta), path("${prefix}_fpcheck.log") , emit: log
+    tuple val(meta), path("${prefix}_fpcheck.tandem.tsv"), emit: tandem, optional: true
+    path "versions.yml"                            , emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
+
+    script:
+    def args = task.ext.args ?: ''
+    prefix   = task.ext.prefix ?: "${meta.id}"
+    // Every sample's genome, each in its own numbered directory so two samples
+    // whose FASTAs share a file name cannot collide. Empty when the filter is off.
+    def tandem = tandem_genomes ? "--tandem-genome ${tandem_genomes}" : ''
+    """
+    # High-abundance non-LTR repeats can seed convincing but spurious LTR-RT
+    # calls. Families whose members are mostly such repeats are purged here,
+    # together with calls cut from tandem arrays (rDNA, satellites).
+    python -m ltr_peel.flag_fp \\
+        --consensus-cluster ${consensus_cluster} \\
+        --internal-cluster ${internal_cluster} \\
+        --ltr-fasta ${consensus_fasta} \\
+        --domains-tsv ${depth_tsvs} \\
+        -o ${prefix}_fpcheck \\
+        --genome ${genome} \\
+        --masked-out ${prefix}_FP_masked.fa \\
+        --threads ${task.cpus} \\
+        --fp-mask-threshold ${params.fp_mask_threshold} \\
+        ${tandem} \\
+        ${args} \\
+        2>&1 | tee ${prefix}_fpcheck.log >&2
+
+    # Keep only the records whose id survived into the cleaned table.
+    for tsv in ${depth_tsvs}; do
+        clean="\${tsv%_ltr.tsv}_clean_ltr.tsv"
+        fa="\${tsv%_ltr.tsv}_ltr.fa"
+        [ -s "\$clean" ] && [ -s "\$fa" ] || continue
+        awk -F'\\t' 'NR==FNR { if (\$0 !~ /^#/ && NF >= 2) keep[\$1]=1; next }
+                     /^>/ { p = (substr(\$0, 2) in keep) } p' \\
+            "\$clean" "\$fa" > "\${tsv%_ltr.tsv}_clean_ltr.fa"
+    done
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        mmseqs2: \$(mmseqs version 2>/dev/null || echo unknown)
+    END_VERSIONS
+    """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    // Names are derived from the input tables, exactly as the real stage does:
+    // downstream joins key on the per-genome prefix embedded in those names, so
+    // a stub that invented its own would test the wrong wiring.
+    """
+    for tsv in ${depth_tsvs}; do
+        cp "\$tsv" "\${tsv%_ltr.tsv}_clean_ltr.tsv"
+    done
+    for fa in ${depth_fastas}; do
+        cp "\$fa" "\${fa%_ltr.fa}_clean_ltr.fa"
+    done
+    printf '[INFO] FP fraction: 0/1 = 0.0000 (threshold ${params.fp_mask_threshold})\\n' > ${prefix}_fpcheck.log
+    ${tandem_genomes ? "printf '#element\\tup\\tdn\\tverdict\\n' > ${prefix}_fpcheck.tandem.tsv" : ''}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        mmseqs2: 16.747c6
+    END_VERSIONS
+    """
+}

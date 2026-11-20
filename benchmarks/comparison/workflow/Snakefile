@@ -22,7 +22,7 @@ PY = "python -I scripts/"
 SIM = ["S1_1", "S1_2", "S1_3", "S2_1", "S2_2", "S2_3"]
 REAL = ["rice", "arab", "maize", "finch", "gorilla"]
 POLY = ["asue", "pann"]
-TOOLS = ["ltrquest", "ltrharvest", "ltr_finder", "ltr_retriever", "look4ltrs", "hirepeat", "hite", "ltrpred",
+TOOLS = ["ltr_peel", "ltrharvest", "ltr_finder", "ltr_retriever", "look4ltrs", "hirepeat", "hite", "ltrpred",
          "dante_ltr"]
 NATIVE = {  # tool's own library as shipped (secondary table); primary = every tool's intact call set
     "ltr_retriever": "runs/{ds}/ltr_retriever/{ds}.fa.mod.LTRlib.fa",
@@ -32,7 +32,7 @@ NATIVE = {  # tool's own library as shipped (secondary table); primary = every t
 }
 DERIVED = {  # post hoc subsets of one tool's calls (developer diagnostics, labeled secondary rows; added
     # after the primary results were seen): name -> source tool. Evaluated exactly like a tool (all three approaches).
-    "ltrquest_hc": "ltrquest",                     # confidence == high (TG..CA ends + exact TSD)
+    "ltr_peel_hc": "ltr_peel",                     # confidence == high (TG..CA ends + exact TSD)
 }
 SUBS = [500, 1000, 2000, 5000, 10000]
 SEEDS = [1, 2, 3, 4, 5]
@@ -59,7 +59,7 @@ def libs_for(tool):
 # they do not hold every later pass. Remove an entry to run it here.
 DEFERRED = {
     "eval/lib/finch/hirepeat.intact.tsv",   # rmfast with this library: ~80 of 19,693 batches/h -> ~10 days
-} | {  # maize intact-call libraries are 0.12-1.49 GB (rice/finch <= 91 MB): dante_ltr and ltrquest_hc measured at
+} | {  # maize intact-call libraries are 0.12-1.49 GB (rice/finch <= 91 MB): dante_ltr and ltr_peel_hc measured at
     # ~36-57 of 37,882 batches/h -> 4-5 weeks each (under the mimalloc THP stall). Re-measured with
     # MIMALLOC_ALLOW_THP=0: dante_ltr (454 MB) ~146/h -> ~260 h and hite (175 MB) ~593/h -> ~64 h, so they and the
     # larger libraries stay deferred (libraries still built, size reported). ltrpred (122 MB, ~1,400/h -> ~27 h) runs in
@@ -72,11 +72,11 @@ DEFERRED = {
 } | {  # gorilla LTR_Finder intact library: its mask stopped at the 36 h cap at batch 26,019 of 61,148;
     # deferred so a stopped mask is not restarted
     "eval/lib/gorilla/ltr_finder.intact.tsv",
-} | {  # gorilla LTRquest intact libraries (56.2 Mb / 12,655 seqs; ltrquest_hc 8.6 Mb / 2,216): masks stalled in the kernel
+} | {  # gorilla LTR_peel intact libraries (56.2 Mb / 12,655 seqs; ltr_peel_hc 8.6 Mb / 2,216): masks stalled in the kernel
     # (mimalloc THP) and were restarted with MIMALLOC_ALLOW_THP=0 (identical output) in a targeted run; both stop at the
     # 36 h cap unless done first; deferred so a stopped mask is not restarted (as ltr_finder above).
-    # ltrquest_hc finished; ltrquest stopped at the cap at batch 55,136 of 61,148
-    "eval/lib/gorilla/ltrquest.intact.tsv", "eval/lib/gorilla/ltrquest_hc.intact.tsv",
+    # ltr_peel_hc finished; ltr_peel stopped at the cap at batch 55,136 of 61,148
+    "eval/lib/gorilla/ltr_peel.intact.tsv", "eval/lib/gorilla/ltr_peel_hc.intact.tsv",
 }
 # Dropped entirely, library build included: gorilla HiRepEat intact library (cd-hit-est on 43,620 calls up to 1 Mb,
 # single-threaded in a targeted run; stopped at 36 h) and its BM_RM2.
@@ -102,10 +102,10 @@ def targets():
                     t += [f"eval/rm2/{ds}/{lib}.tsv" for lib in libs_for(tool)]   # BM_RM2
             if ds in POLY:
                 t.append(f"eval/phase/{ds}/{tool}/score.tsv")
-                if tool == "ltrquest":
-                    t.append(f"eval/phase/{ds}/ltrquest_native/score.tsv")
+                if tool == "ltr_peel":
+                    t.append(f"eval/phase/{ds}/ltr_peel_native/score.tsv")
     for ds in POLY:                                   # power curve: only once a full-library input exists
-        for tool in TOOLS + list(DERIVED) + ["ltrquest_native"]:
+        for tool in TOOLS + list(DERIVED) + ["ltr_peel_native"]:
             n = n_paired(ds, tool)
             for k in SUBS:
                 if k < n:
@@ -300,18 +300,18 @@ rule phase_inputs:
         "--genome data/{wildcards.ds}/genome.fa --outdir eval/phase/{wildcards.ds}/{wildcards.tool}/inputs -t {threads}"
 
 
-rule phase_native_inputs:  # LTRquest's own outputs, as in the v2 polyploid benchmark
-    input: "runs/{ds}/ltrquest/.done"
-    output: fa="eval/phase/{ds}/ltrquest_native/inputs/elements.k.fa",
-            tsv="eval/phase/{ds}/ltrquest_native/inputs/annot.gff3"
+rule phase_native_inputs:  # LTR_peel's own outputs, as in the v2 polyploid benchmark
+    input: "runs/{ds}/ltr_peel/.done"
+    output: fa="eval/phase/{ds}/ltr_peel_native/inputs/elements.k.fa",
+            tsv="eval/phase/{ds}/ltr_peel_native/inputs/annot.gff3"
     shell:
-        "cat runs/{wildcards.ds}/ltrquest/{wildcards.ds}_LTRs_depth[0-9]*_clean_ltr.fa > {output.fa}; "
-        "cp runs/{wildcards.ds}/ltrquest/{wildcards.ds}_LTRs_all_depth_LTR_cleaned.gff3 {output.tsv}"
+        "cat runs/{wildcards.ds}/ltr_peel/{wildcards.ds}_LTRs_depth[0-9]*_clean_ltr.fa > {output.fa}; "
+        "cp runs/{wildcards.ds}/ltr_peel/{wildcards.ds}_LTRs_all_depth_LTR_cleaned.gff3 {output.tsv}"
 
 
 def phase_annot(wc):
     d = f"eval/phase/{wc.ds}/{wc.tool}/inputs"
-    return f"{d}/annot.gff3" if wc.tool == "ltrquest_native" else f"{d}/annot.tsv"
+    return f"{d}/annot.gff3" if wc.tool == "ltr_peel_native" else f"{d}/annot.tsv"
 
 
 rule phase_run:

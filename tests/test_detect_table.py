@@ -2,7 +2,7 @@ import textwrap
 
 import pytest
 
-from ltrquest import detect, kmer2ltr
+from ltr_peel import detect, kmer2ltr
 
 K2L = textwrap.dedent("""\
     {header}
@@ -343,7 +343,7 @@ def test_restate_orientation_preserves_every_other_column_and_the_header(tmp_pat
 
 
 def _wide_k2l(tmp_path, extra="ltr_score"):
-    """A Kmer2LTR table carrying one column more than this LTRquest knows."""
+    """A Kmer2LTR table carrying one column more than this LTR_peel knows."""
     names = kmer2ltr.COLUMNS + [extra]
     v = dict.fromkeys(names, "NA")
     v.update(seq_id="chr1:100-2100#LTR/unknown", seq_len="2001", status="pass",
@@ -456,10 +456,10 @@ def test_withdraw_inner_derived_strands_keeps_only_own_hit_support(tmp_path):
 
 
 def test_withdrawn_strand_is_what_annotate_reads(tmp_path):
-    """ltrquest.annotate reads every *.cls.tsv of a round and lets a +/- in any
+    """ltr_peel.annotate reads every *.cls.tsv of a round and lets a +/- in any
     of them beat a '?', so TEsorter2's per-database table has to lose the
     strand too, or the combined table's '?' is simply outvoted."""
-    from ltrquest.annotate import load_tesorter_strands
+    from ltr_peel.annotate import load_tesorter_strands
 
     work = tmp_path / "x_r1.work"
     work.mkdir()

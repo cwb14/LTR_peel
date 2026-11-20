@@ -1,6 +1,6 @@
 """The Nextflow pipeline's tandem-array wiring: every genome reaches flag_fp.
 
-Without a genome, ltrquest.flag_fp skips the tandem-array purge silently, so a
+Without a genome, ltr_peel.flag_fp skips the tandem-array purge silently, so a
 pipeline that forgot to stage them would still run and still exit 0.
 """
 
@@ -11,8 +11,8 @@ from pathlib import Path
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-MODULE = REPO_ROOT / "modules" / "local" / "ltrquest" / "flagfp" / "main.nf"
-WORKFLOW = REPO_ROOT / "workflows" / "ltrquest.nf"
+MODULE = REPO_ROOT / "modules" / "local" / "ltr_peel" / "flagfp" / "main.nf"
+WORKFLOW = REPO_ROOT / "workflows" / "ltr_peel.nf"
 
 pytestmark = pytest.mark.skipif(not MODULE.is_file(), reason="not running from a source checkout")
 
@@ -32,18 +32,18 @@ def test_the_module_hands_them_to_flag_fp_and_publishes_the_scores():
     text = MODULE.read_text()
     script = section(text, "script:", "stub:")
     assert """def tandem = tandem_genomes ? "--tandem-genome ${tandem_genomes}" : ''""" in script
-    call = section(script, "python -m ltrquest.flag_fp", "2>&1 | tee")
+    call = section(script, "python -m ltr_peel.flag_fp", "2>&1 | tee")
     assert "${tandem}" in call
     assert 'path("${prefix}_fpcheck.tandem.tsv"), emit: tandem, optional: true' in text
 
 
 def test_the_workflow_feeds_every_sample_unless_skipped():
     text = WORKFLOW.read_text()
-    feed = section(text, "ch_tandem_genomes = ", "LTRQUEST_FLAGFP(")
+    feed = section(text, "ch_tandem_genomes = ", "LTR_PEEL_FLAGFP(")
     assert "params.skip_tandem_filter" in feed and "Channel.value([])" in feed
     assert "ch_samples.map { _meta, genome, _proteins -> genome }" in feed
     assert ".toSortedList" in feed                         # stable -resume hash
-    call = section(text, "LTRQUEST_FLAGFP(", "ch_versions")
+    call = section(text, "LTR_PEEL_FLAGFP(", "ch_versions")
     assert ".combine(ch_tandem_genomes.map { files -> [files] })" in call
 
 

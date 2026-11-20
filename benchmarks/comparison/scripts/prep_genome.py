@@ -8,7 +8,7 @@ Streams the input (plain or .gz) and writes, in OUTDIR:
   split/<id>.fa    one FASTA per sequence (with --split; Look4LTRs takes a directory of .fa files)
 
 Why: tools restrict IDs (LTRpred splits on '_', LTR_retriever limits length, LTR_FINDER_parallel parses '_sub'),
-treat soft-masked bases differently, or misread IUPAC codes (LTRquest uses IUPAC letters as mask characters).
+treat soft-masked bases differently, or misread IUPAC codes (LTR_peel uses IUPAC letters as mask characters).
 """
 import argparse
 import gzip

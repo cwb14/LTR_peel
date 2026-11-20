@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to LTRquest are documented here. The format follows
+All notable changes to LTR_peel are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
@@ -15,7 +15,7 @@ Upgrades the bundled Kmer2LTR from its original k-mer/MAFFT implementation to
 the rewritten package, and reorders the pipeline around what that rewrite
 makes possible. Kmer2LTR now runs *ahead of* classification instead of after
 it, so its boundary calls, K2P divergence figures and TSDs are the round's
-single source of truth rather than figures LTRquest re-derived and could
+single source of truth rather than figures LTR_peel re-derived and could
 disagree with. The new tool's CLI and output schema are not compatible with
 the old one's, which forces the schema, flag and stage changes below.
 
@@ -23,21 +23,21 @@ the old one's, which forces the schema, flag and stage changes below.
 
 - `--help-all`: every flag, grouped, beside a short `--help`.
 - `--keep-intermediates` (keep every working file).
-- `--tools-dir DIR` (a reused helper-tools folder, never removed; also `LTRQUEST_TOOLS_DIR`).
+- `--tools-dir DIR` (a reused helper-tools folder, never removed; also `LTR_PEEL_TOOLS_DIR`).
 - Off switches `--no-sdust`, `--no-strand-recovery-ppt` and `--no-reboundary`;
   Nextflow `skip_sdust`. (`--ltr-timeout` is under FastLTR below.)
 - `docs/install.md` (every install route, the container launcher, offline clusters)
   and `docs/developers.md`.
 - **FastLTR, a third LTR caller** (`--fastltr rescue|all|off`, default `rescue`,
-  or `--no-fastltr`; `--fastltr-args`; `ltrquest-detect` also takes
+  or `--no-fastltr`; `--fastltr-args`; `ltr_peel-detect` also takes
   `--fastltr-min-ltr`; Nextflow `--fastltr`, `--ltr_timeout`).
   `--ltr-timeout` (default 300 s per chunk) stops an LTRharvest or LTR_FINDER call that runs too long on a
   chunk, and neither tool writes anything before it finishes, so a capped 500 kb
   chunk lost every candidate of that caller, not only its satellite's: two CHM13
   chunks capped at 30 s gave 0 candidates from either tool, and a 30 s cap fired
   on 60 of 302 *A. thaliana* T2T chunks (its five centromeres and both NORs).
-  LTRquest now ships its own adaptation of Gene Myers' FastLTR (FASTAN, the
-  detector behind HiRepEat; `src/ltrquest/fastltr/FastLTR.c`, compiled against
+  LTR_peel now ships its own adaptation of Gene Myers' FastLTR (FASTAN, the
+  detector behind HiRepEat; `src/ltr_peel/fastltr/FastLTR.c`, compiled against
   FASTAN 843d0ed in `--tools-dir` on first use, and in the image at build time;
   FASTAN's license ships beside it as `LICENSE.FASTAN`).
   It searches LTR spacings of 100-20,000 bp (FastLTR's own floor of 3 kb, 2 kb in
@@ -71,7 +71,7 @@ the old one's, which forces the schema, flag and stage changes below.
   it is harmless (F1 0.951 against 0.946), so it stays available for maximum
   recall. Known gap: arrays whose unit is longer than 20 kb (human 45S rDNA,
   43 kb) escape both the array test and the tandem filter, and on CHM13 rescue's
-  first attempt calls 375 `LTR/unknown` unit copies there (LTRquest 1.0.1 at a
+  first attempt calls 375 `LTR/unknown` unit copies there (LTR_peel 1.0.1 at a
   300 s cap: 86); after the FP correction 146 remain, 101 of them a provirus
   (MER39B LTRs, HERVIP10FH) that the rDNA unit carries.
   Benchmarks: `benchmarks/fastltr/`.
@@ -84,7 +84,7 @@ the old one's, which forces the schema, flag and stage changes below.
   tables now drop a call, alongside the false-positive families, when its
   LTR-pair repeat carries on past both termini: at least half of the
   non-overlapping 15-mers in the 1 kb outside each LTR occur in the 2 kb of
-  internal sequence next to the other LTR (`ltrquest-flagfp --tandem-genome`,
+  internal sequence next to the other LTR (`ltr_peel-flagfp --tandem-genome`,
   `--tandem-min-frac`). A genuine element's flanks are unrelated target-site
   sequence and score ~0; the containment test, rather than a fixed-offset
   comparison, still matches rDNA units that differ in spacer-subrepeat copy
@@ -99,7 +99,7 @@ the old one's, which forces the schema, flag and stage changes below.
   scores every call, and they never count toward the FP fraction that
   triggers masking. Detection is unchanged, so a genome reused from an earlier
   run gains the filter without `--redetect`. The Nextflow pipeline runs it too:
-  `LTRQUEST_FLAGFP` now stages every sample's genome, and `--skip_tandem_filter`
+  `LTR_PEEL_FLAGFP` now stages every sample's genome, and `--skip_tandem_filter`
   turns it off.
 
   Tried first and dropped: the same test as a gate on raw LTRharvest/LTR_FINDER
@@ -107,7 +107,7 @@ the old one's, which forces the schema, flag and stage changes below.
   rDNA candidates through, and removing the rest let short spacer-subrepeat
   candidates that dedup had suppressed surface as calls: 814 rDNA-region calls
   survived.
-- `--reboundary` / `ltrquest-reboundary`: move the ends of LTR-RT calls that have
+- `--reboundary` / `ltr_peel-reboundary`: move the ends of LTR-RT calls that have
   no TSD at their called ends, typically calls a detector stopped short at an indel
   or a mutation-dense patch. The templates are calls with an exact TSD, pooled over
   genomes, families, strands and nesting depths; one BLASTN finds each call's 5
@@ -124,7 +124,7 @@ the old one's, which forces the schema, flag and stage changes below.
   ends. Benchmarks: `benchmarks/reboundary/`.
 
   Needs a Kmer2LTR with the homology-paired credit (`align.CREDIT_PAIRS_BY_HOMOLOGY`
-  and `classify(..., spans=)`). An older one is refused: `ltrquest-reboundary` exits
+  and `classify(..., spans=)`). An older one is refused: `ltr_peel-reboundary` exits
   3 and the pipeline stops. The Docker image now pins Kmer2LTR `2c7e7f8`, the
   commit that adds it.
 
@@ -147,20 +147,20 @@ the old one's, which forces the schema, flag and stage changes below.
   (dc-megablast and minimap2, each on the whole element and on the internal
   region); a view calls only when all of its own alignments agree, and
   disagreement between views vetoes the locus. Leave-one-out against
-  LTRquest's own tesorter strand over 3616 elements: 58% recovered at 0.19%
+  LTR_peel's own tesorter strand over 3616 elements: 58% recovered at 0.19%
   disagreement (conservative), 79% at 0.70% (balanced), 84% at 1.06%
   (sensitive). `--strand-recovery-ppt` adds a polypurine-tract fallback for
   loci homology cannot reach, measured at 93% (on whenever strand recovery runs; `--no-strand-recovery-ppt`).
 
   The calls land in a new `<prefix>_strand_recovery.tsv`, which
-  `ltrquest-annotate` reads as a fourth cascade tier via `--recovered-strands`
+  `ltr_peel-annotate` reads as a fourth cascade tier via `--recovered-strands`
   — pinned by path, never globbed, so a sidecar left behind by an earlier run
   cannot re-strand a later one. Every primary output follows: `strand` in the
   depth tables, `strand_source=homology`/`ppt` in both GFF3s, and the `_clean_` depth
   FASTAs and tables re-oriented so a recovered minus element is stored in coding sense
   exactly like a TEsorter2-called one, with `orientation` restated to match.
   Available on the Nextflow path as `--strand_recovery` and
-  `--strand_recovery_ppt`, and standalone as `ltrquest-recover-strand`.
+  `--strand_recovery_ppt`, and standalone as `ltr_peel-recover-strand`.
 
 - `--mutation-rate`, forwarded to Kmer2LTR's `-u` for both the per-round
   table and the pooled family-clustering pass. Insertion age used to come
@@ -180,8 +180,8 @@ the old one's, which forces the schema, flag and stage changes below.
 - A successful run keeps only `<prefix>_all_depth_LTR_cleaned.gff3`,
   `<prefix>_depth<N>_clean_ltr.{tsv,fa}` and `<prefix>_plots/`; everything else is
   removed unless `--keep-intermediates`, or kept automatically when plotting, strand
-  recovery or re-boundarying failed. Adding a genome later, `ltrquest-plots` and
-  `ltrquest-reboundary --posthoc` need the intermediates. **Breaking** for scripts
+  recovery or re-boundarying failed. Adding a genome later, `ltr_peel-plots` and
+  `ltr_peel-reboundary --posthoc` need the intermediates. **Breaking** for scripts
   that read `<prefix>_depth<N>_ltr.*`, `<prefix>_r<N>_ltr.*` or
   `<prefix>_all_depth_protein_LTR_cleaned.gff3`: add `--keep-intermediates`.
 - `--help` is a short page; the rest is in `--help-all` and `docs/outputs.md`.
@@ -207,8 +207,8 @@ the old one's, which forces the schema, flag and stage changes below.
   only ever disjoint or nested. Now any two calls that overlap without one lying
   strictly inside the other with its own LTR pair conflict, and only the stronger
   is kept: hallmarks at its own ends (TSD and TG..CA, then TSD, then TG..CA), then
-  the LTR pair's `bitscore`, then its distinct protein domains (`ltrquest.overlaps`).
-  The same rule replaces the cross-round shared-LTR merge in `ltrquest-reconcile`.
+  the LTR pair's `bitscore`, then its distinct protein domains (`ltr_peel.overlaps`).
+  The same rule replaces the cross-round shared-LTR merge in `ltr_peel-reconcile`.
   Each round writes the calls it dropped to `<prefix>.conflicts.tsv` in its work
   directory. Scored against empty sites in related genomes (an independent test of
   a real insertion) on 1,087 crossing pairs with exactly one confirmed partner in
@@ -226,7 +226,7 @@ the old one's, which forces the schema, flag and stage changes below.
   call that is very likely wrong; in *Poa*, 44% of calls were non-canonical and,
   among young ones, an empty site confirmed them 12-21% of the time against 73-78%
   for canonical calls of the same age.
-- `ltrquest.plot_struct`'s `--min_ltr_aln` is renamed `--min_ltr_len`, and
+- `ltr_peel.plot_struct`'s `--min_ltr_aln` is renamed `--min_ltr_len`, and
   `flagged_false_positives.tsv`'s `aln_len_raw` column is renamed
   `ltr3_len_raw`. Both hold a 3' LTR length, not an alignment length; the
   names say what they measure.
@@ -236,15 +236,15 @@ the old one's, which forces the schema, flag and stage changes below.
   no longer needs a compiler.
 - Failures to find or build a helper name the conda package that provides it and
   the compiler toolchain that would build it, instead of only the tool.
-- LTRquest's own `depth<N>_clean_ltr.tsv` is now Kmer2LTR's 29 columns plus
-  LTRquest's five (34; see [docs/outputs.md](docs/outputs.md)), replacing the old 21-column one
+- LTR_peel's own `depth<N>_clean_ltr.tsv` is now Kmer2LTR's 29 columns plus
+  LTR_peel's five (34; see [docs/outputs.md](docs/outputs.md)), replacing the old 21-column one
   built around `LTR_len`, `raw_d`/`raw_T`, `JC69_d`/`JC69_T` and
   `left_trim`/`right_trim` — none of which the new boundary model or K2P
   estimator produces. `K2P_d`/`K2P_T` survive only as the GFF3 attribute
   names they always were; the table columns underneath them are now
   `k2p`/`k2p_time`.
-- `flag_fp_families.py` moves out of the Kmer2LTR clone and into LTRquest as
-  `ltrquest.flag_fp` / `ltrquest-flagfp`. Flagging false-positive families
+- `flag_fp_families.py` moves out of the Kmer2LTR clone and into LTR_peel as
+  `ltr_peel.flag_fp` / `ltr_peel-flagfp`. Flagging false-positive families
   reads Kmer2LTR's clustering output; it was never a Kmer2LTR concern, only
   ever colocated with it because that happened to be where the script lived.
 
@@ -253,7 +253,7 @@ the old one's, which forces the schema, flag and stage changes below.
 - `CI.md` (now in `docs/developers.md`) and the install, quick-start and usage
   sections of `docs/outputs.md` (in the README and `docs/install.md`).
 
-- `ltrquest-detect --dedup-threshold` and the pre-classification purge that used
+- `ltr_peel-detect --dedup-threshold` and the pre-classification purge that used
   the same 80% threshold; see *Overlapping calls follow one rule* above. Dropping
   the purge sends ~18% more candidates through TEsorter2 (about a minute on a
   1.2 Gb genome).
@@ -270,7 +270,7 @@ the old one's, which forces the schema, flag and stage changes below.
   internal span of a candidate; structurally inert now that Kmer2LTR needs
   both LTRs to measure divergence, so classification must always receive the
   full-length element and the internals-only path can no longer feed it).
-- `ltrquest-reconcile --scn`. It fed a shared-LTR lookup keyed on each round's
+- `ltr_peel-reconcile --scn`. It fed a shared-LTR lookup keyed on each round's
   pre-trim SCN locus, but Kmer2LTR renames every element to its post-trim
   locus before reconcile ever sees it, so the flag could no longer reach the
   elements it was meant to describe. Boundaries are read from each round's
@@ -357,7 +357,7 @@ the old one's, which forces the schema, flag and stage changes below.
   hit was also not always the element's ends: a call 1 bp wide carries an exact
   4-bp TSD at the wrong ends, and a 5-mer matches by chance 1 bp off a correct call
   about one time in four. Each round now moves every element onto the nearest
-  ends within 2 bp that are TG..CA with an exact 4-6 bp TSD (`ltrquest.ends`),
+  ends within 2 bp that are TG..CA with an exact 4-6 bp TSD (`ltr_peel.ends`),
   re-measures it with Kmer2LTR, and removes a second call that reaches the same
   ends; elements already on such ends get that TSD in `tsd` with `tsd_offset`
   `0,0`, which also makes them re-boundarying templates. Re-boundarying and host
@@ -373,8 +373,8 @@ the old one's, which forces the schema, flag and stage changes below.
   beside it. The full host was beyond them: its LTR alignment is broken, and with
   the tenant inside it is usually longer than their maximum LTR distance. Masking
   between rounds could not help, since host and tenant are mostly found in the
-  same round. `ltrquest.reconcile` now rebuilds such hosts before it resolves
-  containment (`ltrquest.rejoin`). For two calls that abut within 20 bp, it asks
+  same round. `ltr_peel.reconcile` now rebuilds such hosts before it resolves
+  containment (`ltr_peel.rejoin`). For two calls that abut within 20 bp, it asks
   whether the bases beyond one continue the other's own LTR from the junction on:
   identity ≥ 0.70, E ≤ 1e-5, starting at both junctions. Where one side and only
   one does, the host is extended to the end of that continuation and the tenant
@@ -430,10 +430,10 @@ the old one's, which forces the schema, flag and stage changes below.
     now sets that strand to `?` unless the host's own hits (outside its
     inners) all lie on it; it never invents one. Both of the round's cls
     tables (`*.cls.tsv` and `*.rexdb.cls.tsv`) are rewritten, because
-    `ltrquest.annotate` reads both and a `+`/`-` in either beats a `?`. The
-    library orientation, `ltrquest.annotate`, `ltrquest.gff3` and
-    `ltrquest.recover_strand` all read the corrected strand.
-  - `ltrquest.recover_strand` read each element from the plain genome, so a
+    `ltr_peel.annotate` reads both and a `+`/`-` in either beats a `?`. The
+    library orientation, `ltr_peel.annotate`, `ltr_peel.gff3` and
+    `ltr_peel.recover_strand` all read the corrected strand.
+  - `ltr_peel.recover_strand` read each element from the plain genome, so a
     host's sequence still held its tenant, and a host and tenant aligned to
     each other at 100% identity. Each element, as query or reference, is now
     read with its `nest_status` inners masked to N.
@@ -448,13 +448,13 @@ the old one's, which forces the schema, flag and stage changes below.
   now recovers 1,025 strands instead of 717. Unmasked tenants had been
   creating conflicting alignments.
 - **FP masking crashed on a gzipped genome.** When a genome's FP fraction passed
-  `--fp-mask-threshold`, `ltrquest.flag_fp` ran `makeblastdb` on
+  `--fp-mask-threshold`, `ltr_peel.flag_fp` ran `makeblastdb` on
   `<prefix>.input_genome.fa`, a symlink to the user's genome; a `.fa.gz` input
   failed with "Input doesn't start with a defline", hours into the run. The
   genome is now streamed into `makeblastdb` on stdin, decompressed if need be,
   and the masked genome is written from plain or gzip input alike.
 - Nextflow: a genome that completed a single detection round (`--max_rounds 1`,
-  or a first round below `--terminate_count`) crashed `LTRQUEST_RECONCILE`. One
+  or a first round below `--terminate_count`) crashed `LTR_PEEL_RECONCILE`. One
   table arrives as a Path, not a list, and iterating it walked the path's
   components, so the reconciler was called as `--tsv round_1 x_r1_ltr.tsv`. The
   three-round stub test never reached the case.
@@ -467,14 +467,14 @@ the old one's, which forces the schema, flag and stage changes below.
   run (6 of 9 allotetraploid runs, 4 genomes each). The first move in genome order
   now wins and the other call keeps its ends (reason `duplicates_move`); a trim onto
   the exact span of a call inside is refused (`duplicates_element`).
-- **`./ltrquest.sif --genome x.fa` did not work.** The image declared
+- **`./ltr_peel.sif --genome x.fa` did not work.** The image declared
   `ENTRYPOINT []` with only a `CMD`, and Apptainer builds a SIF's runscript from
   those two: with no ENTRYPOINT it *replaces* the command with the user's
   arguments, so the first flag was run as a program —
   `FATAL: "--help": executable file not found in $PATH`. The image now has an
   entry point ([`bin/entrypoint.sh`](bin/entrypoint.sh)) that runs a first
-  argument naming a command and treats anything else as `ltrquest` arguments.
-  `apptainer exec IMG ltrquest …` and `docker run IMG ltrquest …` are unchanged
+  argument naming a command and treats anything else as `ltr_peel` arguments.
+  `apptainer exec IMG ltr_peel …` and `docker run IMG ltr_peel …` are unchanged
   — `exec` never reaches an entry point, and an explicit command still wins.
 - **A working directory reached through a symlink left the run in `$HOME`.**
   Apptainer mounts your home and working directories and nothing else. Where
@@ -484,7 +484,7 @@ the old one's, which forces the schema, flag and stage changes below.
   path in the command then resolved somewhere else, and the only symptom was
   `ERROR: Genome not found: your_genome.fa`. Two changes: a missing input inside
   a container now says so and names the fix, and
-  [`bin/ltrquest-container`](bin/ltrquest-container) — shipped inside the image
+  [`bin/ltr_peel-container`](bin/ltr_peel-container) — shipped inside the image
   — works the mounts out from the command it is given.
 - **The conda environment could not build the helpers it needs.**
   `environment.yml` had no `git`, `make` or compiler, but TRF-mod is compiled on
@@ -580,14 +580,14 @@ testing the source tree.
 
 ## [1.0.0] - 2026-08-21
 
-First release as a standalone tool. LTRquest was extracted from
+First release as a standalone tool. LTR_peel was extracted from
 [synLTR](https://github.com/cwb14/synLTR) `module2` with `git filter-repo`, so
 the development history of every file it carries came with it.
 
 ### Added
 
-- `ltrquest` console entry point, plus one per pipeline stage
-  (`ltrquest-detect`, `-mask`, `-reconcile`, `-annotate`, `-gff3`, `-plots`).
+- `ltr_peel` console entry point, plus one per pipeline stage
+  (`ltr_peel-detect`, `-mask`, `-reconcile`, `-annotate`, `-gff3`, `-plots`).
 - Installable Python package (`pip install .`), with the pipeline driver shipped
   as package data rather than a loose script.
 - Nextflow DSL2 pipeline (`main.nf`) following nf-core conventions, with `stub:`
@@ -595,7 +595,7 @@ the development history of every file it carries came with it.
   toolchain.
 - Container image with the helper repositories (Kmer2LTR, TEsorter2, TRF-mod,
   sdust) pre-built at pinned commits, so a run never reaches the network.
-- `LTRQUEST_TOOLS_DIR` to point a run at a pre-built helper-tool directory.
+- `LTR_PEEL_TOOLS_DIR` to point a run at a pre-built helper-tool directory.
 - pytest suite covering the masking, reconciliation, annotation and GFF3 stages,
   and the installed package's wiring.
 - GitHub Actions running the tests, lint, a Nextflow stub run, and a container
@@ -603,15 +603,15 @@ the development history of every file it carries came with it.
 
 ### Changed
 
-- Filenames collapsed to module names: `ltrharvest5.py` → `ltrquest.detect`,
-  `mask_ltr.py` → `ltrquest.mask`, `reconcile_nests.py` → `ltrquest.reconcile`,
-  `ltr_annotate.py` → `ltrquest.annotate`, `ltr_tsv_to_gff3.py` →
-  `ltrquest.gff3`, `ltrharvest_wrapper2.sh` → the `ltrquest` driver.
+- Filenames collapsed to module names: `ltrharvest5.py` → `ltr_peel.detect`,
+  `mask_ltr.py` → `ltr_peel.mask`, `reconcile_nests.py` → `ltr_peel.reconcile`,
+  `ltr_annotate.py` → `ltr_peel.annotate`, `ltr_tsv_to_gff3.py` →
+  `ltr_peel.gff3`, `ltrharvest_wrapper2.sh` → the `ltr_peel` driver.
 - `--ltrharvest5-args` / `--ltrharvest5-args-from-round` renamed to
   `--detect-args` / `--detect-args-from-round`.
 - `--script_path` removed. Stages are resolved as modules of the installed
   package, so there is nothing left to point at.
-- GFF3 column 2 now reads `LTRquest` rather than `synLTR`.
+- GFF3 column 2 now reads `LTR_peel` rather than `synLTR`.
 
 ### Removed
 

@@ -1,0 +1,9 @@
+ds	age_bin	supported_share
+rice	<0.01	0.981
+rice	>=0.1	0.617
+finch	<0.01	0.749
+finch	>=0.1	0.308
+maize	<0.01	0.961
+maize	>=0.1	0.814
+gorilla	<0.01	0.984
+gorilla	>=0.1	0.758

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""RepeatMasker support for LTRquest elements in CHM13 (independent annotation).
+"""RepeatMasker support for LTR_peel elements in CHM13 (independent annotation).
 
 An element is supported when each of its two LTRs is >= 50% covered by
 RepeatMasker records of class LTR and the two LTRs share at least one

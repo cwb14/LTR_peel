@@ -42,9 +42,9 @@ import nonauto_sim as N  # noqa: E402  (imports queue before scripts/ goes on th
 from evidence import dante_domains  # noqa: E402
 from score_elements import match, read_calls, read_truth  # noqa: E402
 
-TOOLS = ["ltrquest", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
+TOOLS = ["ltr_peel", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
          "dante_ltr"]
-DIAG = ["ltrquest_hc"]
+DIAG = ["ltr_peel_hc"]
 SETS = [f"S{s}_{r}" for s in (1, 2) for r in (1, 2, 3)]
 CLS = ["coding", "partial", "proteinless"]
 BASES = ["std", "ext"]

@@ -9,7 +9,7 @@ Checks (each answers one way the decline could be an artifact):
   V1 precise boundaries only: member calls with an exact 4-6 bp TSD and TG..CA ends, so the span is one whole
      insertion and the 80% rule cannot fail through overextended ends
   V2 strict callers only (LTR_retriever, HiTE, LTR_Finder, DANTE_LTR: structure- or domain-filtered call sets)
-  V3 without LTRquest (the tool under test)
+  V3 without LTR_peel (the tool under test)
   V4 per caller: its own coding calls (no pooling), supported share by age bin
   V5 unsupported coding loci by curated LTR coverage (max over members): 'none' < 10%, 'partial' 10-80%
      -> family absent from the library vs copy only partly annotated
@@ -29,7 +29,7 @@ sys.path.insert(0, f"{B}/scripts")
 import adj_summary as su  # noqa: E402
 import proxies  # noqa: E402
 
-TOOLS = ["ltrquest", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
+TOOLS = ["ltr_peel", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
          "dante_ltr"]
 STRICT = ["ltr_retriever", "hite", "ltr_finder", "dante_ltr"]
 BINS = [("<0.01", 0, 0.01), ("0.01-0.03", 0.01, 0.03), ("0.03-0.1", 0.03, 0.1), (">=0.1", 0.1, math.inf)]
@@ -96,7 +96,7 @@ def main(argv=None):
             "V0_preregistered": pooled(rb, pool),
             "V1_precise_boundaries": pooled(rb, pool, precise),
             "V2_strict_callers": pooled(rb, [t for t in STRICT if t in rb]),
-            "V3_without_ltrquest": pooled(rb, [t for t in pool if t != "ltrquest"]),
+            "V3_without_ltr_peel": pooled(rb, [t for t in pool if t != "ltr_peel"]),
         }
         for name, loci in checks.items():
             rows, slope, ci = summarize([(s, k) for s, k, _ in loci])

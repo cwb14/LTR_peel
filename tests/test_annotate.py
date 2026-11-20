@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from ltrquest.annotate import (
+from ltr_peel.annotate import (
     UNCLASSIFIED_CLADE,
     UNKNOWN,
     DepthTable,
@@ -226,8 +226,8 @@ class TestWriteAnnotatedTable:
 
 
 def test_the_annotation_lands_before_domains():
-    from ltrquest.annotate import ANNOTATION_COLS, annotation_insert_index
-    from ltrquest.detect import DETECT_COLUMNS, ELEMENT_COLUMNS
+    from ltr_peel.annotate import ANNOTATION_COLS, annotation_insert_index
+    from ltr_peel.detect import DETECT_COLUMNS, ELEMENT_COLUMNS
 
     i = annotation_insert_index(DETECT_COLUMNS)
     assert DETECT_COLUMNS[i] == "domains"
@@ -239,13 +239,13 @@ def test_the_annotation_lands_before_domains():
 
 
 def test_annotation_insert_index_falls_back_to_the_end():
-    from ltrquest.annotate import annotation_insert_index
+    from ltr_peel.annotate import annotation_insert_index
 
     assert annotation_insert_index(["name", "tsd"]) == 2
 
 
 def test_confidence_counts_the_hallmarks_at_each_rows_ends(tmp_path):
-    from ltrquest.detect import DETECT_COLUMNS
+    from ltr_peel.detect import DETECT_COLUMNS
 
     def row(locus, tsd, off, motif):
         v = dict.fromkeys(DETECT_COLUMNS, ".")

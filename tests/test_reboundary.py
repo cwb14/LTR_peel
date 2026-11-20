@@ -9,13 +9,13 @@ import shutil
 
 import pytest
 
-from ltrquest import reboundary as rb
-from ltrquest.detect import revcomp as revcomp_record
-from ltrquest.kmer2ltr import COLUMNS
-from ltrquest.reboundary_io import NEW_SUFFIX, OLD_SUFFIX, fetch_records
+from ltr_peel import reboundary as rb
+from ltr_peel.detect import revcomp as revcomp_record
+from ltr_peel.kmer2ltr import COLUMNS
+from ltr_peel.reboundary_io import NEW_SUFFIX, OLD_SUFFIX, fetch_records
 from reboundary_fixtures import FAMILY, Element, _row, build
 
-TOOLS = os.environ.get("LTRQUEST_TOOLS_DIR", ".")
+TOOLS = os.environ.get("LTR_PEEL_TOOLS_DIR", ".")
 MOVED_KINDS = ("del_left", "patch_right", "del_left_minus", "nested_del_left", "ins_left",
                "short3_left", "long3_right", "unstranded_del_left", "split_short")
 

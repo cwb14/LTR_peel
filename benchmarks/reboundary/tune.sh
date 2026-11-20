@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# Tuning sweeps for ltrquest-reboundary (template re-boundarying).
-# Run from the LTRquest run directory (made without --reboundary). Each stage writes
+# Tuning sweeps for ltr_peel-reboundary (template re-boundarying).
+# Run from the LTR_peel run directory (made without --reboundary). Each stage writes
 # reboundary_bench/tune<STAGE>/; every cell runs B1 (n=500) and B2 with the same settings.
 #   tune.sh 1                         n_templates x min_support
 #   KNOBS="--set ..." tune.sh 2       min_identity                   (KNOBS: the stage-1 winner)
 #   KNOBS="--set ..." tune.sh 3       max_trim                       (KNOBS: stages 1-2 winners)
-# --tools-dir must hold a Kmer2LTR that ltrquest-reboundary accepts (see CHANGELOG.md).
+# --tools-dir must hold a Kmer2LTR that ltr_peel-reboundary accepts (see CHANGELOG.md).
 # Finished cells are skipped, so a stage can be re-run after an interruption.
 set -euo pipefail
 STAGE="${1:-}"
-REPO=/data2/chris/poa_LTR/LTRquest
-export PATH=/home/chris/bin/mambaforge/envs/ltrquest/bin:$PATH
+REPO=/data2/chris/poa_LTR/LTR_peel
+export PATH=/home/chris/bin/mambaforge/envs/ltr_peel/bin:$PATH
 export PYTHONPATH=$REPO/src
 P=(annua.nuclear_LTRs chaixii.nuclear_LTRs infirma.nuclear_LTRs supina.nuclear_LTRs)
 G=(annua.nuclear.fa chaixii.nuclear.fa infirma.nuclear.fa supina.nuclear.fa)
@@ -18,7 +18,7 @@ OUT=reboundary_bench/tune${STAGE}
 mkdir -p "$OUT"
 bench() {
   python "$REPO/benchmarks/reboundary/bench.py" "$@" --run . --prefix "${P[@]}" \
-    --genome "${G[@]}" --tools-dir /data2/chris/poa_LTR/ltrquest_tools --threads "${THREADS:-32}"
+    --genome "${G[@]}" --tools-dir /data2/chris/poa_LTR/ltr_peel_tools --threads "${THREADS:-32}"
 }
 done_or() { [[ -s "$1/summary.json" ]]; }
 case "$STAGE" in

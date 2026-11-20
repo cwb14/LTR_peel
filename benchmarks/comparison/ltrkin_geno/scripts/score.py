@@ -5,7 +5,7 @@ report tables.
 Per dataset and tool: recall (found / partial / missed), exact-end recall, end-error bins, the ltrkin outcome of the
 matched call (end-to-end and control runs), false insertion polymorphisms, recall by length and solo counts.
 Confidence intervals are block bootstraps (N_BOOT draws, SEED, BLOCK-bp windows of the reference); the paired
-difference is metric(tool) - metric(ltrquest) over the same draws.
+difference is metric(tool) - metric(ltr_peel) over the same draws.
 
 Coordinates are 0-based half-open. Blocks come from the ORIGINAL reference .fai: lg_config.DATASETS[ds]["ref"] + ".fai",
 or, for tests, a `--fai DS=PATH` override. A tool whose run status is not ok gets status "DNF (<status>)" and empty
@@ -128,7 +128,7 @@ def false_e(genos, truth_rows):
     return dict(n_e_confirmed=nc, n_false=nf, n_e_unconfirmed=nu)
 
 
-def block_bootstrap(units, blocks, tools, ref_tool="ltrquest", n=N_BOOT, seed=SEED):
+def block_bootstrap(units, blocks, tools, ref_tool="ltr_peel", n=N_BOOT, seed=SEED):
     """Block bootstrap. units: [(block, {tool: (num, den)})]; blocks: all blocks of the reference. Each draw
     resamples len(blocks) blocks with replacement (one rng seeded once, the same draws for every tool); metric =
     sum(num) / sum(den). Per tool: lo hi (2.5/97.5 percentiles) and dlo dhi (same for metric - metric[ref_tool];
@@ -201,7 +201,7 @@ def read_blocks(fai):
 
 
 def run_status(root, ds, tool, running=()):
-    src = "ltrquest" if tool == "ltrquest_hc" else tool
+    src = "ltr_peel" if tool == "ltr_peel_hc" else tool
     if (ds, src) in running:
         return "running"
     p = f"{root}/runs/{ds}/{src}/resources.json"
@@ -274,8 +274,8 @@ def score_dataset(root, ds, fai, running=()):
     tabs = dict(recall=[], boundaries=[], ltrkin_yield=[], false_e=[], by_length=[], solo=[])
     base = lambda t: dict(ds=ds, tool=t, role="secondary" if t in SECONDARY else "primary", status=res[t]["status"] if
                           res[t]["status"] == "ok" else f"DNF ({res[t]['status']})")
-    if "ltrquest" not in ok:
-        warn(f"{ds}: ltrquest did not finish; paired differences left empty")
+    if "ltr_peel" not in ok:
+        warn(f"{ds}: ltr_peel did not finish; paired differences left empty")
     ci = {}
 
     def boot(fam, per_tool):
@@ -374,7 +374,7 @@ def main(argv=None):
             die(f"--running {x}: dataset {ds!r} is not among --ds {' '.join(a.ds)}")
         if t not in ALL_TOOLS:
             die(f"--running {x}: unknown tool {t!r} (known: {' '.join(ALL_TOOLS)})")
-        running.add((ds, "ltrquest" if t == "ltrquest_hc" else t))
+        running.add((ds, "ltr_peel" if t == "ltr_peel_hc" else t))
     out_dir = a.out_dir or f"{a.root}/report/tables"
     os.makedirs(out_dir, exist_ok=True)
     allt = {k: [] for k in ("recall", "boundaries", "ltrkin_yield", "false_e", "by_length", "solo")}
@@ -387,9 +387,9 @@ def main(argv=None):
         pool_rows += [dict(p, ds=ds) for p in pool]
         for k in allt:
             allt[k] += tabs[k]
-        yq = [r for r in tabs["ltrkin_yield"] if r["tool"] == "ltrquest" and r["run"] == "e2e"]
+        yq = [r for r in tabs["ltrkin_yield"] if r["tool"] == "ltr_peel" and r["run"] == "e2e"]
         print(f"{ds}: pool={N} loci; tools ok={len(ok)}/{len(ALL_TOOLS)}; "
-              f"ltrquest yield={fmt(yq[0].get('yield')) if yq else ''}", file=sys.stderr)
+              f"ltr_peel yield={fmt(yq[0].get('yield')) if yq else ''}", file=sys.stderr)
         if a.verbose:
             for t in ALL_TOOLS:
                 print(f"  {t}: {res[t]['status']}", file=sys.stderr)

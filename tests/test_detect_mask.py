@@ -1,4 +1,4 @@
-from ltrquest import detect
+from ltr_peel import detect
 
 NAME = "chr1:101-140#LTR/Gypsy"
 HDR = "#seq_id\tdomains\tnest_status\n"

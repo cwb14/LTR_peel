@@ -7,10 +7,10 @@ import random
 
 import pytest
 
-from ltrquest import detect
-from ltrquest.kmer2ltr import COLUMNS
+from ltr_peel import detect
+from ltr_peel.kmer2ltr import COLUMNS
 
-TOOLS = os.environ.get("LTRQUEST_TOOLS_DIR", ".")
+TOOLS = os.environ.get("LTR_PEEL_TOOLS_DIR", ".")
 RNG = random.Random(11)
 
 

@@ -17,16 +17,16 @@ from pathlib import Path
 
 import pytest
 
-import ltrquest
+import ltr_peel
 
 DATA = Path(__file__).parent / "data"
-SCRIPTS = Path(ltrquest.__file__).resolve().parent / "scripts"
+SCRIPTS = Path(ltr_peel.__file__).resolve().parent / "scripts"
 
 
 @pytest.fixture(scope="session")
 def driver() -> Path:
     """The packaged bash driver, wherever the install put it."""
-    return SCRIPTS / "ltrquest.sh"
+    return SCRIPTS / "ltr_peel.sh"
 
 
 @pytest.fixture(scope="session")
@@ -89,10 +89,10 @@ def toy_genome(tmp_path: Path) -> Path:
 
 @pytest.fixture(scope="session")
 def k2l_api():
-    """Kmer2LTR's Python API, from the environment or $LTRQUEST_TOOLS_DIR; skip if neither."""
-    from ltrquest import kmer2ltr
+    """Kmer2LTR's Python API, from the environment or $LTR_PEEL_TOOLS_DIR; skip if neither."""
+    from ltr_peel import kmer2ltr
     try:
-        return kmer2ltr.api(os.environ.get("LTRQUEST_TOOLS_DIR", "."), clone=False)
+        return kmer2ltr.api(os.environ.get("LTR_PEEL_TOOLS_DIR", "."), clone=False)
     except RuntimeError as exc:
         pytest.skip(f"Kmer2LTR API unavailable: {exc}")
 

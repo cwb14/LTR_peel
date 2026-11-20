@@ -1,6 +1,6 @@
 set	tool	role	end	n_seeds	frac_exact	frac_le5bp	frac_le20bp	median_abs_bp
-S1	ltrquest	primary	left	3	0.889	0.964	0.992	0.000
-S1	ltrquest	primary	right	3	0.891	0.965	0.993	0.000
+S1	ltr_peel	primary	left	3	0.889	0.964	0.992	0.000
+S1	ltr_peel	primary	right	3	0.891	0.965	0.993	0.000
 S1	ltr_retriever	primary	left	3	0.978	0.994	1.000	0.000
 S1	ltr_retriever	primary	right	3	0.982	0.996	1.000	0.000
 S1	ltrharvest	primary	left	3	0.514	0.867	0.969	0.333
@@ -17,10 +17,10 @@ S1	ltrpred	primary	left	3	0.518	0.870	0.975	0.000
 S1	ltrpred	primary	right	3	0.450	0.878	0.977	1.000
 S1	dante_ltr	primary	left	3	0.751	0.816	0.951	0.000
 S1	dante_ltr	primary	right	3	0.742	0.807	0.940	0.000
-S1	ltrquest_hc	post_hoc	left	3	0.976	0.991	0.997	0.000
-S1	ltrquest_hc	post_hoc	right	3	0.976	0.991	0.998	0.000
-S2	ltrquest	primary	left	3	0.925	0.980	0.993	0.000
-S2	ltrquest	primary	right	3	0.923	0.980	0.992	0.000
+S1	ltr_peel_hc	post_hoc	left	3	0.976	0.991	0.997	0.000
+S1	ltr_peel_hc	post_hoc	right	3	0.976	0.991	0.998	0.000
+S2	ltr_peel	primary	left	3	0.925	0.980	0.993	0.000
+S2	ltr_peel	primary	right	3	0.923	0.980	0.992	0.000
 S2	ltr_retriever	primary	left	3	0.977	0.996	0.999	0.000
 S2	ltr_retriever	primary	right	3	0.979	0.996	1.000	0.000
 S2	ltrharvest	primary	left	3	0.512	0.859	0.958	0.000
@@ -37,5 +37,5 @@ S2	ltrpred	primary	left	3	0.520	0.868	0.970	0.000
 S2	ltrpred	primary	right	3	0.439	0.871	0.972	1.000
 S2	dante_ltr	primary	left	3	0.751	0.811	0.941	0.000
 S2	dante_ltr	primary	right	3	0.749	0.808	0.938	0.000
-S2	ltrquest_hc	post_hoc	left	3	0.975	0.992	0.997	0.000
-S2	ltrquest_hc	post_hoc	right	3	0.975	0.992	0.997	0.000
+S2	ltr_peel_hc	post_hoc	left	3	0.975	0.992	0.997	0.000
+S2	ltr_peel_hc	post_hoc	right	3	0.975	0.992	0.997	0.000

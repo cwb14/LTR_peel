@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-MODULE = Path(__file__).resolve().parents[1] / "modules" / "local" / "ltrquest" / "reconcile" / "main.nf"
+MODULE = Path(__file__).resolve().parents[1] / "modules" / "local" / "ltr_peel" / "reconcile" / "main.nf"
 
 
 @pytest.mark.skipif(not MODULE.is_file(), reason="not running from a source checkout")

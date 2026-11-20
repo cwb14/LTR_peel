@@ -1,0 +1,4 @@
+element	depth	key	header	chrom	start	end	seq_len	ltr5_end	ltr3_start	ltr5_len	ltr3_len	tsd	tsd_offset	has_tsd	family_class	len_after_deleting
+H	2	c0004:4407852-4436793	c0004:4407852-4436793#LTR/Gypsy/Athila	c0004	4407852	4436793	28942	1779	27164	1779	1779	GTGAT	0,0	True	LTR/Gypsy/Athila	11652
+C	1	c0004:4416804-4434093	c0004:4416804-4434093#LTR/Gypsy/Athila	c0004	4416804	4434093	17290	1624	15663	1624	1628	.	.	False	LTR/Gypsy/Athila	10848
+G	0	c0004:4425022-4431463	c0004:4425022-4431463#LTR/Gypsy/Athila	c0004	4425022	4431463	6442	1729	4947	1729	1496	ATTTT	1,-1	True	LTR/Gypsy/Athila	6442

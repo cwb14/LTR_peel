@@ -8,16 +8,16 @@ import textwrap
 
 import pytest
 
-from ltrquest import recover_strand as rs
-from ltrquest.annotate import (
+from ltr_peel import recover_strand as rs
+from ltr_peel.annotate import (
     ElementInfo,
     load_recovered_strands,
     recovery_sidecar_path,
     resolve_strands,
 )
-from ltrquest.detect import revcomp as revcomp_record
-from ltrquest.reconcile import IUPAC_DEPTH_SEQ
-from ltrquest.recover_strand import (
+from ltr_peel.detect import revcomp as revcomp_record
+from ltr_peel.reconcile import IUPAC_DEPTH_SEQ
+from ltr_peel.recover_strand import (
     Element,
     Genome,
     align,
@@ -40,7 +40,7 @@ from ltrquest.recover_strand import (
 )
 
 # The depth-table schema, trimmed to the columns this stage reads and writes.
-# nest_status stays last, which ltrquest.reconcile treats as a hard invariant.
+# nest_status stays last, which ltr_peel.reconcile treats as a hard invariant.
 HEADER = ("#name\tltr5_start\tltr5_end\tltr3_start\tltr3_end\t"
           "orientation\ttsd\tdomains\tnest_status")
 ANNOTATED_HEADER = ("#name\tltr5_start\tltr5_end\tltr3_start\tltr3_end\t"
@@ -321,7 +321,7 @@ class TestReorientFasta:
     RIGHT = "AAAACCCCGG"
 
     def fasta(self, tmp_path, name="run_depth0_ltr.fa"):
-        # Wrapped the way ltrquest.reconcile writes a depth FASTA, so a rewrite
+        # Wrapped the way ltr_peel.reconcile writes a depth FASTA, so a rewrite
         # that flips nothing is byte-identical.
         path = tmp_path / name
         path.write_text(f">chr1:1-20#LTR/Copia\n{self.LEFT}\n"
@@ -769,7 +769,7 @@ class TestElementsFrom:
     def load(self, tmp_path, rows, header=HEADER):
         path = tmp_path / "run_depth0_ltr.tsv"
         write_depth_table(path, rows, header)
-        from ltrquest.annotate import DepthTable, load_unannotated
+        from ltr_peel.annotate import DepthTable, load_unannotated
         table = DepthTable(str(path), 0, "raw")
         return elements_from([(table,) + load_unannotated(str(path))])
 

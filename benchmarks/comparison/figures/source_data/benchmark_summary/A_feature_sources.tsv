@@ -1,0 +1,38 @@
+tool	feature	source
+ltr_peel	strand	calls tsv strand (clean_ltr.tsv)
+ltr_peel	LTR	calls tsv lltr_end/rltr_start
+ltr_peel	TSD	clean_ltr.tsv tsd sequence, tsd_offset 0,0 (flanks drawn adjacent)
+ltr_peel	domains	S2_1_LTRs_all_depth_LTR_cleaned.gff3 protein_match (1-based)
+ltr_retriever	strand	pass.list Strand (calls tsv)
+ltr_retriever	LTR	pass.list (calls tsv)
+ltr_retriever	TSD	S2_1.fa.mod.pass.list 5_TSD / 3_TSD (1-based)
+ltr_retriever	domains	none
+ltrharvest	strand	not reported ('?')
+ltrharvest	LTR	ltrharvest.tabout (calls tsv)
+ltrharvest	TSD	ltrharvest.gff3 target_site_duplication (1-based)
+ltrharvest	domains	none
+ltr_finder	strand	scn Strand
+ltr_finder	LTR	scn Location, LTR len
+ltr_finder	TSD	scn TSR sequence (flanks drawn adjacent)
+ltr_finder	domains	scn RT / IN(core) / IN(c-term) / RH columns: N-N for all three calls here
+look4ltrs	strand	rtr RC (calls tsv)
+look4ltrs	LTR	rtr LeftEnd / RightStart (0-based)
+look4ltrs	TSD	out/Rtr/c0001.rtr TSDStart / TSDEnd (0-based; NA for the host)
+look4ltrs	domains	none
+hirepeat	strand	not reported
+hirepeat	LTR	not reported
+hirepeat	TSD	not reported
+hirepeat	domains	none
+hirepeat	note	S2_1_all_rounds_original.bed: span only
+hite	strand	not reported ('.')
+hite	LTR	intact_LTR.list IN (calls tsv)
+hite	TSD	intact_LTR.list TSD sequence (flanks drawn adjacent)
+hite	domains	none
+ltrpred	strand	DataSheet strand
+ltrpred	LTR	DataSheet lLTR / rLTR (1-based)
+ltrpred	TSD	S2_1_LTRpred_DataSheet.tsv lTSD / rTSD (1-based)
+ltrpred	domains	S2_1_LTRdigestPrediction.gff protein_match of the element (1-based)
+dante_ltr	strand	dante_ltr.gff3 transposable_element
+dante_ltr	LTR	dante_ltr.gff3 long_terminal_repeat
+dante_ltr	TSD	dante_ltr.gff3 target_site_duplication (1-based)
+dante_ltr	domains	dante_ltr.gff3 protein_domain children (1-based)

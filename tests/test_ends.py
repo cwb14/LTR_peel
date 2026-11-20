@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from ltrquest import ends
+from ltr_peel import ends
 
 BODY = "TGTTAGCCGATCCATGGACTTAGCCA"      # an "element": TG ... CA, 26 bp
 

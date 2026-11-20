@@ -35,8 +35,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from score_elements import match, read_bed3, read_calls  # noqa: E402
 
-TOOLS = ["ltrquest", "ltrharvest", "ltr_finder", "ltr_retriever", "look4ltrs", "hirepeat", "hite", "ltrpred",
-         "dante_ltr", "ltrquest_hc"]
+TOOLS = ["ltr_peel", "ltrharvest", "ltr_finder", "ltr_retriever", "look4ltrs", "hirepeat", "hite", "ltrpred",
+         "dante_ltr", "ltr_peel_hc"]
 STEP = 1540000          # generations per snapshot (sims/div/params.tsv)
 BINW = 0.02             # K2P bin width
 RO = 0.9
@@ -163,7 +163,7 @@ def empty_candidates(ds, tool):
 
 
 def status(ds, tool):
-    rd = f"runs/{ds}/{'ltrquest' if tool == 'ltrquest_hc' else tool}"
+    rd = f"runs/{ds}/{'ltr_peel' if tool == 'ltr_peel_hc' else tool}"
     if os.path.exists(f"calls/{ds}/{tool}.tsv"):
         return "ok"
     if os.path.exists(f"{rd}/.failed"):

@@ -24,7 +24,7 @@ pooled locus; both -> host; neither -> unnested.
 CIs: score.block_bootstrap (5 Mb blocks of the reference, 1,000 draws, seed 1, the same draws as the yield table),
 share = loci of the class in the outcome / loci of the class; classes with < 20 loci get counts only.
 Check (fatal): over all loci, every caller's counts of the 9 ltrkin classes, the yield and its CI reproduce
-report/tables/ltrkin_yield.tsv (e2e rows) to the printed digits; the correct-genotype split (LTRquest-only loci + the
+report/tables/ltrkin_yield.tsv (e2e rows) to the printed digits; the correct-genotype split (LTR_peel-only loci + the
 rest) sums to the yield count.
 Outputs (--out): ltrkin_locus_class.tsv, ltrkin_breakdown.tsv, ltrkin_outcomes_all.tsv.
 """
@@ -239,17 +239,17 @@ def main(argv=None):
                 calls += read_calls(final_calls_path(f"{LG}/calls/{ds}", t), t)
         cons = consensus_elements(calls)
         nest = nesting(loci, cons)
-        lq_only = [nominators(p) == {"ltrquest"} for p in pool]
+        lq_only = [nominators(p) == {"ltr_peel"} for p in pool]
         if a.verbose:
             print(f"{ds}: {N} loci; callers ok {','.join(ok)}; {len(calls)} calls -> {len(cons)} consensus elements; "
                   f"DANTE_LTR calls by class {dict(dlc)}; protein {dict(Counter(pcls))}; nesting "
-                  f"{dict(Counter(v['nesting'] for v in nest.values()))}; LTRquest-only loci {sum(lq_only)}",
+                  f"{dict(Counter(v['nesting'] for v in nest.values()))}; LTR_peel-only loci {sum(lq_only)}",
                   file=sys.stderr)
         for i, (p, L) in enumerate(zip(pool, loci)):
             nv = nest[L["locus_id"]]
             loc_rows.append(dict(ds=ds, locus_id=L["locus_id"], chrom=L["chrom"], match_start=L["start"],
                                  match_end=L["end"], length=L["end"] - L["start"], basis=p["basis"],
-                                 nominators=",".join(sorted(nominators(p))), ltrquest_only=int(lq_only[i]),
+                                 nominators=",".join(sorted(nominators(p))), ltr_peel_only=int(lq_only[i]),
                                  protein_class=pcls[i], n_domains=dev[i][0], domains=dev[i][1], **nv,
                                  **{f"out_{t}": cats[t][i] for t in PRIMARY if t in ok}))
         # check: all-loci fine classes, yield and CI vs ltrkin_yield.tsv (e2e)
@@ -289,8 +289,8 @@ def main(argv=None):
             for k in CATS:
                 row.update({f"n_{k}": ac[k]["n"], f"share_{k}": ac[k]["share"], f"{k}_lo": ac[k]["lo"],
                             f"{k}_hi": ac[k]["hi"]})
-            row.update(n_ltrquest_only_loci=sum(lq_only), n_correct_ltrquest_only=n_lq, n_correct_rest=n_rest,
-                       share_correct_ltrquest_only=n_lq / N, share_correct_rest=n_rest / N)
+            row.update(n_ltr_peel_only_loci=sum(lq_only), n_correct_ltr_peel_only=n_lq, n_correct_rest=n_rest,
+                       share_correct_ltr_peel_only=n_lq / N, share_correct_rest=n_rest / N)
             all_rows.append(row)
         for dim, labels, vals in (("protein", PROT, pcls),
                                   ("nesting", NEST, [nest[L["locus_id"]]["nesting"] for L in loci])):
@@ -307,7 +307,7 @@ def main(argv=None):
     if bad:
         die("checks failed:\n  " + "\n  ".join(bad))
     print("checks passed: all-loci shares of the 9 ltrkin classes, n_loci, yield and its CI equal ltrkin_yield.tsv "
-          "(e2e) for every finished caller; correct = LTRquest-only + rest", file=sys.stderr)
+          "(e2e) for every finished caller; correct = LTR_peel-only + rest", file=sys.stderr)
     order = {t: i for i, t in enumerate(lg_config.ALL_TOOLS)}
     brk_rows.sort(key=lambda r: (DS.index(r["ds"]), r["dimension"] != "nesting",
                                  (NEST + PROT).index(r["cls"]), order[r["tool"]]))
@@ -315,10 +315,10 @@ def main(argv=None):
     cc = [f"{x}" for k in CATS for x in (f"n_{k}", f"share_{k}", f"{k}_lo", f"{k}_hi")]
     write(f"{a.out}/ltrkin_breakdown.tsv", brk_rows, ["ds", "tool", "role", "status", "dimension", "cls", "n_loci"] + cc)
     write(f"{a.out}/ltrkin_outcomes_all.tsv", all_rows,
-          ["ds", "tool", "role", "status", "n_loci"] + cc + ["n_ltrquest_only_loci", "n_correct_ltrquest_only",
-                                                             "n_correct_rest", "share_correct_ltrquest_only",
+          ["ds", "tool", "role", "status", "n_loci"] + cc + ["n_ltr_peel_only_loci", "n_correct_ltr_peel_only",
+                                                             "n_correct_rest", "share_correct_ltr_peel_only",
                                                              "share_correct_rest"])
-    lc = ["ds", "locus_id", "chrom", "match_start", "match_end", "length", "basis", "nominators", "ltrquest_only",
+    lc = ["ds", "locus_id", "chrom", "match_start", "match_end", "length", "basis", "nominators", "ltr_peel_only",
           "protein_class", "n_domains", "domains", "nesting", "is_tenant", "is_host", "n_self_cons", "enclosing",
           "enclosing_len", "enclosing_callers", "n_enclosing", "contained", "contained_len", "contained_ro",
           "contained_callers", "n_contained", "contained_loci"] + [f"out_{t}" for t in PRIMARY]

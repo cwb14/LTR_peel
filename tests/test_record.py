@@ -11,8 +11,8 @@ from pathlib import Path
 
 import pytest
 
-import ltrquest
-from ltrquest import record
+import ltr_peel
+from ltr_peel import record
 
 SETTINGS = {"max_rounds": "1", "terminate_count": "100", "trf": "true"}
 
@@ -128,11 +128,11 @@ class TestCheck:
     def test_a_different_version_only_warns(self, run_dir):
         path = write(run_dir)
         saved = json.loads(Path(path).read_text())
-        saved["ltrquest"] = "0.0.1"
+        saved["ltr_peel"] = "0.0.1"
         Path(path).write_text(json.dumps(saved))
         verdict, problems, warnings = check(run_dir)
         assert (verdict, problems) == ("reuse", [])
-        assert warnings == [f"detected with LTRquest 0.0.1; this is {ltrquest.__version__}"]
+        assert warnings == [f"detected with LTR_peel 0.0.1; this is {ltr_peel.__version__}"]
 
     def test_numerically_equal_settings_match(self, run_dir):
         write(run_dir, settings={**SETTINGS, "fp_mask_threshold": "0.10"})
@@ -191,7 +191,7 @@ class TestClear:
 
 class TestCli:
     def cli(self, *args):
-        return subprocess.run([sys.executable, "-m", "ltrquest.record", *args],
+        return subprocess.run([sys.executable, "-m", "ltr_peel.record", *args],
                               capture_output=True, text=True)
 
     def common(self, d: Path, max_rounds="1"):

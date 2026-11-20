@@ -1,0 +1,44 @@
+item	value	source
+A: depth2 record length as written, >c0004:4407852-4436793#LTR/Gypsy/Athila	28942	runs/arab/ltr_peel/arab_LTRs_depth2_clean_ltr.fa
+A/B: depth2 c0004:4407852-4436793 5' LTR / 3' LTR length drawn (bp; record 1-1779, 27164-28942)	1779/1779	runs/arab/ltr_peel/arab_LTRs_depth2_clean_ltr.tsv
+A/C: depth2 record c0004:4407852-4436793: run of R at record positions 8953-17170 (1-based); drawn in the depth1 element's hue	8218	runs/arab/ltr_peel/arab_LTRs_depth2_clean_ltr.fa
+A/C: depth2 record c0004:4407852-4436793: run of N at record positions 17171-23612 (1-based); drawn in the depth0 element's hue	6442	runs/arab/ltr_peel/arab_LTRs_depth2_clean_ltr.fa
+A/C: depth2 record c0004:4407852-4436793: run of R at record positions 23613-26242 (1-based); drawn in the depth1 element's hue	2630	runs/arab/ltr_peel/arab_LTRs_depth2_clean_ltr.fa
+A/B: depth2 c0004:4407852-4436793 domain GAG drawn, c0004:4410048-4410431 (GFF3 1-based closed) = record 2197-2580	384	runs/arab/ltr_peel/arab_LTRs_all_depth_LTR_cleaned.gff3
+A/B: depth2 c0004:4407852-4436793 domain PROT drawn, c0004:4411243-4411473 (GFF3 1-based closed) = record 3392-3622	231	runs/arab/ltr_peel/arab_LTRs_all_depth_LTR_cleaned.gff3
+A/B: depth2 c0004:4407852-4436793 domain RT drawn, c0004:4412271-4412846 (GFF3 1-based closed) = record 4420-4995	576	runs/arab/ltr_peel/arab_LTRs_all_depth_LTR_cleaned.gff3
+A/B: depth2 c0004:4407852-4436793 domain RH drawn, c0004:4412985-4413326 (GFF3 1-based closed) = record 5134-5475	342	runs/arab/ltr_peel/arab_LTRs_all_depth_LTR_cleaned.gff3
+A/B: depth2 c0004:4407852-4436793 domain INT drawn, c0004:4413745-4414248 (GFF3 1-based closed) = record 5894-6397	504	runs/arab/ltr_peel/arab_LTRs_all_depth_LTR_cleaned.gff3
+A/B: depth2 c0004:4407852-4436793 TSD drawn (table tsd, tsd_offset)	GTGAT (0,0)	runs/arab/ltr_peel/arab_LTRs_depth2_clean_ltr.tsv
+A: depth1 record length as written, >c0004:4416804-4434093#LTR/Gypsy/Athila	17290	runs/arab/ltr_peel/arab_LTRs_depth1_clean_ltr.fa
+A/B: depth1 c0004:4416804-4434093 5' LTR / 3' LTR length drawn (bp; record 1-1624, 15663-17290)	1624/1628	runs/arab/ltr_peel/arab_LTRs_depth1_clean_ltr.tsv
+A/C: depth1 record c0004:4416804-4434093: run of N at record positions 8219-14660 (1-based); drawn in the depth0 element's hue	6442	runs/arab/ltr_peel/arab_LTRs_depth1_clean_ltr.fa
+A/B: depth1 c0004:4416804-4434093 domain GAG drawn, c0004:4419023-4419304 (GFF3 1-based closed) = record 2220-2501	282	runs/arab/ltr_peel/arab_LTRs_all_depth_LTR_cleaned.gff3
+A/B: depth1 c0004:4416804-4434093 domain PROT drawn, c0004:4420474-4420704 (GFF3 1-based closed) = record 3671-3901	231	runs/arab/ltr_peel/arab_LTRs_all_depth_LTR_cleaned.gff3
+A/B: depth1 c0004:4416804-4434093 TSD drawn (table tsd, tsd_offset)	none (tsd '.')	runs/arab/ltr_peel/arab_LTRs_depth1_clean_ltr.tsv
+A: depth0 record length as written, >c0004:4425022-4431463#LTR/Gypsy/Athila	6442	runs/arab/ltr_peel/arab_LTRs_depth0_clean_ltr.fa
+A/B: depth0 c0004:4425022-4431463 5' LTR / 3' LTR length drawn (bp; record 1-1729, 4947-6442)	1729/1496	runs/arab/ltr_peel/arab_LTRs_depth0_clean_ltr.tsv
+A/B: depth0 c0004:4425022-4431463 domain GAG drawn, c0004:4427178-4427561 (GFF3 1-based closed) = record 2157-2540	384	runs/arab/ltr_peel/arab_LTRs_all_depth_LTR_cleaned.gff3
+A/B: depth0 c0004:4425022-4431463 domain PROT drawn, c0004:4428985-4429215 (GFF3 1-based closed) = record 3964-4194	231	runs/arab/ltr_peel/arab_LTRs_all_depth_LTR_cleaned.gff3
+A/B: depth0 c0004:4425022-4431463 TSD drawn (table tsd, tsd_offset)	ATTTT (1,-1)	runs/arab/ltr_peel/arab_LTRs_depth0_clean_ltr.tsv
+A: axis tick (Mb)	4.410	axis
+A: axis tick (Mb)	4.415	axis
+A: axis tick (Mb)	4.420	axis
+A: axis tick (Mb)	4.425	axis
+A: axis tick (Mb)	4.430	axis
+A: axis tick (Mb)	4.435	axis
+A: genome window drawn, chromosome 4 = c0004 (0-based edges)	4407000-4437400	data/arab/genome.fa; data/arab/names.tsv
+B: depth2 join point (kept bases before the insert); marker in the depth1 element's hue	8952	runs/arab/ltr_peel/arab_LTRs_depth2_clean_ltr.fa
+B: depth2 record length after deleting non-ACGT letters, c0004:4407852-4436793	11652	runs/arab/ltr_peel/arab_LTRs_depth2_clean_ltr.fa (same as sed '/^>/!s/[^ATCGatcg]//g')
+B: depth1 join point (kept bases before the insert); marker in the depth0 element's hue	8218	runs/arab/ltr_peel/arab_LTRs_depth1_clean_ltr.fa
+B: depth1 record length after deleting non-ACGT letters, c0004:4416804-4434093	10848	runs/arab/ltr_peel/arab_LTRs_depth1_clean_ltr.fa (same as sed '/^>/!s/[^ATCGatcg]//g')
+B: depth0 record length after deleting non-ACGT letters, c0004:4425022-4431463	6442	runs/arab/ltr_peel/arab_LTRs_depth0_clean_ltr.fa (same as sed '/^>/!s/[^ATCGatcg]//g')
+B: scale bar (kb), same bp scale as A	5	axis
+A/B: bp scale (mm per kb)	2.5	layout
+C: host bases shown on each side of the insert (depth2 record)	12	runs/arab/ltr_peel/arab_LTRs_depth2_clean_ltr.fa
+C: masked letters shown at each end of each run	6	runs/arab/ltr_peel/arab_LTRs_depth2_clean_ltr.fa
+C: host bases left of the insert, record positions 8941-8952	GTATTAGGTTCG	runs/arab/ltr_peel/arab_LTRs_depth2_clean_ltr.fa
+C: host bases right of the insert, record positions 26243-26254	GTTTGTAACGAC	runs/arab/ltr_peel/arab_LTRs_depth2_clean_ltr.fa
+legend: elements in the nest (each other's nest-outer / nest-inner)	3	runs/arab/ltr_peel/arab_LTRs_depth0_clean_ltr.tsv; runs/arab/ltr_peel/arab_LTRs_depth1_clean_ltr.tsv; runs/arab/ltr_peel/arab_LTRs_depth2_clean_ltr.tsv
+legend: Arabidopsis thaliana chromosome (TAIR10.1 NC_003075.7 = c0004)	4	data/arab/names.tsv
+legend: family class of all three elements	LTR/Gypsy/Athila	seq_id column of the depth tables

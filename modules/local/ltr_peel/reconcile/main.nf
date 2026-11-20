@@ -1,0 +1,66 @@
+process LTR_PEEL_RECONCILE {
+    tag "$meta.id"
+    label 'process_medium'
+
+    conda "${moduleDir}/environment.yml"
+    // One image for every engine. Singularity and Apptainer convert an OCI
+    // image on the fly, so the nf-core habit of pointing them at a separate
+    // `oras://…-singularity` artifact only helps if you actually publish one.
+    container 'ghcr.io/cwb14/ltr_peel:1.0.1'
+
+    input:
+    tuple val(meta), path(tsvs, stageAs: 'round_*/*'), path(fastas, stageAs: 'round_*/*'), path(genome)
+
+    output:
+    tuple val(meta), path("${prefix}_depth*_ltr.tsv", arity: '1..*'), emit: tsv
+    tuple val(meta), path("${prefix}_depth*_ltr.fa", arity: '1..*') , emit: fasta
+    // Always written (a header alone when no host was rebuilt): the strand
+    // loaders of the annotate, recover-strand and GFF3 stages read it by name.
+    tuple val(meta), path("${prefix}_rejoined.tsv")                 , emit: rejoined
+    path "versions.yml"                              , emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
+
+    script:
+    def args = task.ext.args ?: ''
+    prefix   = task.ext.prefix ?: "${meta.id}"
+
+    // The two lists are round-ordered and index-aligned; the reconciler reads
+    // the round index off the position, so they must be sorted identically.
+    // A genome that completed one round arrives as a single Path, not a list,
+    // and collect() on a Path walks its name components ('round_1', 'x.tsv').
+    def tsv_list = (tsvs   instanceof List ? tsvs   : [tsvs]  ).collect { it.toString() }.sort().join(' ')
+    def fa_list  = (fastas instanceof List ? fastas : [fastas]).collect { it.toString() }.sort().join(' ')
+    """
+    ltr_peel-reconcile \\
+        --out-prefix ${prefix} \\
+        --tsv ${tsv_list} \\
+        --fa ${fa_list} \\
+        --genome ${genome} \\
+        --tools-dir \${LTR_PEEL_TOOLS_DIR:-/opt/ltr_peel/tools} \\
+        ${args}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        ltr_peel: \$(python -c 'import ltr_peel; print(ltr_peel.__version__)')
+    END_VERSIONS
+    """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    printf '#seq_id\\tseq_len\\tstatus\\tltr5_start\\tltr5_end\\tltr3_start\\tltr3_end\\tltr5_len\\tltr3_len\\tflank5_len\\tflank3_len\\taln_len\\tn_sites\\tn_ts\\tn_tv\\tn_gapcols\\tidentity\\tp_dist\\tk2p\\tk2p_se\\tbitscore\\tflank_margin_bits\\tcigar\\tmotif\\tk2p_time\\torientation\\ttsd\\ttsd_offset\\ttsd_input\\tdomains\\tnest_status\\n' > ${prefix}_depth0_ltr.tsv
+    # One field per header name: a stub row narrower than its own header is a
+    # schema mismatch that -stub-run, the only automated exercise this DAG
+    # gets, would otherwise read straight past.
+    printf 'chr1:1000-6000#LTR/Gypsy/Tekay\\t5001\\tpass\\t1\\t500\\t4502\\t5001\\t500\\t500\\t0\\t0\\t500\\t500\\t8\\t4\\t0\\t0.9760\\t0.0240\\t0.0244\\t0.0070\\t900.0\\t12.5\\t500=\\ttg...ca\\t406667\\t+\\tTGCAA\\t0,0\\tTGCAA\\tGAG|Tekay@1600-2200;RT|Tekay@2500-3400\\t.\\n' >> ${prefix}_depth0_ltr.tsv
+    printf '>chr1:1000-6000#LTR/Gypsy/Tekay\\nACGT\\n' > ${prefix}_depth0_ltr.fa
+    printf '#old_key\\tnew_key\\ttenant\\tltr\\tremainder_bp\\tidentity\\tevalue\\ttsd\\n' > ${prefix}_rejoined.tsv
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        ltr_peel: 1.0.1
+    END_VERSIONS
+    """
+}

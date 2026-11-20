@@ -3,7 +3,7 @@
 set -euo pipefail
 B=${FASTLTR_BENCH:?set FASTLTR_BENCH to the benchmark directory (inputs/, regions/, runs/ ...)}
 S=$(cd "$(dirname "$0")" && pwd)
-# run inside the LTRquest environment (ltrquest, blastn, makeblastdb on PATH), after make_regions.sh
+# run inside the LTR_peel environment (ltr_peel, blastn, makeblastdb on PATH), after make_regions.sh
 DB=${EDTA_DB:?set EDTA_DB to EDTA share/EDTA/database (curated rice7.0.0 and athrep libraries)}
 mkdir -p $B/analysis && cd $B/analysis
 

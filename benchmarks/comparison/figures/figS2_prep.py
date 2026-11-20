@@ -2,7 +2,8 @@
 """Data preparation for Fig. S2 (figS2_masking): the rice example window of panel A.
 Cache written to this directory's tmp/.
 
-Imported by figS2_masking.py (which calls windows() when the cached table is missing); can also be run alone:
+Imported by figS2_masking.py (which calls init_bench(), then windows() when the cached table is missing); can also be
+run alone (needs BENCH_ROOT):
   figS2_prep.py windows              rice 200-kb windows on assembled chromosomes, ranked for the example (panel A)
 Coordinates: RepeatMasker .out 1-based closed -> 0-based half-open on read (start - 1, end); eval/adj is 0-based
 half-open; MSU gff3 1-based closed -> 0-based half-open on read.
@@ -19,15 +20,29 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-B = Path(os.environ["BENCH_ROOT"])
 HERE = Path(__file__).resolve().parent
 TMP = HERE / "tmp"
-sys.path.insert(0, str(B / "scripts"))
-import libtest_ci  # noqa: E402  (read-only import: LTR_RE and ltr_hits reproduce lib-test's LTR class selection)
-import evidence    # noqa: E402  (read-only import: TE_NOTE_V2 for transposon-derived genes)
+B = libtest_ci = evidence = None        # set by init_bench()
+
+
+def init_bench():
+    """point B at $BENCH_ROOT and import its read-only scripts: libtest_ci (LTR_RE and ltr_hits reproduce lib-test's
+    LTR class selection) and evidence (TE_NOTE_V2 for transposon-derived genes). Returns B."""
+    global B, libtest_ci, evidence
+    if B is None:
+        if "BENCH_ROOT" not in os.environ:
+            sys.exit("error: BENCH_ROOT is not set (the full dataset is needed unless --from-source-data)")
+        B = Path(os.environ["BENCH_ROOT"])
+        sys.path.insert(0, str(B / "scripts"))
+        import libtest_ci as _lt
+        import evidence as _ev
+        libtest_ci, evidence = _lt, _ev
+    TMP.mkdir(exist_ok=True)
+    return B
+
 
 DATASETS = ["arab", "rice", "finch", "maize", "gorilla"]
-TOOLS = ["ltrquest", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
+TOOLS = ["ltr_peel", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
          "dante_ltr"]
 
 
@@ -115,18 +130,18 @@ def genes(ds="rice"):
 
 
 def windows(force=False):
-    """rice 200-kb windows on c0001-c0012, with LTRquest calls (by midpoint), their unsupported share, gene count
-    and LTRquest masking precision; distance to the genome-wide values (selection rule)"""
+    """rice 200-kb windows on c0001-c0012, with LTR_peel calls (by midpoint), their unsupported share, gene count
+    and LTR_peel masking precision; distance to the genome-wide values (selection rule)"""
     path = TMP / "rice_windows.tsv"
     if path.exists() and not force:
         return pd.read_csv(path, sep="\t")
     ds = "rice"
     seqs = [s for s in fai(ds) if s[0] <= "c0012"]
-    adj = pd.read_csv(B / f"eval/adj/{ds}/ltrquest.calls.tsv", sep="\t", usecols=["chrom", "start", "end",
+    adj = pd.read_csv(B / f"eval/adj/{ds}/ltr_peel.calls.tsv", sep="\t", usecols=["chrom", "start", "end",
                                                                                      "supported"])
     g = genes(ds)
     ref = libtest_ci.ltr_hits(str(B / f"mask/{ds}/curated/{ds}.fa.out"))
-    tst = libtest_ci.ltr_hits(str(B / f"mask/{ds}/ltrquest.intact/{ds}.fa.out"))
+    tst = libtest_ci.ltr_hits(str(B / f"mask/{ds}/ltr_peel.intact/{ds}.fa.out"))
     rows = []
     for c, n, *_ in seqs:
         nw = n // WIN
@@ -149,7 +164,7 @@ def windows(force=False):
     w["unsup_share"] = w.n_unsup / w.n_calls.where(w.n_calls > 0)
     w["lq_prec"] = w.lq_TP / w.lq_masked.where(w.lq_masked > 0)
     # targets: medians over windows for counts; genome-wide (pooled) values for the two shares, because per-window
-    # shares of ~3 calls are coarse (0, 1/3, ...); the panel shows masking, so LTRquest's masking precision in the
+    # shares of ~3 calls are coarse (0, 1/3, ...); the panel shows masking, so LTR_peel's masking precision in the
     # window is a fourth criterion (added to the three above). Scale: interquartile range over windows.
     tgt = {"n_calls": w.n_calls.median(), "n_genes": w.n_genes.median(),
            "unsup_share": w.n_unsup.sum() / w.n_calls.sum(), "lq_prec": w.lq_TP.sum() / w.lq_masked.sum()}
@@ -170,4 +185,5 @@ def windows(force=False):
 if __name__ == "__main__":
     if len(sys.argv) < 2 or sys.argv[1] != "windows":
         sys.exit(__doc__)
+    init_bench()
     print(windows(force=True).head(15).to_string())

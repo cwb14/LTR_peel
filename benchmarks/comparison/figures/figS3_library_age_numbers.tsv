@@ -7,14 +7,14 @@ A unsupported copy curated hit TAT1_ATH identity (%)	66	mask/arab/curated/arab.f
 A unsupported copy curated hit ATLANTYS1_I identity (%)	64	mask/arab/curated/arab.fa.out (100 - perc div. 35.6); 11529398-11529781
 A unsupported copy curated hit ATLANTYS1_I identity (%)	68	mask/arab/curated/arab.fa.out (100 - perc div. 31.9); 11530105-11531784
 A unsupported copy curated hit ATLANTYS1_I identity (%)	67	mask/arab/curated/arab.fa.out (100 - perc div. 32.8); 11532284-11533140
-A supported copy K2P (LTR-LTR, substitutions per site)	0.02974	eval/adj/arab/ltrquest.calls.tsv k2p (Kmer2LTR)
+A supported copy K2P (LTR-LTR, substitutions per site)	0.02974	eval/adj/arab/ltr_peel.calls.tsv k2p (Kmer2LTR)
 A supported copy curated LTR coverage of the span	1.0	computed from mask/arab/curated/arab.fa.out (proxies.ref_ltr rule)
-A supported copy length (bp)	11196	eval/adj/arab/ltrquest.calls.tsv len
-A supported copy TSD (open boxes)	GATG	calls/arab/ltrquest.ids.tsv tsd; checked against data/arab/genome.fa
-A unsupported copy K2P (LTR-LTR, substitutions per site)	0.04761	eval/adj/arab/ltrquest.calls.tsv k2p (Kmer2LTR)
+A supported copy length (bp)	11196	eval/adj/arab/ltr_peel.calls.tsv len
+A supported copy TSD (open boxes)	GATG	calls/arab/ltr_peel.ids.tsv tsd; checked against data/arab/genome.fa
+A unsupported copy K2P (LTR-LTR, substitutions per site)	0.04761	eval/adj/arab/ltr_peel.calls.tsv k2p (Kmer2LTR)
 A unsupported copy curated LTR coverage of the span	0.32	computed from mask/arab/curated/arab.fa.out (proxies.ref_ltr rule)
-A unsupported copy length (bp)	10964	eval/adj/arab/ltrquest.calls.tsv len
-A unsupported copy TSD (open boxes)	GAGAC	calls/arab/ltrquest.ids.tsv tsd; checked against data/arab/genome.fa
+A unsupported copy length (bp)	10964	eval/adj/arab/ltr_peel.calls.tsv len
+A unsupported copy TSD (open boxes)	GAGAC	calls/arab/ltr_peel.ids.tsv tsd; checked against data/arab/genome.fa
 B rice protein-confirmed loci drawn (K2P measured)	6901	report/tables/library_age_bias.tsv n_loci (sum of the four bins); rows rebuilt from eval/adj
 B rice mean curated coverage along loci, K2P class <0.01 (mean over bins)	0.986	computed from eval/adj + mask/<ds>/curated (tmp cache)
 B rice mean curated coverage along loci, K2P class >=0.1 (mean over bins)	0.774	computed from eval/adj + mask/<ds>/curated (tmp cache)
@@ -47,7 +47,7 @@ B gorilla loci in K2P class <0.01	63	report/tables/library_age_bias.tsv n_loci
 B gorilla loci in K2P class 0.01-0.03	271	report/tables/library_age_bias.tsv n_loci
 B gorilla loci in K2P class 0.03-0.1	1120	report/tables/library_age_bias.tsv n_loci
 B gorilla loci in K2P class >=0.1	879	report/tables/library_age_bias.tsv n_loci
-B A. thaliana panel	in fig_benchmark G (main figure, Fig. 1G), not redrawn here	figures/pub/SPEC.md; coordinator brief
+B A. thaliana panel	in fig_benchmark G (main figure, Fig. 1G), not redrawn here	scripts/adj_summary.py frozen rules
 legend supported share, youngest class, range over the four genomes of B	0.75-0.98	report/tables/library_age_bias.tsv supported_share <0.01 (rice, finch, maize, gorilla)
 legend supported share, oldest class, range over the four genomes of B	0.31-0.81	report/tables/library_age_bias.tsv supported_share >=0.1 (rice, finch, maize, gorilla)
 legend rule: moved-locus shift (kb)	20-200	memo.md 'Approach 4' local null

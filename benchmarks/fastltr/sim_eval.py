@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Score LTRquest clean calls on the PrinTE burn-in genome against its known intact LTR-RTs.
+"""Score LTR_peel clean calls on the PrinTE burn-in genome against its known intact LTR-RTs.
 
 Truth: rows of the PrinTE BED whose name carries '#LTR' and not '_FRAG' (intact insertions).
 A call is a true positive when its span and a truth span overlap reciprocally by >= --rec

@@ -1,0 +1,11 @@
+name: ltr_peel_flagfp
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - mmseqs2=16.747c6
+  - blast
+  - pyfaidx
+  - numpy
+  - matplotlib-base

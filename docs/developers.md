@@ -1,45 +1,45 @@
 # Developer notes
 
-For people changing LTRquest. Users want the [README](../README.md); the output
+For people changing LTR_peel. Users want the [README](../README.md); the output
 formats are in [outputs.md](outputs.md).
 
 ## How it fits together
 
 ```
-ltrquest (driver, src/ltrquest/scripts/ltrquest.sh)
+ltr_peel (driver, src/ltr_peel/scripts/ltr_peel.sh)
   |
-  |-- round 1..N --+- ltrquest.detect   LTRharvest + LTR_finder (+ FastLTR on capped chunks)
+  |-- round 1..N --+- ltr_peel.detect   LTRharvest + LTR_finder (+ FastLTR on capped chunks)
   |                |                    -> sdust filter -> Kmer2LTR -> TEsorter2
-  |                +- ltrquest.mask     mask this round's hits -> next round's genome
+  |                +- ltr_peel.mask     mask this round's hits -> next round's genome
   |
-  |-- ltrquest.reconcile                pool rounds, resolve containment -> depth buckets
-  |-- Kmer2LTR + ltrquest.flag_fp       cluster into families, purge false-positive families
+  |-- ltr_peel.reconcile                pool rounds, resolve containment -> depth buckets
+  |-- Kmer2LTR + ltr_peel.flag_fp       cluster into families, purge false-positive families
   |                                     and tandem-array calls (rDNA, satellites)
-  |-- ltrquest.recover_strand           give strand to unstranded elements   (off by default)
-  |-- ltrquest.annotate                 add strand, family, confidence columns
-  |-- ltrquest.recover_strand           re-orient the _clean_ FASTAs to match (off by default)
-  |-- ltrquest.reboundary               re-bound calls that lack a TSD       (on by default)
-  |-- ltrquest.gff3                     pooled GFF3 (after annotate when re-boundarying is off)
-  |-- ltrquest-plots                    structure PDFs, summary PDF, TEGV browser
-  +-- ltrquest.cleanup                  remove working files (unless --keep-intermediates)
+  |-- ltr_peel.recover_strand           give strand to unstranded elements   (off by default)
+  |-- ltr_peel.annotate                 add strand, family, confidence columns
+  |-- ltr_peel.recover_strand           re-orient the _clean_ FASTAs to match (off by default)
+  |-- ltr_peel.reboundary               re-bound calls that lack a TSD       (on by default)
+  |-- ltr_peel.gff3                     pooled GFF3 (after annotate when re-boundarying is off)
+  |-- ltr_peel-plots                    structure PDFs, summary PDF, TEGV browser
+  +-- ltr_peel.cleanup                  remove working files (unless --keep-intermediates)
 ```
 
 The stages that run by default and their off switches are in
 [outputs.md](outputs.md#1-what-runs-by-default-and-how-to-turn-it-off). Every
-stage is also its own command (`ltrquest-reconcile --help`, `ltrquest-gff3
+stage is also its own command (`ltr_peel-reconcile --help`, `ltr_peel-gff3
 --help`, and so on), so any of them can be re-run alone. The Nextflow pipeline
 runs the same stages as modules; see [nextflow.md](nextflow.md).
 
-`ltrquest.cleanup` runs last, once every result is in place, and never after a
+`ltr_peel.cleanup` runs last, once every result is in place, and never after a
 failed step: when plotting, strand recovery or re-boundarying failed, everything is
 kept so the step can be redone. It removes only names this run gives its working
 files, directly inside the run folder, and never anything passed with `--protect`.
 
 ## Where things live
 
-- `src/ltrquest/`: the Python stages. `scripts/ltrquest.sh` is the driver and
+- `src/ltr_peel/`: the Python stages. `scripts/ltr_peel.sh` is the driver and
   holds the `--help` and `--help-all` text; `scripts/plots.sh` drives the plots.
-- `src/ltrquest/fastltr/`: LTRquest's adaptation of FastLTR (`FastLTR.c`, with
+- `src/ltr_peel/fastltr/`: LTR_peel's adaptation of FastLTR (`FastLTR.c`, with
   FASTAN's license beside it).
 - `tests/`: pytest. Small synthetic fixtures; `tests/data/` holds the shipped
   *A. thaliana* chr2 and protein set used by the end-to-end test.
@@ -48,10 +48,12 @@ files, directly inside the run folder, and never anything passed with `--protect
 - `main.nf`, `workflows/`, `modules/`, `subworkflows/`, `conf/`, `nextflow.config`,
   `nextflow_schema.json`: the Nextflow pipeline.
 - `recipe/meta.yaml`: the conda recipe. `Dockerfile`, `bin/entrypoint.sh`,
-  `bin/ltrquest-container`: the image and its launcher.
+  `bin/ltr_peel-container`: the image and its launcher.
 - `benchmarks/`: the benchmark pages and the code to rerun them.
-- `docs/images/`: the README figures. `workflow_alt.png` (one genome, step by step) is a spare version of the
-  workflow figure, not shown in the README.
+- `docs/images/`: the README figures. `benchmark_summary.png` and `nesting_depth.png` are drawn by
+  `benchmarks/comparison/figures/{benchmark_summary,nesting_depth}.py` (add `--from-source-data` to redraw without
+  the benchmark dataset). `workflow_alt.png` (one genome, step by step) is a spare version of the workflow figure,
+  not shown in the README.
 
 ## A note on Kmer2LTR boundaries
 
@@ -80,10 +82,10 @@ non-zero if one fails. A check whose tool is missing is listed as skipped, not
 passed. Point it at both Nextflow versions CI uses:
 
 ```bash
-mamba create -n ltrquest_nf -c conda-forge -c bioconda nextflow shellcheck  # newest
-mamba create -n ltrquest_nf2404 -c conda-forge -c bioconda nextflow=24.04.4  # oldest allowed
-NXF_OLD=<envs>/ltrquest_nf2404/bin/nextflow NXF_NEW=<envs>/ltrquest_nf/bin/nextflow \
-    PATH=$PATH:<envs>/ltrquest_nf/bin bash dev/check.sh
+mamba create -n ltr_peel_nf -c conda-forge -c bioconda nextflow shellcheck  # newest
+mamba create -n ltr_peel_nf2404 -c conda-forge -c bioconda nextflow=24.04.4  # oldest allowed
+NXF_OLD=<envs>/ltr_peel_nf2404/bin/nextflow NXF_NEW=<envs>/ltr_peel_nf/bin/nextflow \
+    PATH=$PATH:<envs>/ltr_peel_nf/bin bash dev/check.sh
 ```
 
 Run it from an environment with the package's dev extras (`pip install -e
@@ -94,12 +96,12 @@ Kmer2LTR skip.
 
 - **lint: ruff** (`ruff check .`; `ruff check --fix .` sorts imports). Covers
   `tests/` too, at a Python 3.9 floor; CI installs the newest ruff.
-- **lint: shellcheck** (`--severity=warning` on `src/ltrquest/scripts/*.sh`,
-  `bin/entrypoint.sh`, `bin/ltrquest-container`). Runs only once ruff passes.
+- **lint: shellcheck** (`--severity=warning` on `src/ltr_peel/scripts/*.sh`,
+  `bin/entrypoint.sh`, `bin/ltr_peel-container`). Runs only once ruff passes.
 - **pytest** on Python 3.9 (on `ubuntu-24.04`; `ubuntu-latest` has no 3.9 builds),
   3.11 and 3.13 (`pytest -m "not slow"`). Locally,
   put `src/` first on `PYTHONPATH`, as `dev/check.sh` does: in an environment
-  with an older LTRquest installed, pytest otherwise tests that copy.
+  with an older LTR_peel installed, pytest otherwise tests that copy.
 - **nextflow stub** under 24.04.4 and `latest-stable`: the test profile, then
   `--max_rounds 1`, then the off switches (`--reboundary false --strand_recovery
   off`, which must leave both steps out of `trace.txt`; `dev/check.sh` skips this
@@ -116,7 +118,7 @@ Kmer2LTR skip.
   non-zero even though grep matched: write `{ tool 2>&1 || true; } | grep -q x`.
   Every `ARG *_REF` must be a commit that exists on GitHub, not only locally.
 - **Slow tests** (`pytest -m slow`) never run in CI. Run them after touching the
-  driver or a stage's outputs; `LTRQUEST_TOOLS_DIR` set to a built tools
+  driver or a stage's outputs; `LTR_PEEL_TOOLS_DIR` set to a built tools
   directory skips the clones.
 
 ### After pushing
@@ -129,18 +131,18 @@ the next push.
 1. Move the `[Unreleased]` entries in [CHANGELOG.md](../CHANGELOG.md) under the new
    version and date.
 2. Set the version to `X.Y.Z` in each of these (they must agree):
-   `pyproject.toml`, `src/ltrquest/__init__.py`, `CITATION.cff`,
+   `pyproject.toml`, `src/ltr_peel/__init__.py`, `CITATION.cff`,
    `recipe/meta.yaml`, the `org.opencontainers.image.version` label in
    `Dockerfile`, and `manifest.version` in `nextflow.config`. In the Nextflow
-   modules (`modules/local/ltrquest/*/main.nf`), also set the
-   `ghcr.io/cwb14/ltrquest:X.Y.Z` container tags
+   modules (`modules/local/ltr_peel/*/main.nf`), also set the
+   `ghcr.io/cwb14/ltr_peel:X.Y.Z` container tags
    (`test_every_module_pins_the_current_image` checks them) and the
-   `ltrquest: X.Y.Z` lines in their `stub:` blocks;
-   `grep -rnE 'ltrquest: ?[0-9]' modules` lists both.
+   `ltr_peel: X.Y.Z` lines in their `stub:` blocks;
+   `grep -rnE 'ltr_peel: ?[0-9]' modules` lists both.
 3. Update the image tag in the README and [install.md](install.md) if they name one.
    Other places that name the version in examples: the `Dockerfile` comment
    lines 11-12, the docstring at `tests/test_end_to_end.py` line 10 (and
-   `bin/ltrquest-container` if any version remains there).
+   `bin/ltr_peel-container` if any version remains there).
 4. Run `bash dev/check.sh`, and the slow tests after any change to the driver.
 5. Commit, push, and wait for CI and the container build to go green.
 6. Tag `vX.Y.Z` and push the tag; the conda recipe downloads the tag's tarball.

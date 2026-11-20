@@ -1,0 +1,4 @@
+role	id	chrom	start	end	strand	family	superfamily	ltr_len	tsd
+host	chr1:11858003-11868332	chr1	11858003	11868332	+	owiit_AC196151_4998	Copia	394	CGAGT
+tenant	chr1:11861453-11866676	chr1	11861453	11866676	-	Os0336	Gypsy	358	CTTTG
+nonnested	chr1:11885081-11890067	chr1	11885081	11890067	+	ajit_AC191382_3096	Copia	265	CGAGG

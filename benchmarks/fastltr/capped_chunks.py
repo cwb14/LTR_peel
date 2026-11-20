@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""BED of the chunks --ltr-timeout cut short, parsed from an LTRquest run log.
+"""BED of the chunks --ltr-timeout cut short, parsed from an LTR_peel run log.
 
 Reads the detector's [WARN] lines ("ltrharvest timeout for index .../ltr_runs/<chunk>/idx",
 "ltr_finder timeout ... on .../ltr_runs/<chunk>/<chunk>...fa"), keeps the round from the

@@ -1,0 +1,2 @@
+name	chrom	start	end	tsd	seq_left	seq_right	member_tools
+Dasheng	Chr1	2007764	2014480	ATACC	AATTTGGACATACCTGTGGAGATTATAG	TTCATGTTTCGACAATACCTATATTTAG	hirepeat,look4ltrs,ltrharvest,ltrpred,ltr_peel

@@ -1,0 +1,18 @@
+line	piece	kind	run	letters	rec_start	rec_end
+as_written	1	elision	0		1	8940
+as_written	2	host	0	GTATTAGGTTCG	8941	8952
+as_written	3	masked	1	RRRRRR	8953	8958
+as_written	4	elision	1		8959	17164
+as_written	5	masked	1	RRRRRR	17165	17170
+as_written	6	masked	2	NNNNNN	17171	17176
+as_written	7	elision	2		17177	23606
+as_written	8	masked	2	NNNNNN	23607	23612
+as_written	9	masked	3	RRRRRR	23613	23618
+as_written	10	elision	3		23619	26236
+as_written	11	masked	3	RRRRRR	26237	26242
+as_written	12	host	0	GTTTGTAACGAC	26243	26254
+as_written	13	elision	0		26255	28942
+after_deleting	1	elision	0		1	8940
+after_deleting	2	host	0	GTATTAGGTTCG	8941	8952
+after_deleting	3	host	0	GTTTGTAACGAC	26243	26254
+after_deleting	4	elision	0		26255	28942

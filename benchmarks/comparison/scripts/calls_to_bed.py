@@ -8,8 +8,8 @@ Output TSV columns: chrom start end strand id parent lltr_end rltr_start tsd cla
 Only full-length (two-LTR) calls are kept: solo LTRs, partial/domain-only elements are dropped.
 
 Formats (per run directory runs/<ds>/<tool>/):
-  ltrquest       <ds>_LTRs_depth*_clean_ltr.tsv   (seq_id chrom:start-end#class, 1-based; nest_status links)
-  ltrquest_hc    same files, confidence == high only (post hoc diagnostic subset; rundir = the LTRquest run)
+  ltr_peel       <ds>_LTRs_depth*_clean_ltr.tsv   (seq_id chrom:start-end#class, 1-based; nest_status links)
+  ltr_peel_hc    same files, confidence == high only (post hoc diagnostic subset; rundir = the LTR_peel run)
   ltrharvest     ltrharvest.tabout                (1-based inclusive; seq-nr = 0-based FASTA index)
   ltr_finder     <ds>.fa.finder.combine.scn       (-w 2 table; Location s-e 1-based inclusive)
   ltr_retriever  <ds>.fa.mod.pass.list            (chr:s..e, 1-based; may be written e..s for minus)
@@ -49,7 +49,7 @@ def rec(chrom, s0, e, strand=".", id_=None, parent=".", lend=".", rstart=".", ts
                 parent=parent, lltr_end=lend, rltr_start=rstart, tsd=tsd or ".", cls=cls or ".")
 
 
-def p_ltrquest(rd, ds, order, conf=None):
+def p_ltr_peel(rd, ds, order, conf=None):
     out = []
     files = [f for f in one(f"{rd}/{ds}_LTRs_depth*_clean_ltr.tsv") if re.search(r"_depth\d+_clean_ltr\.tsv$", f)]
     for fn in files:
@@ -81,10 +81,10 @@ def p_ltrquest(rd, ds, order, conf=None):
     return out
 
 
-def p_ltrquest_hc(rd, ds, order):
-    """Post hoc developer diagnostic, not a primary row: LTRquest calls with confidence == high (TG..CA ends and an
-    exact TSD). rd is the LTRquest run directory."""
-    return p_ltrquest(rd, ds, order, conf="high")
+def p_ltr_peel_hc(rd, ds, order):
+    """Post hoc developer diagnostic, not a primary row: LTR_peel calls with confidence == high (TG..CA ends and an
+    exact TSD). rd is the LTR_peel run directory."""
+    return p_ltr_peel(rd, ds, order, conf="high")
 
 
 def p_ltrharvest(rd, ds, order):

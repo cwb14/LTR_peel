@@ -25,12 +25,12 @@ family, strand and nesting depth (the number of layers of elements nested inside
 With **Apptainer**, the usual choice on a cluster (no root needed; `singularity` works the same):
 
 ```bash
-apptainer pull LTR_peel.sif docker://ghcr.io/cwb14/LTR_peel:latest
-./LTR_peel.sif --help
+apptainer pull ltr_peel.sif docker://ghcr.io/cwb14/ltr_peel:latest
+./ltr_peel.sif --help
 ```
 
 `:latest` is the newest release; for a paper, replace `latest` with the number of the release you used. With the
-container, type `./LTR_peel.sif` wherever this page says `LTR_peel`.
+container, type `./ltr_peel.sif` wherever this page says `ltr_peel`.
 
 With **conda / mamba**, which puts the tools on your `PATH` (a run fetches a few helper tools, so it needs internet; see
 [offline clusters](docs/install.md#offline-clusters)):
@@ -63,7 +63,7 @@ To see every element, open `Athal_tair10_chr2_LTRs_plots/Athal_tair10_chr2_LTRs_
 **Your genome:**
 
 ```bash
-LTR_peel --genome your_genome.fa --proteins related_species.pep.fa --threads 20
+ltr_peel --genome your_genome.fa --proteins related_species.pep.fa --threads 20
 ```
 
 | Option | What to give it |
@@ -201,7 +201,7 @@ half times as long as detection (for example 4.8 h after 6.8 h of detection on 5
 
 ## More
 
-- Every option: `LTR_peel --help-all`
+- Every option: `ltr_peel --help-all`
 - Every output file and column: [docs/outputs.md](docs/outputs.md)
 - Install routes, containers, clusters without internet: [docs/install.md](docs/install.md)
 - Many genomes, or a cluster, with Nextflow: [docs/nextflow.md](docs/nextflow.md)
@@ -218,7 +218,7 @@ repository.
 
 The FastLTR caller is adapted from Gene Myers' FastLTR in
 [FASTAN](https://github.com/thegenemyers/FASTAN), under FASTAN's license
-([`src/LTR_peel/fastltr/LICENSE.FASTAN`](src/LTR_peel/fastltr/LICENSE.FASTAN)),
+([`src/ltr_peel/fastltr/LICENSE.FASTAN`](src/ltr_peel/fastltr/LICENSE.FASTAN)),
 and takes two fixes from [HiRepEat](https://github.com/AnantMaheshwari/HiRepEat).
 If your results rely on it, please also cite HiRepEat: Maheshwari A, Myers EW,
 et al. Efficient and precise discovery of LTR-retrotransposon families using

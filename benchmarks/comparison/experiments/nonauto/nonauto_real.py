@@ -33,7 +33,7 @@ sys.path.append(f"{B}/scripts")
 from adj_summary import loci, found_loci, load  # noqa: E402
 from evidence import dante_domains  # noqa: E402
 
-TOOLS = ["ltrquest", "ltrharvest", "ltr_finder", "ltr_retriever", "look4ltrs", "hirepeat", "hite", "ltrpred",
+TOOLS = ["ltr_peel", "ltrharvest", "ltr_finder", "ltr_retriever", "look4ltrs", "hirepeat", "hite", "ltrpred",
          "dante_ltr"]
 DS = ["arab", "rice", "finch", "maize", "gorilla"]
 CLS = ["coding", "partial", "proteinless"]

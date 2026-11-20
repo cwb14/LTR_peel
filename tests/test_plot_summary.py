@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ltrquest.plot_summary import parse_alignment_file
+from ltr_peel.plot_summary import parse_alignment_file
 
 
 def _table(tmp_path, nest_status):

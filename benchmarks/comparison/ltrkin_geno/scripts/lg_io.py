@@ -100,7 +100,7 @@ def fai_lengths(fasta):
 
 def final_calls_path(calls_dir, tool):
     """Final calls TSV of a tool: <calls_dir>/hirepeat.ltr.tsv for hirepeat (Kmer2LTR edges added), else
-    <calls_dir>/<tool>.tsv (also for ltrquest_hc)."""
+    <calls_dir>/<tool>.tsv (also for ltr_peel_hc)."""
     return os.path.join(calls_dir, "hirepeat.ltr.tsv" if tool == "hirepeat" else f"{tool}.tsv")
 
 

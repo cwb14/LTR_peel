@@ -21,7 +21,7 @@ sys.path.insert(0, f"{B}/scripts")
 import adj_summary as su  # noqa: E402
 import proxies  # noqa: E402
 
-TOOLS = ["ltrquest", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
+TOOLS = ["ltr_peel", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
          "dante_ltr"]
 
 

@@ -1,6 +1,6 @@
-# Running LTRquest under Nextflow
+# Running LTR_peel under Nextflow
 
-The CLI (`ltrquest`) handles one machine and a handful of genomes. The Nextflow
+The CLI (`ltr_peel`) handles one machine and a handful of genomes. The Nextflow
 pipeline exists for the case the CLI is bad at: many genomes, a scheduler, and a
 run long enough that you want `-resume` when a node dies.
 
@@ -9,10 +9,10 @@ Nextflow:
 
 ```bash
 # 30 seconds, no bioinformatics tools needed -- checks the wiring
-nextflow run cwb14/LTRquest -profile test -stub-run --outdir results
+nextflow run cwb14/LTR_peel -profile test -stub-run --outdir results
 
 # the real thing
-nextflow run cwb14/LTRquest -profile singularity --input sheet.csv --outdir results
+nextflow run cwb14/LTR_peel -profile singularity --input sheet.csv --outdir results
 ```
 
 On a cluster, `module load apptainer` (or `singularity`) first. `-profile
@@ -75,7 +75,7 @@ process {
 ```
 
 ```bash
-nextflow run cwb14/LTRquest -c site.config -profile singularity --input sheet.csv --outdir results
+nextflow run cwb14/LTR_peel -c site.config -profile singularity --input sheet.csv --outdir results
 ```
 
 Nextflow caches the image once and reuses it for every task and every later run;
@@ -85,7 +85,7 @@ small.
 ## AWS Batch
 
 ```bash
-nextflow run cwb14/LTRquest -profile awsbatch \
+nextflow run cwb14/LTR_peel -profile awsbatch \
     --input      s3://my-bucket/samplesheet.csv \
     --outdir     s3://my-bucket/results \
     --aws_queue  my-batch-queue \
@@ -156,7 +156,7 @@ Nextflow gives no compact way to express that: a process may be invoked only
 once per workflow, calling a workflow from inside a closure is rejected, and the
 `recurse` operator is still behind `nextflow.preview.recursion` and accepts only
 value channels — which would forfeit the per-genome parallelism that is the
-reason to be here at all. So `subworkflows/local/ltrquest_detect_rounds` includes
+reason to be here at all. So `subworkflows/local/ltr_peel_detect_rounds` includes
 the round subworkflow ten times and writes the chain down.
 
 Nothing is wasted. Rounds past `--max_rounds` are starved at the gate, and a

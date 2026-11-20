@@ -40,7 +40,7 @@ ncbi GCA_029281585.3_NHGRI_mGorGor1-v2.1_pri genomic.fna.gz $D/gorilla/raw
 gdrive 1_1gQ9Z79fXofMekEDRNEP8jMlxDzMtdc $D/finch/raw/taeniopygia_guttata_curated.fa
 gdrive 1kYOXNWE67JmYRrrHYUkOoJ3j3IqKNmgo $D/gorilla/raw/gorilla_gorilla_curated_lib.fa
 
-# related-species proteomes for LTRquest --proteins (closest RefSeq relative, never the target)
+# related-species proteomes for LTR_peel --proteins (closest RefSeq relative, never the target)
 ncbi GCF_000231095.2_ObraRS2 protein.faa.gz $D/proteins          # rice
 ncbi GCF_000003195.3_Sorghum_bicolor_NCBIv3 protein.faa.gz $D/proteins   # maize
 ncbi GCF_022539315.1_serCan2020 protein.faa.gz $D/proteins       # zebra finch

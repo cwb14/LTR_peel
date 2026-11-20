@@ -1,0 +1,13 @@
+ds	cls	n_loci
+camara_hap2	all	696
+camara_hap2	non-nested	613
+camara_hap2	tenants	43
+camara_hap2	hosts	40
+camara_hap2	coding	590
+camara_hap2	protein-less	77
+camara_hap1	all	664
+camara_hap1	non-nested	557
+camara_hap1	tenants	67
+camara_hap1	hosts	40
+camara_hap1	coding	575
+camara_hap1	protein-less	53

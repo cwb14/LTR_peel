@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Does a curated TE library support each LTRquest element? (80-80-80 style)
+"""Does a curated TE library support each LTR_peel element? (80-80-80 style)
 
 Every element of the given clean FASTAs is searched (blastn) against the curated
 library's LTR entries; an element is supported when HSPs of >= 80% identity and

@@ -8,7 +8,7 @@ Tables (report/tables/):
   sim_crosscheck.tsv  our std F1 vs PrinTE's own evaluator (bedtools.py --printe-intact -r 0.9) on the same calls
   sim_masking.tsv   simulations, base level: each library's masking vs the exact LTR-RT truth (mean over seeds)
   masking.tsv       real genomes, EDTA lib-test LTR row vs the curated library; 95% block-bootstrap CI and the paired
-                    difference to LTRquest when eval/lib/<ds>.ci.tsv exists (scripts/libtest_ci.py)
+                    difference to LTR_peel when eval/lib/<ds>.ci.tsv exists (scripts/libtest_ci.py)
   proxies.tsv       real genomes, per-call sequence proxies
   phasing.tsv       allopolyploids, all copies; k80 = fewest copies (of 500/1k/2k/5k/10k) from which every larger
                     tested subset is correct in >= 80% of 5 seeds and the full set is correct ('<=500' if already at
@@ -17,7 +17,7 @@ Tables (report/tables/):
   phasing_power.tsv allopolyploids, random subsets: P(correct) and root-split strength per copy number
   resources.tsv     every tool run: status, wall and CPU hours, peak memory, load average at start
 Column 'role': primary (the pre-registered row), secondary (native library / native phasing path), or post_hoc
-(ltrquest_hc, developer diagnostic added after the primary results were seen).
+(ltr_peel_hc, developer diagnostic added after the primary results were seen).
 usage: summarize.py [--outdir report/tables] [-v]
 """
 import argparse
@@ -34,9 +34,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import libtest_ci  # noqa: E402
 
 B = os.environ["BENCH_ROOT"]
-TOOLS = ["ltrquest", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
+TOOLS = ["ltr_peel", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
          "dante_ltr"]
-POST_HOC = {"ltrquest_hc"}
+POST_HOC = {"ltr_peel_hc"}
 SUBS = [500, 1000, 2000, 5000, 10000]
 SIM = "S[12]_*"        # approach 1 sets S1, S2; the approach 1b divergence series (SD*) has its own tables (div_score.py)
 
@@ -45,7 +45,7 @@ def role(name):
     base = name.split(".")[0].split("/")[0]
     if base in POST_HOC:
         return "post_hoc"
-    if name.endswith(".native") or base == "ltrquest_native":
+    if name.endswith(".native") or base == "ltr_peel_native":
         return "secondary"
     return "primary"
 
@@ -157,7 +157,7 @@ INCOMPLETE = {
                                     "BM_RM2 (calls: 43,695, 827 Mb of span, longest 26.8 Mb)",
     ("gorilla", "ltr_finder.intact"): "incomplete: masking stopped at the 36 h cap at batch 26,019 of 61,148 (slow in "
                                       "tandem arrays); not scored",
-    ("gorilla", "ltrquest.intact"): "incomplete: masking stopped at the 36 h cap at batch 55,136 of 61,148 (90%; 36 h "
+    ("gorilla", "ltr_peel.intact"): "incomplete: masking stopped at the 36 h cap at batch 55,136 of 61,148 (90%; 36 h "
                                     "counted from its 11-14 12:48 restart after the kernel stall); not scored",
 }
 
@@ -173,7 +173,7 @@ def lib_mb(path):
 # maize intact-call libraries are 122-1,492 Mb (<= 91 Mb elsewhere). Masking rates measured with MIMALLOC_ALLOW_THP=0
 # at 16 threads, 37,882 batches; rate falls faster than library size grows
 MAIZE_RATE = {"ltrpred": 1410, "hite": 593, "dante_ltr": 146}   # batches/h
-for _t in TOOLS + ["ltrquest_hc"]:
+for _t in TOOLS + ["ltr_peel_hc"]:
     if os.path.exists(f"{B}/calls/maize/{_t}.tsv"):
         _mb = lib_mb(f"{B}/libs/maize/{_t}.intact.fa")
         if _t == "ltrpred":       # scored row replaces this once its targeted run finishes
@@ -187,7 +187,7 @@ for _t in TOOLS + ["ltrquest_hc"]:
 
 
 def masking(out):
-    header = ["ds", "lib", "role", "F1", "F1_lo", "F1_hi", "prec", "sens", "FP_mb", "FN_mb", "dF1_vs_ltrquest",
+    header = ["ds", "lib", "role", "F1", "F1_lo", "F1_hi", "prec", "sens", "FP_mb", "FN_mb", "dF1_vs_ltr_peel",
               "dF1_lo", "dF1_hi", "ci"]
     data = []
     for dsdir in sorted(glob.glob(f"{B}/eval/lib/*/")):

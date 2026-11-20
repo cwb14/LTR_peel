@@ -46,18 +46,18 @@ def test_schema_lists_the_same_defaults():
 
 
 def test_detect_passes_sdust_unless_skipped():
-    text = (REPO_ROOT / "modules/local/ltrquest/detect/main.nf").read_text()
+    text = (REPO_ROOT / "modules/local/ltr_peel/detect/main.nf").read_text()
     script = text[text.index("script:"):text.index("stub:")]
     assert "params.skip_sdust" in script and "'--sdust'" in script
     assert "${sdust_opt}" in script
     # detect.py's own defaults already equal the driver's, so no value is passed
     assert "--sdust-args" not in script and "--max-dust-frac" not in script
-    env = (REPO_ROOT / "modules/local/ltrquest/detect/environment.yml").read_text()
+    env = (REPO_ROOT / "modules/local/ltr_peel/detect/environment.yml").read_text()
     assert re.search(r"^\s*-\s*sdust\b", env, re.MULTILINE)
 
 
 def test_off_turns_strand_recovery_off_everywhere():
-    wf = (REPO_ROOT / "workflows/ltrquest.nf").read_text()
+    wf = (REPO_ROOT / "workflows/ltr_peel.nf").read_text()
     assert "strand_recovery.toString() in ['off', 'false']" in wf
     # Nextflow 26.10 passes `--reboundary false` as the String "false" (truthy)
     assert "params.reboundary.toString().toBoolean()" in wf

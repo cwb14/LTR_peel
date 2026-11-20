@@ -1,4 +1,4 @@
-"""Resolution of the helper binaries LTRquest shells out to.
+"""Resolution of the helper binaries LTR_peel shells out to.
 
 `ensure_tools` used to clone and compile minimap2 and miniprot from source
 before it would consider the copies already on PATH. That made the container
@@ -15,8 +15,8 @@ from pathlib import Path
 
 import pytest
 
-from ltrquest import detect, fastltr, helper_tools, kmer2ltr
-from ltrquest.detect import _resolve_helper, ensure_sdust, ensure_tebinsorter, ensure_trfmod
+from ltr_peel import detect, fastltr, helper_tools, kmer2ltr
+from ltr_peel.detect import _resolve_helper, ensure_sdust, ensure_tebinsorter, ensure_trfmod
 
 URL = "https://example.invalid/never-cloned"
 OFFLINE = ("Offline? Run once with internet using --tools-dir DIR, then pass the same "
@@ -42,7 +42,7 @@ def never_usable(_p) -> bool:
 
 class TestResolutionOrder:
     def test_a_prebuilt_copy_in_tools_dir_wins(self, tmp_path, monkeypatch):
-        # This is the container's case: /opt/ltrquest/tools is populated at
+        # This is the container's case: /opt/ltr_peel/tools is populated at
         # build time and must be used as-is.
         prebuilt = fake_binary(tmp_path / "minimap2" / "minimap2")
         monkeypatch.setattr("shutil.which", lambda n: "/usr/bin/minimap2")
@@ -63,7 +63,7 @@ class TestResolutionOrder:
         def explode(*a, **k):
             raise AssertionError("cloned or built despite a usable binary on PATH")
 
-        monkeypatch.setattr("ltrquest.detect.run", explode)
+        monkeypatch.setattr("ltr_peel.detect.run", explode)
         assert _resolve_helper("minimap2", tmp_path, URL, is_present) == on_path
 
     def test_an_unusable_binary_on_path_is_not_accepted(self, tmp_path, monkeypatch):
@@ -87,7 +87,7 @@ class TestErrorsAreActionable:
 
     def test_a_failed_build_names_the_tool(self, tmp_path, monkeypatch):
         monkeypatch.setattr("shutil.which", lambda n: "/usr/bin/git" if n == "git" else None)
-        monkeypatch.setattr("ltrquest.detect.run", lambda *a, **k: type("R", (), {"returncode": 1})())
+        monkeypatch.setattr("ltr_peel.detect.run", lambda *a, **k: type("R", (), {"returncode": 1})())
         (tmp_path / "miniprot").mkdir()
         with pytest.raises(RuntimeError, match="miniprot build failed") as excinfo:
             _resolve_helper("miniprot", tmp_path, URL, never_usable)
@@ -98,7 +98,7 @@ class TestErrorsAreActionable:
         # sdust runs by default, so the way around a failure is its off switch, as
         # TRF-mod's names --no-trf and FastLTR's --no-fastltr.
         monkeypatch.setattr("shutil.which", lambda n: git if n == "git" else None)
-        monkeypatch.setattr("ltrquest.detect.run", lambda *a, **k: type("R", (), {"returncode": 1})())
+        monkeypatch.setattr("ltr_peel.detect.run", lambda *a, **k: type("R", (), {"returncode": 1})())
         if git:
             (tmp_path / "sdust").mkdir()                 # cloned; the build then fails
         with pytest.raises(RuntimeError) as excinfo:
@@ -122,7 +122,7 @@ class TestErrorsAreActionable:
             return result
 
         monkeypatch.setattr("shutil.which", lambda n: "/usr/bin/git" if n == "git" else None)
-        monkeypatch.setattr("ltrquest.detect.run", clone_fails)
+        monkeypatch.setattr("ltr_peel.detect.run", clone_fails)
         monkeypatch.delenv("TESORTER2_SRC", raising=False)
         monkeypatch.delenv("TEBINSORTER_SRC", raising=False)
         with pytest.raises(RuntimeError) as excinfo:

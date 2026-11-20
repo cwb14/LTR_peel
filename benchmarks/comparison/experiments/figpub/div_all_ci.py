@@ -29,9 +29,9 @@ NA = f"{B}/experiments/nonauto"
 sys.path.insert(0, NA)
 from nonauto_stats import NB, ci  # noqa: E402
 
-TOOLS = ["ltrquest", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
+TOOLS = ["ltr_peel", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
          "dante_ltr"]
-DIAG = ["ltrquest_hc"]
+DIAG = ["ltr_peel_hc"]
 NT = 11
 
 
@@ -69,7 +69,7 @@ def main(argv=None):
         if (r["ds"], r["tool"]) in per_ds and tuple(per_ds[(r["ds"], r["tool"])]) != (int(r["n_truth"]), int(r["tp"])):
             bad.append(f"{r['ds']} {r['tool']}: div_elements {per_ds[(r['ds'], r['tool'])]} vs sim_divergence "
                        f"{r['n_truth']}/{r['tp']}")
-        if r["tool"] == "ltrquest":
+        if r["tool"] == "ltr_peel":
             seed_med[t].append(float(r["median_k2p"]))
     for tool in TOOLS + DIAG:
         for t in range(NT):

@@ -8,7 +8,7 @@
 # Nextflow stub runs under the oldest supported and the newest Nextflow. Tools come
 # from PATH; NXF_OLD / NXF_NEW name two nextflow launchers (else `nextflow` on
 # PATH runs once), each run with the Java beside it, as in its conda env. The tests
-# import this checkout, whatever ltrquest is installed. A check whose tool is
+# import this checkout, whatever ltr_peel is installed. A check whose tool is
 # missing is reported as skipped, never as passed. The container is not built here.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
@@ -54,7 +54,7 @@ stub() {                # stub NEXTFLOW: CI's stub job, in a scratch directory
 
 have ruff ruff && check "ruff" ruff check .
 have shellcheck shellcheck && check "shellcheck" shellcheck --severity=warning \
-  src/ltrquest/scripts/*.sh bin/entrypoint.sh bin/ltrquest-container dev/check.sh
+  src/ltr_peel/scripts/*.sh bin/entrypoint.sh bin/ltr_peel-container dev/check.sh
 check "pytest -m 'not slow'" python -m pytest -m "not slow" -q -p no:cacheprovider
 
 nxf=()

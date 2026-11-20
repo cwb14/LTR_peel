@@ -10,11 +10,14 @@ real-genome lines in gray behind. Caps drawn as dashed lines.
 Inputs (read-only): report/tables/resources.tsv (status, threads, load_at_start; drawn values checked against it),
 runs/<ds>/<tool>/resources.json (the table's source; full precision for the log axis), data/<ds>/genome.fa.fai.
 Outputs: figS5_resources.{pdf,png} (poafig.write_figure: figure + one legend page), figS5_resources_numbers.tsv.
+Source data: source_data/figS5_resources/ (ABC_runs.tsv: one row per run; ABC_genome_sizes.tsv: genome sizes). The
+full mode writes them and draws from the copies read back; --from-source-data draws from them without BENCH_ROOT.
 check_claims() stops the run, before anything is written, if a number worded in the legend no longer holds.
-Usage: figS5_resources.py [-v]
+Usage: figS5_resources.py [--from-source-data] [-v]
 """
 import argparse
 import glob
+import gzip
 import json
 import os
 import sys
@@ -68,9 +71,10 @@ from matplotlib.lines import Line2D  # noqa: E402
 from matplotlib.patches import Rectangle  # noqa: E402
 
 STEM = "figS5_resources"
-B = Path(os.environ["BENCH_ROOT"])
+B = Path(os.environ["BENCH_ROOT"]) if os.environ.get("BENCH_ROOT") else None
 HERE = Path(__file__).resolve().parent
-TAB = B / "report/tables/resources.tsv"
+SD = HERE / "source_data" / STEM
+GZ_OVER = 1 << 20         # source-data tables larger than this (bytes, uncompressed) are written gzipped
 MM = poafig.MM
 INK = poafig.INK
 MUTED = "#6B6B6B"
@@ -81,12 +85,12 @@ GUIDE = "#EFEFEF"         # faint vertical guides at each genome size
 FAILC = "#5A5A5A"         # tool failed (missing-result style, tool side)
 FAIL_STYLE = dict(marker="X", ms=4.2, mfc=FAILC, mec="white", mew=0.3)
 
-TOOLS = ["ltrquest", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
+TOOLS = ["ltr_peel", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
          "dante_ltr"]
-LABEL = {"ltrquest": "LTRquest", "ltr_retriever": "LTR_retriever", "ltrharvest": "LTRharvest",
+LABEL = {"ltr_peel": "LTR_peel", "ltr_retriever": "LTR_retriever", "ltrharvest": "LTRharvest",
          "ltr_finder": "LTR_Finder", "look4ltrs": "Look4LTRs", "hirepeat": "HiRepEat", "hite": "HiTE",
          "ltrpred": "LTRpred", "dante_ltr": "DANTE_LTR"}
-COLOR = {"ltrquest": "#D55E00", "ltr_retriever": "#0072B2", "ltrharvest": "#56B4E9", "ltr_finder": "#009E73",
+COLOR = {"ltr_peel": "#D55E00", "ltr_retriever": "#0072B2", "ltrharvest": "#56B4E9", "ltr_finder": "#009E73",
          "look4ltrs": "#CC79A7", "hirepeat": "#E69F00", "hite": "#000000", "ltrpred": "#A6761D",
          "dante_ltr": "#6A3D9A"}
 REAL = ["arab", "asue", "rice", "finch", "pann", "maize", "gorilla"]
@@ -140,21 +144,22 @@ def log(msg, verbose):
 
 
 # ---------------------------------------------------------------------------------------------------------- data
-def genome_size_gb(ds):
+def genome_bp(ds):
     bp = sum(int(line.split("\t")[1]) for line in open(B / f"data/{ds}/genome.fa.fai"))
     if ds in GENOME_BP and bp != GENOME_BP[ds]:
         sys.exit(f"error: {ds} genome size {bp} != expected size {GENOME_BP[ds]}")
-    return bp / 1e9
+    return bp
 
 
 def load():
     """117 runs: values from runs/<ds>/<tool>/resources.json with summarize.py's formulas, checked against the
     rounded report table; status, threads and load from the table."""
-    tab = pd.read_csv(TAB, sep="\t", dtype=str)
+    tab = pd.read_csv(B / "report/tables/resources.tsv", sep="\t", dtype=str)
     tab = tab[tab.tool.isin(TOOLS) & tab.ds.isin(REAL + SIM_DS)]
     if len(tab) != len(TOOLS) * len(REAL + SIM_DS):
         sys.exit(f"error: resources.tsv has {len(tab)} of {len(TOOLS) * len(REAL + SIM_DS)} expected rows")
-    size = {d: genome_size_gb(d) for d in REAL + SIM_DS}
+    bp = {d: genome_bp(d) for d in REAL + SIM_DS}
+    size = {d: v / 1e9 for d, v in bp.items()}
     rows = []
     for r in tab.itertuples():
         p = B / f"runs/{r.ds}/{r.tool}/resources.json"
@@ -175,6 +180,47 @@ def load():
     bad = set(df.status) - {"ok", "timeout", "mem_guard", "failed"}
     if bad:
         sys.exit(f"error: unexpected status values {bad}")
+    return df, bp
+
+
+# ---------------------------------------------------------------------------------------------------------- source data
+def write_table(df, name):
+    """source_data/<stem>/<name>.tsv, or .tsv.gz (gzip mtime 0, so reruns are byte-identical) above GZ_OVER"""
+    SD.mkdir(parents=True, exist_ok=True)
+    text = df.to_csv(sep="\t", index=False, na_rep="NA", lineterminator="\n").encode()
+    plain, gz = SD / f"{name}.tsv", SD / f"{name}.tsv.gz"
+    if len(text) > GZ_OVER:
+        with open(gz, "wb") as fh, gzip.GzipFile(filename="", mode="wb", fileobj=fh, mtime=0) as z:
+            z.write(text)
+        plain.unlink(missing_ok=True)
+    else:
+        plain.write_bytes(text)
+        gz.unlink(missing_ok=True)
+
+
+def read_table(name):
+    p = SD / f"{name}.tsv"
+    if not p.exists():
+        p = SD / f"{name}.tsv.gz"
+    if not p.exists():
+        sys.exit(f"error: source-data table {name}.tsv(.gz) not found in {SD}")
+    return pd.read_csv(p, sep="\t")
+
+
+def write_source_data(df, bp):
+    """the drawn and printed values: one row per run (run order kept) and the genome sizes in bp"""
+    write_table(df[["ds", "tool", "status", "wall_h", "cpu_h", "mem_gb", "rss_gb", "threads", "load"]], "ABC_runs")
+    write_table(pd.DataFrame({"ds": list(bp), "bp": list(bp.values())}), "ABC_genome_sizes")
+
+
+def read_source_data():
+    """the run table and genome sizes as load() returns them, from source_data/<stem>/"""
+    g = read_table("ABC_genome_sizes")
+    size = {d: int(b) / 1e9 for d, b in zip(g.ds, g.bp)}
+    df = read_table("ABC_runs")
+    df["size_gb"] = df.ds.map(size)
+    df["real"] = df.ds.isin(REAL)
+    df["group"] = ["real" if d in REAL else d.split("_")[0] for d in df.ds]
     return df, size
 
 
@@ -183,7 +229,7 @@ def facts(df):
     ok = df[df.status == "ok"]
     gor = df[df.ds == "gorilla"]
     gor_ok = gor[gor.status == "ok"]
-    lq = df[df.tool == "ltrquest"].set_index("ds")
+    lq = df[df.tool == "ltr_peel"].set_index("ds")
     fold = {}
     for d in REAL:
         w = ok[ok.ds == d].wall_h
@@ -204,7 +250,7 @@ def facts(df):
         gor_stopped=int(gor.status.isin(["timeout", "mem_guard"]).sum()),
         gor_ok_wall_min=gor_ok.wall_h.min(), gor_ok_wall_max=gor_ok.wall_h.max(),
         fold_min=min(fold.values()), fold_max=max(fold.values()), fold=fold,
-        lq_status_all_ok=bool((df[df.tool == "ltrquest"].status == "ok").all()),
+        lq_status_all_ok=bool((df[df.tool == "ltr_peel"].status == "ok").all()),
         lq_gor_wall=lq.loc["gorilla", "wall_h"], lq_gor_cpu=lq.loc["gorilla", "cpu_h"],
         max_cpu_run=df.loc[df.cpu_h.idxmax(), ["ds", "tool"]].tolist(), max_cpu=df.cpu_h.max(),
         lq_maize_mem=lq.loc["maize", "mem_gb"], max_ok_mem_run=ok.loc[ok.mem_gb.idxmax(), ["ds", "tool"]].tolist(),
@@ -232,11 +278,11 @@ def check_claims(f):
         (f["gor_stopped"] == 4, "gorilla: 4 of 9 tools stopped at a limit"),
         (f"{f['gor_ok_wall_min']:.1f}" == "0.5" and f"{f['gor_ok_wall_max']:.1f}" == "33.4",
          "gorilla finished runs 0.5-33.4 h"),
-        (f["lq_status_all_ok"], "LTRquest finished every genome"),
-        (f"{f['lq_gor_wall']:.1f}" == "33.4" and f"{f['lq_gor_cpu']:.0f}" == "507", "LTRquest gorilla 33.4 h, 507 CPU h"),
-        (f["max_cpu_run"] == ["gorilla", "ltrquest"], "LTRquest gorilla = most CPU of any run"),
-        (f["max_ok_mem_run"] == ["maize", "ltrquest"] and f"{f['max_ok_mem']:.1f}" == "92.6",
-         "LTRquest maize 92.6 GB = highest finished-run memory"),
+        (f["lq_status_all_ok"], "LTR_peel finished every genome"),
+        (f"{f['lq_gor_wall']:.1f}" == "33.4" and f"{f['lq_gor_cpu']:.0f}" == "507", "LTR_peel gorilla 33.4 h, 507 CPU h"),
+        (f["max_cpu_run"] == ["gorilla", "ltr_peel"], "LTR_peel gorilla = most CPU of any run"),
+        (f["max_ok_mem_run"] == ["maize", "ltr_peel"] and f"{f['max_ok_mem']:.1f}" == "92.6",
+         "LTR_peel maize 92.6 GB = highest finished-run memory"),
         (f"{f['lf_mem_max']:.1f}" == "1.9", "LTR_Finder at most 1.9 GB"),
         (f["l4_gor_mem"] > GUARD_GB and f"{f['l4_gor_wall']:.1f}" == "13.2", "Look4LTRs gorilla over 200 GB at 13.2 h"),
         (f["ltrpred_cores_max"] < 1.05, "LTRpred about one core"),
@@ -297,7 +343,7 @@ def draw_cell(ax, df, tool, key, meas, row, col, guides):
         s = df[(df.tool == t2) & df.real & (df.status == "ok")].sort_values("size_gb")
         ax.plot(s.size_gb, s[key], "-", color=CONTEXT, lw=0.35, zorder=2, solid_capstyle="round")
     c = COLOR[tool]
-    lw = 1.25 if tool == "ltrquest" else 0.75
+    lw = 1.25 if tool == "ltr_peel" else 0.75
     me = df[df.tool == tool]
     real = me[me.real].sort_values("size_gb")
     ok = real[real.status == "ok"]
@@ -404,7 +450,7 @@ def draw(df, size_all, verbose):
         y = Y0 + i * (ROW_H + ROW_GAP) + ROW_H / 2
         # tool label = dark name + tool-color square 
         fig_text(fig, NAME_W - 3.6, y, LABEL[tool], fontsize=6.5, color=INK, ha="right", va="center",
-                 fontweight="bold" if tool == "ltrquest" else "normal")
+                 fontweight="bold" if tool == "ltr_peel" else "normal")
         sq = 2.0
         fig.add_artist(Rectangle(((NAME_W - 0.4 - sq) / FIG_W, 1 - (y + sq / 2) / FIG_H), sq / FIG_W, sq / FIG_H,
                                  transform=fig.transFigure, fc=COLOR[tool], ec="none"))
@@ -441,9 +487,9 @@ def numbers(df, f, size):
         *[(f"fold spread of finished wall times, {d}", f"{f['fold'][d]:.1f}", T) for d in REAL],
         *[(f"{LABEL[t]}: fastest S2 seed wall / rice wall",
            f"{f['s2_over_rice'][t]:.2f}", T) for t in TOOLS],
-        ("LTRquest gorilla wall (h)", f"{f['lq_gor_wall']:.2f}", T),
-        ("LTRquest gorilla CPU (h), most of any run", f"{f['lq_gor_cpu']:.1f}", T),
-        ("LTRquest maize peak PSS (GB), most of any finished run", f"{f['lq_maize_mem']:.1f}", T),
+        ("LTR_peel gorilla wall (h)", f"{f['lq_gor_wall']:.2f}", T),
+        ("LTR_peel gorilla CPU (h), most of any run", f"{f['lq_gor_cpu']:.1f}", T),
+        ("LTR_peel maize peak PSS (GB), most of any finished run", f"{f['lq_maize_mem']:.1f}", T),
         ("LTR_Finder largest peak PSS (GB)", f"{f['lf_mem_max']:.1f}", T),
         ("Look4LTRs gorilla peak PSS at the stop (GB)", f"{f['l4_gor_mem']:.1f}", T),
         ("Look4LTRs gorilla wall at the stop (h)", f"{f['l4_gor_wall']:.2f}", T),
@@ -475,13 +521,13 @@ def legend(f):
         "**A**, Wall-clock time of every run against genome size, one row per caller, the other callers in gray. "
         "Real genomes (five with curated repeat libraries, two allopolyploids) are joined in order of size; open "
         "circles, three simulated genomes per regime. HiTE, LTRpred and DANTE_LTR took longer on the LTR-rich "
-        "simulated S2 genomes than on the larger rice genome. LTRquest finished every genome, taking "
+        "simulated S2 genomes than on the larger rice genome. LTR_peel finished every genome, taking "
         f"{f['lq_gor_wall']:.1f} h on gorilla.\n\n"
         "**B**, CPU time of the same runs, a lower bound (the larger of two measures, each of which misses some "
-        f"short-lived or killed processes). LTRquest used {f['lq_gor_cpu']:.0f} CPU hours on gorilla, the most of "
+        f"short-lived or killed processes). LTR_peel used {f['lq_gor_cpu']:.0f} CPU hours on gorilla, the most of "
         "any run. LTRharvest runs on one thread, and LTRpred used about one core although given 16.\n\n"
         "**C**, Peak memory, counting memory shared between processes once. LTR_Finder never needed more than "
-        f"{f['lf_mem_max']:.1f} GB. LTRquest reached {f['lq_maize_mem']:.1f} GB on maize, the most of any finished "
+        f"{f['lf_mem_max']:.1f} GB. LTR_peel reached {f['lq_maize_mem']:.1f} GB on maize, the most of any finished "
         "run.\n\n"
         "Gray crosses, tool failed, drawn at the value reached when the run ended. Five runs stopped at the 36 h "
         "limit: LTR_retriever on zebra finch, maize and gorilla, and LTRharvest and LTRpred on gorilla. The three "
@@ -491,22 +537,31 @@ def legend(f):
         "complete element in the two animal genomes and exited with an error. For runs stopped at a limit the true "
         "cost is higher. Every caller ran with 16 threads on a shared server "
         f"(load at job start {f['load_min']} to {f['load_max']} of 256 cores), so wall times are noisy. PrinTE, "
-        "which made the simulated genomes, shares an author with LTRquest, and LTRquest was tuned on PrinTE "
+        "which made the simulated genomes, shares an author with LTR_peel, and LTR_peel was tuned on PrinTE "
         "simulations and on rice."
     )
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--from-source-data", action="store_true",
+                    help=f"redraw from source_data/{STEM}/ only; needs no BENCH_ROOT")
     ap.add_argument("-v", "--verbose", action="store_true", help="report sizes and checks")
     a = ap.parse_args()
-    df, size = load()
+    if not a.from_source_data:
+        if B is None:
+            sys.exit("error: BENCH_ROOT is not set (or use --from-source-data)")
+        df, bp = load()
+        check_claims(facts(df))
+        write_source_data(df, bp)
+    df, size = read_source_data()
     f = facts(df)
     check_claims(f)
     log(f"{len(df)} runs; statuses {df.status.value_counts().to_dict()}", a.verbose)
     fig = draw(df, size, a.verbose)
     n = numbers(df, f, size)
-    res = poafig.write_figure(STEM, fig, legend(f), None, HERE, str(B), str(HERE / f"{STEM}.py"))
+    res = poafig.write_figure(STEM, fig, legend(f), None, HERE, str(SD if a.from_source_data else B),
+                              str(HERE / f"{STEM}.py"))
     print(f"wrote {res['pdf']}, {res['png'][0]}, {STEM}_numbers.tsv ({n} rows); figure {res['fig_mm'][0]} mm, "
           f"legend page {res['short_mm']} mm, {res['short_words']} words {res['short_par_words']}")
 

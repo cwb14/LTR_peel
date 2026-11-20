@@ -16,8 +16,10 @@ Inputs: report/tables/{masking,resources}.tsv, eval/lib/<ds>.ci.tsv, eval/lib/<d
   mask/rice/*/rice.fa.out, calls/rice/<tool>.tsv, eval/adj/rice/<tool>.calls.tsv, data/rice/genes/all.gff3
   (window ranking via figS2_prep.py, cached in tmp/).
 Outputs: figS2_masking.{pdf,png}, figS2_masking_numbers.tsv (every number on the figure and legend, with its source),
-  tmp/f1_crosscheck.tsv (eval/lib F1, precision, sensitivity vs masking.tsv, every scored cell).
-Usage: figS2_masking.py [--reprep] [-v]
+  tmp/f1_crosscheck.tsv (eval/lib F1, precision, sensitivity vs masking.tsv, every scored cell),
+  source_data/figS2_masking/*.tsv (the tables the figure is drawn from; full mode writes them, reads them back and
+  draws only from them; --from-source-data redraws from them without BENCH_ROOT, skipping the raw-data checks).
+Usage: figS2_masking.py [--reprep] [--from-source-data] [-v]
 """
 import argparse
 import glob
@@ -76,16 +78,16 @@ from matplotlib.colors import to_rgb  # noqa: E402
 from matplotlib.patches import Polygon, Rectangle  # noqa: E402
 
 STEM = "figS2_masking"
-B = P.B
-T = B / "report/tables"
+SD = HERE / "source_data" / STEM
+B = T = None                                         # $BENCH_ROOT and its report/tables, full mode only
 MM = poafig.MM
 INK = poafig.INK
 DS = P.DATASETS
 TOOLS = P.TOOLS
-LABEL = {"ltrquest": "LTRquest", "ltr_retriever": "LTR_retriever", "ltrharvest": "LTRharvest",
+LABEL = {"ltr_peel": "LTR_peel", "ltr_retriever": "LTR_retriever", "ltrharvest": "LTRharvest",
          "ltr_finder": "LTR_Finder", "look4ltrs": "Look4LTRs", "hirepeat": "HiRepEat", "hite": "HiTE",
          "ltrpred": "LTRpred", "dante_ltr": "DANTE_LTR"}
-COLOR = {"ltrquest": "#D55E00", "ltr_retriever": "#0072B2", "ltrharvest": "#56B4E9", "ltr_finder": "#009E73",
+COLOR = {"ltr_peel": "#D55E00", "ltr_retriever": "#0072B2", "ltrharvest": "#56B4E9", "ltr_finder": "#009E73",
          "look4ltrs": "#CC79A7", "hirepeat": "#E69F00", "hite": "#000000", "ltrpred": "#A6761D",
          "dante_ltr": "#6A3D9A"}
 DSNAME = {"arab": r"$\it{A.\ thaliana}$", "rice": "rice", "finch": "zebra finch", "maize": "maize",
@@ -135,8 +137,8 @@ TOOL_FAIL_STATUS = {"timeout": "did not finish within 36 h", "mem_guard": "excee
 EXPECT_TOOL_FAIL = {("finch", "ltr_retriever"), ("maize", "ltr_retriever"), ("gorilla", "ltr_retriever"),
                     ("gorilla", "ltrharvest"), ("gorilla", "ltrpred"), ("gorilla", "look4ltrs"),
                     ("finch", "dante_ltr"), ("gorilla", "dante_ltr")}
-EXPECT_NOT_EVAL = {("finch", "hirepeat"), ("gorilla", "ltrquest"), ("gorilla", "ltr_finder"), ("gorilla", "hirepeat"),
-                   ("maize", "ltrquest"), ("maize", "ltrharvest"), ("maize", "ltr_finder"), ("maize", "look4ltrs"),
+EXPECT_NOT_EVAL = {("finch", "hirepeat"), ("gorilla", "ltr_peel"), ("gorilla", "ltr_finder"), ("gorilla", "hirepeat"),
+                   ("maize", "ltr_peel"), ("maize", "ltrharvest"), ("maize", "ltr_finder"), ("maize", "look4ltrs"),
                    ("maize", "hirepeat"), ("maize", "hite"), ("maize", "dante_ltr")}
 
 
@@ -226,12 +228,12 @@ def load_libtest(M, verbose):
 
 # ================================================================== panel A data
 def window_choice(verbose):
-    """first window in the ranked list (figS2_prep.windows) passing the checks: LTRquest's library masks >= 99% of
-    the window's curated LTR-RT bases (no visible LTRquest miss), and every drawn call's library support
+    """first window in the ranked list (figS2_prep.windows) passing the checks: LTR_peel's library masks >= 99% of
+    the window's curated LTR-RT bases (no visible LTR_peel miss), and every drawn call's library support
     recomputed from the curated .out (>= 80% of the span) agrees with eval/adj"""
     w = P.windows()
     ref = P.libtest_ci.ltr_hits(str(B / "mask/rice/curated/rice.fa.out"))
-    lq = P.libtest_ci.ltr_hits(str(B / "mask/rice/ltrquest.intact/rice.fa.out"))
+    lq = P.libtest_ci.ltr_hits(str(B / "mask/rice/ltr_peel.intact/rice.fa.out"))
     log_rows = []
     for i, r in w.head(30).iterrows():
         c, s, e = r.chrom, int(r.start), int(r.end)
@@ -362,7 +364,7 @@ def missing_box(ax, x, y, w, h, text, fs=5.5):
 
 
 def label_column(fig, x0, y, H, rows, RH, extra=None):
-    """tool names (LTRquest bold) with a square of the tool color, right-aligned to x0; extra: [(label, y)]"""
+    """tool names (LTR_peel bold) with a square of the tool color, right-aligned to x0; extra: [(label, y)]"""
     lab = mm_ax(fig, 0, y, x0 - 0.8, H)
     lab.set_xlim(0, x0 - 0.8)
     lab.set_ylim(H, 0)
@@ -370,7 +372,7 @@ def label_column(fig, x0, y, H, rows, RH, extra=None):
     for i, t in enumerate(rows):
         yc = i * RH + RH / 2
         lab.text(x0 - 3.4, yc, LABEL[t], ha="right", va="center", fontsize=6,
-                 fontweight="bold" if t == "ltrquest" else "normal")
+                 fontweight="bold" if t == "ltr_peel" else "normal")
         lab.add_patch(Rectangle((x0 - 2.7, yc - 0.65), 1.3, 1.3, fc=COLOR[t], ec="none"))
     for text, yy in (extra or []):
         lab.text(x0 - 1.4, yy, text, ha="right", va="center", fontsize=6, color=MUTED)
@@ -468,7 +470,7 @@ def panel_A(fig, x0, y0, w, D, win):
         yc = yt - y0 + hh / 2
         if name in TOOLS:
             lab.text(x0 - 3.4, yc, LABEL[name], ha="right", va="center", fontsize=6,
-                     fontweight="bold" if name == "ltrquest" else "normal")
+                     fontweight="bold" if name == "ltr_peel" else "normal")
             lab.add_patch(Rectangle((x0 - 2.7, yc - 0.65), 1.3, 1.3, fc=COLOR[name], ec="none"))
         else:
             lab.text(x0 - 1.4, yc, name, ha="right", va="center", fontsize=6)
@@ -517,7 +519,7 @@ def panel_Mb(fig, x0, y0, cols, colw, RH, M, reasons):
             ax.add_patch(Rectangle((0, yt), cur * sc, hh, fc="none", ec="#7A7A7A", lw=0.3))
             ax.add_patch(Rectangle((xc, yt), r.FP * sc, hh, fc=col, ec="none"))
             ax.text(xc + r.FP * sc + 0.5, yt + hh / 2, f"{r.FP / 1e6:.0f}" if r.FP >= 1e6 else f"{r.FP / 1e6:.1f}",
-                    ha="left", va="center", fontsize=6, fontweight="bold" if t == "ltrquest" else "normal")
+                    ha="left", va="center", fontsize=6, fontweight="bold" if t == "ltr_peel" else "normal")
             num("B", ds, t, "masked outside curated LTR-RT (Mb)", round(r.FP / 1e6, 2), "report/tables/masking.tsv FP_mb")
             num("B", ds, t, "curated LTR-RT masked (Mb)", round(r.TP / 1e6, 2), "eval/lib/<ds>.ci.tsv TP")
         for i, t in enumerate(TOOLS):
@@ -612,7 +614,7 @@ def key_A(fig, x, y, w):
 
 
 def glyph_element(sup):
-    col = COLOR["ltrquest"]
+    col = COLOR["ltr_peel"]
 
     def draw(ax, x, y, measure=False):
         W = 5.0
@@ -631,7 +633,7 @@ def glyph_element(sup):
 
 
 def glyph_tools():
-    cols = [COLOR[t] for t in ("ltrquest", "ltr_retriever", "ltr_finder", "hite")]
+    cols = [COLOR[t] for t in ("ltr_peel", "ltr_retriever", "ltr_finder", "hite")]
 
     def draw(ax, x, y, measure=False):
         W = 2.4
@@ -647,7 +649,7 @@ WORD = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seve
 
 
 def legend_text(V):
-    return f"""**Fig. S2. On real genomes, the library built from LTRquest's elements masks nearly all curated LTR retrotransposon sequence but also much sequence that curators did not call LTR retrotransposon, so its masking precision, specificity and accuracy trail the strictest callers.** Each caller's elements served as a repeat library to mask its own genome, scored base by base against the curated annotation. Fig. 1E shows precision, recall and F1 for *A. thaliana*, rice and zebra finch, and Fig. 1F the recovery of curated families. Dark gray cells mark callers that failed (no result within 36 h or 200 GB of memory, or a crash without calls). Hatched cells were not evaluated because masking with the caller's library, or building it, would have run past 36 h or was stopped there.
+    return f"""**Fig. S2. On real genomes, the library built from LTR_peel's elements masks nearly all curated LTR retrotransposon sequence but also much sequence that curators did not call LTR retrotransposon, so its masking precision, specificity and accuracy trail the strictest callers.** Each caller's elements served as a repeat library to mask its own genome, scored base by base against the curated annotation. Fig. 1E shows precision, recall and F1 for *A. thaliana*, rice and zebra finch, and Fig. 1F the recovery of curated families. Dark gray cells mark callers that failed (no result within 36 h or 200 GB of memory, or a crash without calls). Hatched cells were not evaluated because masking with the caller's library, or building it, would have run past 36 h or was stopped there.
 
 **A**, A typical 200-kb window of rice chromosome 11. Elements carry their long terminal repeats (darker ends) and are outlined where curators do not support them. Beneath each caller, what its library masks here, gray inside curated LTR retrotransposons and colored outside them. {V['A']}
 
@@ -657,58 +659,122 @@ def legend_text(V):
 
 
 def legend_values(M, L, D, PCH):
-    lq = M[M.tool == "ltrquest"].set_index("ds")
+    lq = M[M.tool == "ltr_peel"].set_index("ds")
     fp = {t: span(D["masks"][t]["fp"]) / 1e3 for t in TOOLS}
-    k = D["calls"]["ltrquest"]
+    k = D["calls"]["ltr_peel"]
     assert (k.supported == 1).all()
     V = {}
-    V["A"] = (f"All {WORD[len(k)]} LTRquest elements are supported, yet its library masks {fp['ltrquest']:.0f} kb outside "
+    V["A"] = (f"All {WORD[len(k)]} LTR_peel elements are supported, yet its library masks {fp['ltr_peel']:.0f} kb outside "
               f"curated LTR retrotransposons here, HiTE's {fp['hite']:.0f} kb.")
     sens = [lq.loc[d, "sens"] for d in ("arab", "rice", "finch")]
-    V["B"] = (f"LTRquest masks {min(sens) * 100:.1f}–{max(sens) * 100:.1f}% of the curated sequence, like the other "
+    V["B"] = (f"LTR_peel masks {min(sens) * 100:.1f}–{max(sens) * 100:.1f}% of the curated sequence, like the other "
               f"permissive callers, but {lq.loc['arab', 'FP_mb']:.0f}, {lq.loc['rice', 'FP_mb']:.0f} and "
               f"{lq.loc['finch', 'FP_mb']:.0f} Mb besides in *A. thaliana*, rice and zebra finch.")
     l = L.set_index(["ds", "tool"])
     pm = num("legend", "maize", ".", "curated LTR-RT share of the genome (%)", round(PCH["maize"] * 100),
              "computed: lib-test (TP+FN)/(TP+TN+FP+FN), eval/lib/maize/ltrpred.intact.tsv")
-    rec = [fmt3(float(l.loc[(d, "ltrquest"), "sens"])) for d in ("arab", "rice", "finch")]   # 3 decimals: the cells
+    rec = [fmt3(float(l.loc[(d, "ltr_peel"), "sens"])) for d in ("arab", "rice", "finch")]   # 3 decimals: the cells
     # print 1.00, 0.99, 0.99
     V["C"] = (f"Outside maize ({pm}% curated LTR retrotransposon), most of each genome is not LTR retrotransposon, "
-              f"which compresses specificity and accuracy toward 1. LTRquest's recall is {min(rec)}–{max(rec)}, but its "
-              f"specificity, {l.loc[('arab', 'ltrquest'), 'spec']:.2f}, {l.loc[('rice', 'ltrquest'), 'spec']:.2f} and "
-              f"{l.loc[('finch', 'ltrquest'), 'spec']:.2f} in *A. thaliana*, rice and zebra finch, is below HiTE's "
+              f"which compresses specificity and accuracy toward 1. LTR_peel's recall is {min(rec)}–{max(rec)}, but its "
+              f"specificity, {l.loc[('arab', 'ltr_peel'), 'spec']:.2f}, {l.loc[('rice', 'ltr_peel'), 'spec']:.2f} and "
+              f"{l.loc[('finch', 'ltr_peel'), 'spec']:.2f} in *A. thaliana*, rice and zebra finch, is below HiTE's "
               f"{l.loc[('arab', 'hite'), 'spec']:.2f}, {l.loc[('rice', 'hite'), 'spec']:.2f} and "
               f"{l.loc[('finch', 'hite'), 'spec']:.2f}.")
     for ds in ("arab", "rice", "finch"):                 # check the claims in that sentence
-        assert l.loc[(ds, "ltrquest"), "spec"] < l.loc[(ds, "hite"), "spec"], ds
-        num("legend", ds, "ltrquest", "recall (as printed in the legend, 3 decimals)",
-            fmt3(float(l.loc[(ds, "ltrquest"), "sens"])), f"eval/lib/{ds}/ltrquest.intact.tsv sens")
-    for ds, t in (("arab", "ltrquest"), ("rice", "ltrquest"), ("finch", "ltrquest"), ("arab", "hite"),
+        assert l.loc[(ds, "ltr_peel"), "spec"] < l.loc[(ds, "hite"), "spec"], ds
+        num("legend", ds, "ltr_peel", "recall (as printed in the legend, 3 decimals)",
+            fmt3(float(l.loc[(ds, "ltr_peel"), "sens"])), f"eval/lib/{ds}/ltr_peel.intact.tsv sens")
+    for ds, t in (("arab", "ltr_peel"), ("rice", "ltr_peel"), ("finch", "ltr_peel"), ("arab", "hite"),
                   ("rice", "hite"), ("finch", "hite")):
         num("legend", ds, t, "specificity (as printed in the legend)", fmt_score(float(l.loc[(ds, t), "spec"])),
             f"eval/lib/{ds}/{t}.intact.tsv spec")
     return V
 
 
+# ================================================================== source data
+def write_table(df, name):
+    """source_data/<stem>/<name>.tsv, gzipped (mtime 0) when over 1 MB"""
+    raw = df.to_csv(sep="\t", index=False)
+    if len(raw.encode()) > 1_000_000:
+        df.to_csv(SD / f"{name}.tsv.gz", sep="\t", index=False, compression={"method": "gzip", "mtime": 0})
+    else:
+        (SD / f"{name}.tsv").write_text(raw)
+
+
+def read_table(name, **kw):
+    p = SD / f"{name}.tsv"
+    return pd.read_csv(p if p.exists() else SD / f"{name}.tsv.gz", sep="\t", **kw)
+
+
+def build_source_data(reprep, verbose):
+    """full mode: load the full dataset, run the raw-data checks, write the source-data tables"""
+    global B, T
+    B = P.init_bench()
+    T = B / "report/tables"
+    M = load_tables()
+    L, nchk = load_libtest(M, verbose)
+    reasons = missing_reasons()
+    if reprep:
+        P.windows(force=True)
+    win, _ = window_choice(verbose)
+    D = window_data(*win[:3])
+    log(f"window data: {D['cur_ltr_bp']} bp curated LTR-RT; call checks ok", verbose)
+    SD.mkdir(parents=True, exist_ok=True)
+    c, s, e, rank = win
+    write_table(pd.DataFrame([("window_chrom", c), ("window_start", s), ("window_end", e), ("window_rank", rank),
+                              ("window_curated_ltr_bp", D["cur_ltr_bp"]), ("f1_crosscheck_cells", nchk)],
+                             columns=["name", "value"]), "scalars")
+    write_table(D["genes"][["start", "end", "strand"]], "A_genes")
+    write_table(D["cur"][["start", "end"]].assign(ltr_rt=D["cur"].ltr.astype(int)), "A_curated_hits")
+    write_table(pd.concat([D["calls"][t][["start", "end", "lltr_end", "rltr_start", "supported"]].assign(tool=t)
+                           for t in TOOLS])[["tool", "start", "end", "lltr_end", "rltr_start", "supported"]],
+                "A_calls")
+    write_table(pd.DataFrame([(t, kind, a, b) for t in TOOLS for kind in ("tp", "fp", "fn")
+                              for a, b in D["masks"][t][kind]], columns=["tool", "kind", "start", "end"]), "A_masks")
+    write_table(M[["ds", "tool", "TP", "FN", "FP", "sens", "FP_mb"]], "B_masking")
+    write_table(L[["ds", "tool", "prec", "sens", "F1", "spec", "accu", "TP", "TN", "FP", "FN"]], "C_libtest")
+    write_table(pd.DataFrame([(ds, t, lab, src) for (ds, t), (lab, src) in reasons.items()],
+                             columns=["ds", "tool", "label", "source"]), "BC_missing")
+
+
+def read_source_data():
+    """the tables the figure is drawn from: M (masking, B), L (lib-test, C), reasons (missing cells), win, D (A),
+    nchk"""
+    sc = dict(read_table("scalars", dtype=str).values)
+    win = (sc["window_chrom"], int(sc["window_start"]), int(sc["window_end"]), int(sc["window_rank"]))
+    D = {"genes": read_table("A_genes"), "cur_ltr_bp": int(sc["window_curated_ltr_bp"])}
+    cur = read_table("A_curated_hits")
+    D["cur"] = cur.assign(ltr=cur.ltr_rt.astype(bool))
+    calls = read_table("A_calls", dtype={"lltr_end": str, "rltr_start": str})
+    D["calls"] = {t: calls[calls.tool == t].reset_index(drop=True) for t in TOOLS}
+    mk = read_table("A_masks")
+    D["masks"] = {t: {kind: mk[(mk.tool == t) & (mk.kind == kind)][["start", "end"]].to_numpy(np.int64).reshape(-1, 2)
+                      for kind in ("tp", "fp", "fn")} for t in TOOLS}
+    M = read_table("B_masking")
+    L = read_table("C_libtest")
+    L["total"] = L.TP + L.TN + L.FP + L.FN
+    miss = read_table("BC_missing")
+    reasons = {(r.ds, r.tool): (r.label, r.source) for r in miss.itertuples()}
+    return M, L, reasons, win, D, int(sc["f1_crosscheck_cells"])
+
+
 # ================================================================== main
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Build Fig. S2 (figS2_masking): figure, legend page and numbers.")
     ap.add_argument("--reprep", action="store_true", help="recompute the cached window table")
+    ap.add_argument("--from-source-data", action="store_true",
+                    help="redraw from source_data/figS2_masking/ only (no BENCH_ROOT; raw-data checks skipped)")
     ap.add_argument("-v", "--verbose", action="store_true", help="progress and checks")
     a = ap.parse_args(argv)
     v = a.verbose
-    M = load_tables()
-    L, nchk = load_libtest(M, v)
-    reasons = missing_reasons()
+    if not a.from_source_data:
+        build_source_data(a.reprep, v)
+    M, L, reasons, win, D, nchk = read_source_data()
     for ds in DS:                                          # every missing result must have a reason
         for t in TOOLS:
             if t not in set(M[M.ds == ds].tool) and (ds, t) not in reasons:
                 sys.exit(f"error: no reason for the missing masking result {ds} {t}")
-    if a.reprep:
-        P.windows(force=True)
-    win, _ = window_choice(v)
-    D = window_data(*win[:3])
-    log(f"window data: {D['cur_ltr_bp']} bp curated LTR-RT; call checks ok", v)
     PCH = {}                                               # curated LTR-RT share of the scored genome (lib-test counts)
     for ds in DS:
         l = L[L.ds == ds]
@@ -748,12 +814,13 @@ def main(argv=None):
     # ---- legend
     V = legend_values(M, L, D, PCH)
     for ds in ("arab", "rice", "finch"):
-        num("legend", ds, "ltrquest", "sensitivity (curated sequence masked)",
-            float(M[(M.ds == ds) & (M.tool == "ltrquest")].sens.iloc[0]), "report/tables/masking.tsv sens")
-        num("legend", ds, "ltrquest", "masked outside curated LTR-RT (Mb)",
-            float(M[(M.ds == ds) & (M.tool == "ltrquest")].FP_mb.iloc[0]), "report/tables/masking.tsv FP_mb")
+        num("legend", ds, "ltr_peel", "sensitivity (curated sequence masked)",
+            float(M[(M.ds == ds) & (M.tool == "ltr_peel")].sens.iloc[0]), "report/tables/masking.tsv sens")
+        num("legend", ds, "ltr_peel", "masked outside curated LTR-RT (Mb)",
+            float(M[(M.ds == ds) & (M.tool == "ltr_peel")].FP_mb.iloc[0]), "report/tables/masking.tsv FP_mb")
     short = legend_text(V)
-    out = poafig.write_figure(STEM, fig, short, None, HERE, str(B), str(HERE / f"{STEM}.py"))
+    src = B if B is not None else SD
+    out = poafig.write_figure(STEM, fig, short, None, HERE, str(src), str(HERE / f"{STEM}.py"))
     pd.DataFrame(NUM).to_csv(HERE / f"{STEM}_numbers.tsv", sep="\t", index=False)
     log(f"wrote {out['pdf']} ({out['fig_mm']}, legend {out['short_mm']} mm, {out['short_words']} words, per "
         f"paragraph {out['short_par_words']})", True)

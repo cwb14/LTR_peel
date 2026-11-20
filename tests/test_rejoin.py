@@ -19,9 +19,9 @@ from typing import Dict, List
 
 import pytest
 
-from ltrquest import kmer2ltr, reconcile
-from ltrquest.annotate import REJOIN_SIDECAR_SUFFIX, load_pass2_links, load_tesorter_strands
-from ltrquest.detect import DETECT_COLUMNS, iter_fasta, revcomp
+from ltr_peel import kmer2ltr, reconcile
+from ltr_peel.annotate import REJOIN_SIDECAR_SUFFIX, load_pass2_links, load_tesorter_strands
+from ltr_peel.detect import DETECT_COLUMNS, iter_fasta, revcomp
 
 LTR = 400          # host LTR length
 P = 250            # insertion offset inside the host LTR
@@ -32,7 +32,7 @@ CHROM = "chr1"
 @pytest.fixture(scope="module")
 def tools_dir() -> str:
     """A directory Kmer2LTR's `genome` module imports from; skip without one."""
-    path = os.environ.get("LTRQUEST_TOOLS_DIR", ".")
+    path = os.environ.get("LTR_PEEL_TOOLS_DIR", ".")
     try:
         kmer2ltr.genome_module(path)
     except RuntimeError as exc:

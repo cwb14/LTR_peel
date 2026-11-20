@@ -1,6 +1,6 @@
 import pytest
 
-from ltrquest.table import Columns, as_float, as_int, is_missing, parse_header
+from ltr_peel.table import Columns, as_float, as_int, is_missing, parse_header
 
 HEADER = "#seq_id\tseq_len\tstatus\tk2p\ttsd\n"
 

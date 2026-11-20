@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from ltrquest import flag_fp
+from ltr_peel import flag_fp
 
 HEADER = "#seq_id\tseq_len\tstatus\tltr5_len\tk2p\ttsd\tdomains\tnest_status\n"
 ROWS = (

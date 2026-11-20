@@ -1,6 +1,6 @@
 tool	cls	n_fam	recall_t0	d50	d50_lo	d50_hi	d50_diff_vs_coding	diff_lo	diff_hi
-ltrquest	coding	587	0.9996	0.3320	0.3274	0.3368	NA	NA	NA
-ltrquest	proteinless	106	0.9801	0.1454	0.1249	0.1659	-0.1866	-0.2075	-0.1660
+ltr_peel	coding	587	0.9996	0.3320	0.3274	0.3368	NA	NA	NA
+ltr_peel	proteinless	106	0.9801	0.1454	0.1249	0.1659	-0.1866	-0.2075	-0.1660
 ltrharvest	coding	587	0.9748	0.1207	0.1188	0.1227	NA	NA	NA
 ltrharvest	proteinless	106	0.8339	0.1258	0.1190	0.1331	0.0051	-0.0024	0.0127
 ltr_finder	coding	587	0.7510	0.0447	0.0427	0.0466	NA	NA	NA

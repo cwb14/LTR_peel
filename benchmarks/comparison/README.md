@@ -1,11 +1,11 @@
-# LTRquest compared with eight other LTR retrotransposon callers
+# LTR_peel compared with eight other LTR retrotransposon callers
 
-This page compares LTRquest with eight other tools that find LTR retrotransposons (LTR-RTs) in genome assemblies:
+This page compares LTR_peel with eight other tools that find LTR retrotransposons (LTR-RTs) in genome assemblies:
 LTR_retriever, LTRharvest, LTR_Finder, Look4LTRs, HiRepEat, HiTE, LTRpred and DANTE_LTR. Each tool ran its documented
 default command, with a few stated deviations, on the same server with 16 threads and the same time and memory limits.
 The tests ask where each tool loses elements and what recovering them costs. They use simulated genomes in which every
 element is known, five real genomes scored against curated repeat libraries, two allopolyploids split into their
-parental subgenomes, and real insertion polymorphisms genotyped from long reads. LTRquest's author designed and ran
+parental subgenomes, and real insertion polymorphisms genotyped from long reads. LTR_peel's author designed and ran
 the benchmark (see [Limits and conflicts of interest](#limits-and-conflicts-of-interest)). Every result on this page
 comes from a table in [`results/`](results/) or, for a value read off a figure, from that figure's `_numbers.tsv` in
 [`figures/`](figures/). The code that made them is in this directory.
@@ -27,9 +27,9 @@ as the curated library (E; masked bases, not elements found), the share of curat
 curated annotation of protein-confirmed *A. thaliana* loci sorted by age (G), and real insertion polymorphisms
 genotyped correctly in *Cardamine amara* (H).
 
-LTRquest is built for sensitivity. In these tests it found more nested, old and protein-less LTR-RTs than the other
+LTR_peel is built for sensitivity. In these tests it found more nested, old and protein-less LTR-RTs than the other
 eight callers, except that DANTE_LTR found as many elements at the oldest simulated age and more of those with protein
-domains at the two oldest ages (Fig. 1C). In simulations, where the truth is known, LTRquest was also the most accurate
+domains at the two oldest ages (Fig. 1C). In simulations, where the truth is known, LTR_peel was also the most accurate
 overall (highest F1). On real genomes it calls many elements that curated libraries do not annotate, so for building a
 library to mask repeats, HiTE, LTR_retriever and DANTE_LTR are the better choice, and the best library in every genome
 was one that HiTE or HiRepEat builds itself ([test 3](#3-masking-with-curated-libraries)).
@@ -38,31 +38,31 @@ The other tools have clear strengths. LTR_retriever and LTR_Finder place element
 old elements most slowly, HiRepEat comes second for nested elements and for real insertions, Look4LTRs is the fastest
 on most genomes, and LTR_Finder needs the least memory on real genomes.
 
-- **Nested elements.** In three deeply nested simulated genomes (S2), LTRquest found 0.94 of hosts (elements split in
+- **Nested elements.** In three deeply nested simulated genomes (S2), LTR_peel found 0.94 of hosts (elements split in
   two by a later insertion), the other tools 0.23-0.79 (Fig. 1B). Its F1 was the highest: 0.950 (S1) and 0.909 (S2),
   against 0.909 (LTRharvest) and 0.837 (HiTE, LTRharvest). [Test 1](#1-simulated-genomes-nested-elements)
-- **Old elements.** LTRquest keeps half its recall up to an LTR divergence (K2P) of 0.32-0.33, seven other tools
+- **Old elements.** LTR_peel keeps half its recall up to an LTR divergence (K2P) of 0.32-0.33, seven other tools
   0.04-0.18. DANTE_LTR declines more slowly, and among elements with protein domains it keeps more at the two oldest
   ages (0.54 against 0.49 at K2P 0.33, 0.39 against 0.32 at K2P 0.37). [Test 2](#2-divergence-series-old-elements)
-- **Protein-less elements.** LTRquest found 0.97 (S1) and 0.99 (S2) of simulated elements without LTR-RT protein
+- **Protein-less elements.** LTR_peel found 0.97 (S1) and 0.99 (S2) of simulated elements without LTR-RT protein
   domains, the other tools 0-0.81; only Look4LTRs also finds them about as often as coding elements.
   [Test 6](#6-protein-less-elements)
-- **Precision and ends in simulations.** LTRquest's calls were 0.97-0.98 precise, below the 0.99-1.00 of HiTE,
+- **Precision and ends in simulations.** LTR_peel's calls were 0.97-0.98 precise, below the 0.99-1.00 of HiTE,
   LTR_retriever, LTR_Finder and DANTE_LTR. LTR_retriever and LTR_Finder also placed ends most exactly (0.96-0.98 exact,
-  LTRquest 0.89-0.93). [Test 1](#1-simulated-genomes-nested-elements)
-- **Masking with curated libraries.** As a repeat library, LTRquest's elements masked nearly all curated LTR-RT
+  LTR_peel 0.89-0.93). [Test 1](#1-simulated-genomes-nested-elements)
+- **Masking with curated libraries.** As a repeat library, LTR_peel's elements masked nearly all curated LTR-RT
   sequence but also 11, 80 and 135 Mb more in *A. thaliana*, rice and zebra finch, so their masking F1 (0.59, 0.68,
-  0.45) trails HiTE's (0.90, 0.88, 0.69). In four of the five genomes an estimated 13-34% of LTRquest's calls without
+  0.45) trails HiTE's (0.90, 0.88, 0.69). In four of the five genomes an estimated 13-34% of LTR_peel's calls without
   curated support carry LTR-RT protein domains above chance, a sign that some are real elements the libraries miss.
   [Tests 3](#3-masking-with-curated-libraries) and [5](#5-library-support-and-protein-evidence-of-each-call)
-- **Curated families recovered.** LTRquest's library recovered the most curated LTR families in *A. thaliana* (0.89),
+- **Curated families recovered.** LTR_peel's library recovered the most curated LTR families in *A. thaliana* (0.89),
   rice (0.82), maize (0.80) and gorilla (0.07, of three libraries scored; low for every tool), Look4LTRs in zebra finch
-  (0.60, LTRquest 0.51). The test rewards recall, not precision. [Test 4](#4-curated-families-recovered)
-- **Real insertion polymorphisms.** In one *Cardamine amara* plant, LTRquest's annotation let a long-read genotyper
-  type 0.93 and 0.91 of real insertion polymorphisms correctly (haplotypes 2 and 1), HiRepEat's 0.79 and 0.81. LTRquest
-  alone nominated 39 of the 696 loci on haplotype 2, and the genotyper was developed with LTRquest annotations.
+  (0.60, LTR_peel 0.51). The test rewards recall, not precision. [Test 4](#4-curated-families-recovered)
+- **Real insertion polymorphisms.** In one *Cardamine amara* plant, LTR_peel's annotation let a long-read genotyper
+  type 0.93 and 0.91 of real insertion polymorphisms correctly (haplotypes 2 and 1), HiRepEat's 0.79 and 0.81. LTR_peel
+  alone nominated 39 of the 696 loci on haplotype 2, and the genotyper was developed with LTR_peel annotations.
   [Test 8](#8-genotyping-real-insertion-polymorphisms)
-- **Cost.** LTRquest finished every genome but is heavy: 33.4 h and 507 CPU hours on the 3.5 Gb gorilla genome (the
+- **Cost.** LTR_peel finished every genome but is heavy: 33.4 h and 507 CPU hours on the 3.5 Gb gorilla genome (the
   most CPU of any run) and 92.6 GB of memory on maize. Look4LTRs was the fastest on five of the seven real genomes and
   LTR_Finder used the least memory on every one (at most 1.9 GB). [Resources](#resources)
 
@@ -106,7 +106,7 @@ exports in [`envs/`](envs/).
 
 | Tool | Version | Command as run | Deviations from defaults, and why | Runs that did not finish | Installed from | Source |
 |---|---|---|---|---|---|---|
-| LTRquest | 1.0.1 (commit 5042a1e) | `ltrquest --genome G --proteins P --threads 16 --detect-args "ltr-timeout=300" --run-sdust --no-plots --reboundary` | Four flags beyond the 1.0.1 defaults, see [LTRquest settings](#ltrquest-settings). `P` is the proteome of the closest RefSeq relative, never the target species | none; gorilla took 33.4 h of the 36 h | `envs/ltrquest_bench.yml`, pip install of the clone; helper tools FASTAN 843d0ed, Kmer2LTR 2c7e7f8, TEsorter2 cc9b195, TRF-mod 3e891db, built once before the timed runs | [cwb14/LTRquest](https://github.com/cwb14/LTRquest) |
+| LTR_peel | 1.0.1 (commit 5042a1e) | `ltr_peel --genome G --proteins P --threads 16 --detect-args "ltr-timeout=300" --run-sdust --no-plots --reboundary` | Four flags beyond the 1.0.1 defaults, see [LTR_peel settings](#ltr_peel-settings). `P` is the proteome of the closest RefSeq relative, never the target species | none; gorilla took 33.4 h of the 36 h | `envs/ltr_peel_bench.yml`, pip install of the clone; helper tools FASTAN 843d0ed, Kmer2LTR 2c7e7f8, TEsorter2 cc9b195, TRF-mod 3e891db, built once before the timed runs | [cwb14/LTR_peel](https://github.com/cwb14/LTR_peel) |
 | LTR_retriever | v3.0.7 (b02d29e) | its README pipeline:<br>`gt suffixerator -db G -indexname G -tis -suf -lcp -des -ssp -sds -dna`<br>`gt ltrharvest -index G -minlenltr 100 -maxlenltr 7000 -mintsd 4 -maxtsd 6 -motif TGCA -motifmis 1 -similar 85 -vic 10 -seed 20 -seqids yes > G.harvest.scn`<br>`LTR_FINDER_parallel -seq G -threads 16 -harvest_out -size 1000000 -time 300`<br>`cat G.harvest.scn G.finder.combine.scn > G.rawLTR.scn`<br>`LTR_retriever -genome G -inharvest G.rawLTR.scn -threads 16` | none | not finished in 36 h (our limit) on zebra finch, maize and gorilla ([details](#runs-and-steps-that-did-not-finish)) | `envs/ltrr_bench.yml` (dependencies as in its README) and the clone | [oushujun/LTR_retriever](https://github.com/oushujun/LTR_retriever) |
 | LTRharvest | GenomeTools 1.6.6 | `gt suffixerator -db G -indexname G -tis -suf -lcp -des -ssp -sds -dna`<br>`gt ltrharvest -index G -gff3 ltrharvest.gff3 > ltrharvest.tabout` | none (GenomeTools defaults); one thread, since `gt ltrharvest` has no thread option | not finished in 36 h (our limit) on gorilla | `envs/ltrr_bench.yml` (bioconda) | [genometools.org](https://genometools.org) |
 | LTR_Finder | ltr_finder 1.07 (bioconda), run by LTR_FINDER_parallel v1.4 (f1036ca) | `LTR_FINDER_parallel -seq G -threads 16` | Run through LTR_FINDER_parallel to use 16 threads, with that wrapper's defaults: it calls ltr_finder with `-w 2 -C -D 15000 -d 1000 -L 7000 -l 100 -p 20 -M 0.85` on 5 Mb chunks, and reruns a chunk that takes over 120 s in 50 kb pieces (ltr_finder's own `-M` default is 0) | none | `envs/ltrr_bench.yml` and the LTR_FINDER_parallel clone | [xzhub/LTR_Finder](https://github.com/xzhub/LTR_Finder), [oushujun/LTR_FINDER_parallel](https://github.com/oushujun/LTR_FINDER_parallel) |
@@ -120,20 +120,20 @@ exports in [`envs/`](envs/).
 coordinates), with one parser per tool, tested in `tests/test_calls_to_bed.py`. As a check that no parser shifts
 element ends, the share of calls with TG..CA ends peaks at zero offset for every tool on a test chromosome.
 
-LTRquest builds on several of the tools it is compared with. It runs LTRharvest and LTR_FINDER as its first-pass
+LTR_peel builds on several of the tools it is compared with. It runs LTRharvest and LTR_FINDER as its first-pass
 callers, and its own adaptation of FastLTR (from FASTAN, the detector behind HiRepEat) on chunks where those two time
 out. It then filters their candidates, masks what it found and scans again.
 
-### LTRquest settings
+### LTR_peel settings
 
-The benchmark ran LTRquest 1.0.1 (commit 5042a1e) as
-`ltrquest --genome G --proteins P --threads 16 --detect-args "ltr-timeout=300" --run-sdust --no-plots --reboundary`:
+The benchmark ran LTR_peel 1.0.1 (commit 5042a1e) as
+`ltr_peel --genome G --proteins P --threads 16 --detect-args "ltr-timeout=300" --run-sdust --no-plots --reboundary`:
 a 300 s limit per caller and 500 kb chunk, the sdust low-complexity filter, re-boundarying of truncated calls, and no
-plots. These settings equal LTRquest's current defaults except the plots, which do not change which elements are
+plots. These settings equal LTR_peel's current defaults except the plots, which do not change which elements are
 called. Strand recovery, off by default now, was not run. The results describe commit
 5042a1e, which reports version 1.0.1 but is newer than the v1.0.1 release tag; later code changes are not covered.
 
-The result tables also carry rows named `ltrquest_hc` (role `post_hoc`): the calls of the same LTRquest run rated high
+The result tables also carry rows named `ltr_peel_hc` (role `post_hoc`): the calls of the same LTR_peel run rated high
 confidence (TG..CA ends and an exact TSD). This subset is a developer diagnostic added after the first results were
 seen. It trades recall for precision, it is not a setting a user picks, and it is left out of every figure and summary
 on this page.
@@ -144,7 +144,7 @@ Every genome was normalized by `scripts/prep_genome.py` before any tool saw it. 
 and S2 are from [`figures/figS5_resources_numbers.tsv`](figures/figS5_resources_numbers.tsv); curated LTR entries from
 the test 4 table, [`results/bm_rm2.tsv`](results/bm_rm2.tsv).
 
-| Genome | Assembly | Size | Curated library (source) | Curated LTR entries | LTRquest proteins |
+| Genome | Assembly | Size | Curated library (source) | Curated LTR entries | LTR_peel proteins |
 |---|---|---|---|---|---|
 | *Arabidopsis thaliana* | TAIR10.1, GCF_000001735.4 | 119.7 Mb | `athrep.updated.nonredun.fasta` ([EDTA](https://github.com/oushujun/EDTA) `database/`, commit 2ad391d) | 291 | *A. lyrata*, GCF_000004255.2 |
 | rice (*Oryza sativa*) | Nipponbare MSU7 [`all.con`](https://rice.uga.edu/pub/data/Eukaryotic_Projects/o_sativa/annotation_dbs/pseudomolecules/version_7.0/all.dir/all.con) | 374.5 Mb | `rice7.0.0.liban` (EDTA `database/`) | 897 | *O. brachyantha*, GCF_000231095.2 |
@@ -195,7 +195,7 @@ the two LTRs runs from 0 to 0.37 across the 11 ages ([`sim_divergence.tsv`](resu
 | 7 | [Subgenome phasing](#7-subgenome-phasing) | Do the elements carry subgenome signal? | correct subgenome splits | 2 allopolyploids | before any scoring | no, see the test |
 | 8 | [Genotyping](#8-genotyping-real-insertion-polymorphisms) | Do the calls let a genotyper type real insertions? | insertions genotyped correctly | *C. amara* | added later; fixed before scoring | no, see the test |
 
-Tests marked "added later" were designed after the first results were known, including LTRquest's low masking scores
+Tests marked "added later" were designed after the first results were known, including LTR_peel's low masking scores
 in test 3. Test 5 was built to ask whether those scores penalize real elements that curated libraries miss. Test 3 is
 reported in full and unchanged. Bold in the score tables below marks each column's best value (for "copies for 80%
 correct" the fewest) where at least two tools have one.
@@ -220,7 +220,7 @@ left and right ends).
 
 | Tool | F1, intact set | F1, hosts added | Precision, hosts added | Host recall | Exact ends |
 |---|---|---|---|---|---|
-| LTRquest | **0.950** / **0.909** | **0.973** / **0.968** | 0.98 / 0.97 | **0.95** / **0.94** | 0.89 / 0.92-0.93 |
+| LTR_peel | **0.950** / **0.909** | **0.973** / **0.968** | 0.98 / 0.97 | **0.95** / **0.94** | 0.89 / 0.92-0.93 |
 | LTR_retriever | 0.708 / 0.682 | 0.710 / 0.678 | **1.00** / 0.99 | 0.40 / 0.31 | **0.98** / **0.98** |
 | LTRharvest | 0.909 / 0.837 | 0.913 / 0.833 | 0.98 / 0.94 | 0.53 / 0.39 | 0.45-0.51 / 0.44-0.51 |
 | LTR_Finder | 0.607 / 0.589 | 0.613 / 0.592 | **1.00** / 0.99 | 0.40 / 0.30 | 0.97 / 0.96 |
@@ -230,7 +230,7 @@ left and right ends).
 | LTRpred | 0.718 / 0.645 | 0.728 / 0.646 | 0.99 / 0.97 | 0.52 / 0.34 | 0.45-0.52 / 0.44-0.52 |
 | DANTE_LTR | 0.649 / 0.673 | 0.648 / 0.655 | **1.00** / 0.99 | 0.29 / 0.23 | 0.74-0.75 / 0.75 |
 
-- LTRquest has the highest F1 and host recall in both sets, and it links tenants to their hosts best (link F1 0.89 in
+- LTR_peel has the highest F1 and host recall in both sets, and it links tenants to their hosts best (link F1 0.89 in
   S1 and 0.82 in S2, against 0.50 and 0.43 for Look4LTRs, the only other tool that reports such links).
 - HiTE is the most precise tool, and LTR_retriever and LTR_Finder place ends most exactly.
 - Our F1 reproduces PrinTE's own evaluator within 0.0021 on every run.
@@ -242,8 +242,8 @@ left and right ends).
 
 **Can and cannot say.** It shows which tools find nested elements when the answer is known. It cannot show precision
 on real genomes: simulated genomes lack tandem duplicated genes, incomplete curated libraries and other features of
-real genomes, so precision runs higher here (compare tests 3 and 5). PrinTE shares an author with LTRquest, and
-LTRquest was tuned on PrinTE simulations and on rice.
+real genomes, so precision runs higher here (compare tests 3 and 5). PrinTE shares an author with LTR_peel, and
+LTR_peel was tuned on PrinTE simulations and on rice.
 
 ### 2. Divergence series: old elements
 
@@ -263,7 +263,7 @@ is where a tool's recall falls to half its own recall at K2P 0, per genome. Runs
 
 | Tool | Recall at K2P 0 | K2P where recall halves (genomes 1 / 2 / 3) | Recall at K2P 0.17 | Recall at K2P 0.37 |
 |---|---|---|---|---|
-| LTRquest | **1.00** | 0.323 / 0.328 / 0.322 | **0.90-0.91** | **0.29-0.31** |
+| LTR_peel | **1.00** | 0.323 / 0.328 / 0.322 | **0.90-0.91** | **0.29-0.31** |
 | LTR_retriever | 0.84 | 0.052 / 0.048 / 0.051 | 0.01 | 0.00 (no candidates) |
 | LTRharvest | 0.94-0.95 | 0.123 / 0.123 / 0.123 | 0.08-0.10 | 0.00 |
 | LTR_Finder | 0.71-0.73 | 0.046 / 0.044 / 0.043 | 0.00 | 0.00 |
@@ -273,26 +273,26 @@ is where a tool's recall falls to half its own recall at K2P 0, per genome. Runs
 | LTRpred | 0.74-0.76 | 0.134 / 0.131 / 0.132 | 0.18-0.21 | 0.00 |
 | DANTE_LTR | 0.60-0.61 | **> 0.373** / **0.373** / **0.371** | 0.54-0.57 | **0.30-0.31** |
 
-- LTRquest finds nearly every young element and keeps half of them to K2P 0.32-0.33. DANTE_LTR, which builds elements
-  from chains of protein domains, starts lower but declines most slowly. It matches LTRquest at the oldest age (higher
+- LTR_peel finds nearly every young element and keeps half of them to K2P 0.32-0.33. DANTE_LTR, which builds elements
+  from chains of protein domains, starts lower but declines most slowly. It matches LTR_peel at the oldest age (higher
   in 2 of 3 genomes) and keeps more of the elements with protein domains (Fig. 1C: 0.54 against 0.49 at K2P 0.33, 0.39
   against 0.32 at K2P 0.37). HiRepEat comes third (0.17-0.18).
 - Four tools require at least 85% identity between the two LTRs in our commands: LTRharvest (default `-similar 85`),
   LTR_FINDER_parallel (`-M 0.85`), LTR_retriever (which runs both) and HiTE (through LtrDetector). Under this
   simulation's model 85% identity is K2P 0.168, and per element their recall beyond K2P 0.18 is below 1%. LTRpred and
-  DANTE_LTR use 70% (K2P 0.388), and LTRquest 70% on its LTRharvest branch and none on its LTR_FINDER branch. We found
+  DANTE_LTR use 70% (K2P 0.388), and LTR_peel 70% on its LTRharvest branch and none on its LTR_FINDER branch. We found
   no such floor in Look4LTRs or HiRepEat.
 - LTR_Finder and LTR_retriever lose half their recall much earlier than their floor. Part of that is a simulation
   artifact: PrinTE's first aging step ages the TSD copies faster than the LTRs, and these two tools effectively need
   identical TSD copies. Reweighting for it (column `d50_k2p_tsd_adj`) moves their values to about 0.05 and 0.06; the
   ranking does not change.
-- Most tools lose old elements by making fewer calls, not wrong ones: LTRquest's precision stays at 0.946 or above at
+- Most tools lose old elements by making fewer calls, not wrong ones: LTR_peel's precision stays at 0.946 or above at
   every age. Look4LTRs, LTRpred and LTRharvest also make more false calls with age (lowest precision where they still
   make at least 50 calls: 0.69, 0.80 and 0.85).
 
 **Can and cannot say.** It isolates tolerance of LTR divergence for de novo detection. It is optimistic for every
 tool: real old LTRs also carry insertions, deletions and fragmentation. The single burst leaves no younger relatives
-through which a tool could find old copies by homology. PrinTE shares an author with LTRquest.
+through which a tool could find old copies by homology. PrinTE shares an author with LTR_peel.
 
 ### 3. Masking with curated libraries
 
@@ -307,7 +307,7 @@ using every call ([`library_reduction/arab.tsv`](results/library_reduction/arab.
 Calls longer than 1 Mb (HiRepEat only) skip cd-hit-est, which crashes on them. The genome is masked with MaskerAide's
 `rmfast`, a reimplementation of RepeatMasker, with EDTA's benchmark parameters (`-q -no_is -norna -nolow -div 40
 -cutoff 225`, 16 threads), and scored with EDTA's `lib-test.py` against the genome masked with the curated library. The
-score is the F1 over masked LTR-RT bases, with 95% intervals and the paired difference to LTRquest from resampling 5 Mb genome blocks (2,000
+score is the F1 over masked LTR-RT bases, with 95% intervals and the paired difference to LTR_peel from resampling 5 Mb genome blocks (2,000
 draws). A scoring step projected past 36 h at 16 threads was not run.
 
 **Code.** `scripts/build_library.py`, Snakefile rules `lib_intact`, `mask`, `libtest`; `scripts/libtest_ci.py`.
@@ -317,7 +317,7 @@ intervals, and the tools' own libraries as `secondary` rows).
 
 | Library made from the tool's elements | *A. thaliana* | rice | zebra finch | maize | gorilla |
 |---|---|---|---|---|---|
-| LTRquest | 0.588 | 0.683 | 0.451 | not evaluated (> 36 h) | not evaluated (stopped at 36 h) |
+| LTR_peel | 0.588 | 0.683 | 0.451 | not evaluated (> 36 h) | not evaluated (stopped at 36 h) |
 | LTR_retriever | 0.889 | 0.883 | not finished in 36 h (our limit) | not finished in 36 h (our limit) | not finished in 36 h (our limit) |
 | LTRharvest | 0.394 | 0.597 | 0.400 | not evaluated (> 36 h) | not finished in 36 h (our limit) |
 | LTR_Finder | 0.781 | 0.804 | 0.495 | not evaluated (> 36 h) | not evaluated (stopped at 36 h) |
@@ -336,12 +336,12 @@ The libraries the tools build themselves score as follows (secondary rows of the
 | HiTE | **0.916** | **0.914** | 0.772 | 0.956 | 0.280 |
 | DANTE_LTR | 0.831 | 0.873 | 0 calls (error) | 0.945 | 0 calls (error) |
 
-- LTRquest's library finds nearly all curated LTR-RT sequence (sensitivity 0.99-1.00 in *A. thaliana*, rice and zebra
+- LTR_peel's library finds nearly all curated LTR-RT sequence (sensitivity 0.99-1.00 in *A. thaliana*, rice and zebra
   finch) but also masks 11, 80 and 135 Mb that the curated annotation does not call LTR-RT, so its precision is 0.42,
   0.52 and 0.29.
 - HiTE, LTR_retriever and DANTE_LTR build the cleanest libraries from their calls (precision 0.78-0.87 in
   *A. thaliana* and rice), and HiTE leads in zebra finch too.
-- LTRquest's library scores above those of LTRharvest, HiRepEat and Look4LTRs wherever both were scored, and level
+- LTR_peel's library scores above those of LTRharvest, HiRepEat and Look4LTRs wherever both were scored, and level
   with LTRpred's in *A. thaliana* and zebra finch (paired intervals include 0).
 - A tool's own library pipeline can clean its calls well: HiRepEat's own library scores 0.801 and 0.907 in
   *A. thaliana* and rice, against 0.396 and 0.606 for a library of its calls.
@@ -377,7 +377,7 @@ the present share and the tools' own libraries).
 
 | Library made from the tool's elements | *A. thaliana* (n = 291) | rice (897) | zebra finch (292) | maize (572) | gorilla (620) |
 |---|---|---|---|---|---|
-| LTRquest | **0.89** | **0.82** | 0.51 | **0.80** | **0.07** |
+| LTR_peel | **0.89** | **0.82** | 0.51 | **0.80** | **0.07** |
 | LTR_retriever | 0.45 | 0.61 | not finished in 36 h (our limit) | not finished in 36 h (our limit) | not finished in 36 h (our limit) |
 | LTRharvest | 0.85 | 0.79 | 0.51 | 0.72 | not finished in 36 h (our limit) |
 | LTR_Finder | 0.31 | 0.60 | 0.36 | 0.66 | 0.04 |
@@ -387,8 +387,8 @@ the present share and the tools' own libraries).
 | LTRpred | 0.58 | 0.49 | 0.44 | 0.45 | not finished in 36 h (our limit) |
 | DANTE_LTR | 0.63 | 0.50 | 0 calls (error) | 0.48 | 0 calls (error) |
 
-- LTRquest's library recovers the most families in *A. thaliana*, rice, maize and gorilla. Look4LTRs recovers the most
-  in zebra finch, where HiRepEat (0.517) and LTRharvest (0.514) also edge out LTRquest (0.510).
+- LTR_peel's library recovers the most families in *A. thaliana*, rice, maize and gorilla. Look4LTRs recovers the most
+  in zebra finch, where HiRepEat (0.517) and LTRharvest (0.514) also edge out LTR_peel (0.510).
 - Every finished library recovers few gorilla families.
 - "Perfect" depends on format: a whole-element sequence rarely matches curated libraries that split each element into
   LTR and internal entries (*A. thaliana*, rice, zebra finch), so perfect-or-good is the comparable measure.
@@ -417,7 +417,7 @@ Share of each tool's calls that the curated library supports:
 
 | Tool | *A. thaliana* | rice | zebra finch | maize | gorilla |
 |---|---|---|---|---|---|
-| LTRquest | 0.57 | 0.84 | 0.45 | 0.91 | 0.61 |
+| LTR_peel | 0.57 | 0.84 | 0.45 | 0.91 | 0.61 |
 | LTR_retriever | 0.84 | **0.99** | not finished in 36 h (our limit) | not finished in 36 h (our limit) | not finished in 36 h (our limit) |
 | LTRharvest | 0.28 | 0.64 | 0.22 | 0.88 | not finished in 36 h (our limit) |
 | LTR_Finder | 0.75 | 0.96 | 0.67 | 0.90 | 0.38 |
@@ -427,21 +427,21 @@ Share of each tool's calls that the curated library supports:
 | LTRpred | 0.46 | 0.70 | 0.32 | 0.89 | not finished in 36 h (our limit) |
 | DANTE_LTR | 0.87 | **0.99** | 0 calls (error) | **0.98** | 0 calls (error) |
 
-- An estimated 13-34% of LTRquest's unsupported calls are real elements in *A. thaliana*, rice, zebra finch and
+- An estimated 13-34% of LTR_peel's unsupported calls are real elements in *A. thaliana*, rice, zebra finch and
   gorilla (f = 0.29, 0.13, 0.32, 0.34), and 9% in maize. LTR_Finder's are real at a similar rate in *A. thaliana* and
   zebra finch (0.30 and 0.25). The unsupported calls of LTRharvest, Look4LTRs, HiRepEat and LTRpred carry protein
   evidence at or near chance (f at most 0.19, often below 0).
 - The few unsupported calls of the strict tools are often real: f is 0.66 to about 1 for HiTE in *A. thaliana*, rice
   and zebra finch (0.24 in maize) and 0.74 for LTR_retriever in *A. thaliana* (0.22 in rice). So part of their gap to
   the curated annotation is the library's too.
-- The test is weak in gorilla, where only 0.228 of LTRquest's library-supported calls carry a coding unit (0.505-0.870
+- The test is weak in gorilla, where only 0.228 of LTR_peel's library-supported calls carry a coding unit (0.505-0.870
   in the other genomes).
 - Curated libraries annotate old copies less completely in all five genomes. Among protein-confirmed loci, the
   supported share falls from K2P below 0.01 to K2P 0.1 or more: 0.84 to 0.37 (*A. thaliana*), 0.98 to 0.62 (rice),
   0.75 to 0.31 (zebra finch), 0.96 to 0.81 (maize) and 0.98 to 0.76 (gorilla). Fig. 1G and Fig. S3 show every locus.
-- This explains only part of LTRquest's masking excess. In *A. thaliana*, protein-confirmed sequence outside the
+- This explains only part of LTR_peel's masking excess. In *A. thaliana*, protein-confirmed sequence outside the
   curated annotation (2.2 Mb, [`figures/fig_benchmark_numbers.tsv`](figures/fig_benchmark_numbers.tsv) panel G) is
-  about 20% of the 10.96 Mb that LTRquest's library masks outside it.
+  about 20% of the 10.96 Mb that LTR_peel's library masks outside it.
 
 ![Figure S3: curated annotation by element age](figures/figS3_library_age.png)
 
@@ -452,7 +452,7 @@ annotation, beside the same spans moved 20-200 kb (B).
 
 **Can and cannot say.** It gives a lower bound on real elements among unsupported calls. It cannot tell whether old
 unsupported copies belong to curated families that drifted or to related families the libraries lack. Elements without
-proteins are invisible to it (test 6). LTRquest by default keeps a candidate only if it has a TSD, a REXdb
+proteins are invisible to it (test 6). LTR_peel by default keeps a candidate only if it has a TSD, a REXdb
 protein-domain hit or homology to an element with either, so part of its calls are selected on the evidence this test
 counts and its f may be inflated. DANTE_LTR's f is circular by construction, since it builds elements from domains. In
 maize, where curated LTR-RTs fill most of the genome, chance support is high, so maize values carry little
@@ -475,7 +475,7 @@ class), `sim_len.tsv` (by length), `div_d50.tsv` (aging), `real_calls.tsv` and `
 
 | Tool | Recall, coding (S1 / S2) | Recall, protein-less (S1 / S2) | K2P where recall halves (coding / protein-less) |
 |---|---|---|---|
-| LTRquest | **1.00** / **0.99** | **0.97** / **0.99** | 0.332 / 0.145 |
+| LTR_peel | **1.00** / **0.99** | **0.97** / **0.99** | 0.332 / 0.145 |
 | LTR_retriever | 0.61 / 0.59 | 0.53 / 0.47 | 0.050 / 0.045 |
 | LTRharvest | 0.94 / 0.86 | 0.81 / 0.68 | 0.121 / 0.126 |
 | LTR_Finder | 0.49 / 0.48 | 0.42 / 0.39 | 0.045 / 0.040 |
@@ -485,16 +485,16 @@ class), `sim_len.tsv` (by length), `div_d50.tsv` (aging), `real_calls.tsv` and `
 | LTRpred | 0.77 / 0.65 | 0.09 / 0.11 | 0.132 / 0.124 |
 | DANTE_LTR | 0.71 / 0.72 | 0.00 / 0.00 | **> 0.37** / none found |
 
-- LTRquest and Look4LTRs find protein-less elements about as often as coding ones.
+- LTR_peel and Look4LTRs find protein-less elements about as often as coding ones.
 - Two kinds of rule remove protein-less elements. Minimum lengths: in the six simulated genomes HiRepEat finds no
   element shorter than 2 kb and HiTE 15 of 1,704 protein-less ones, and LTRpred and DANTE_LTR none shorter than 4 kb
   (for LTRpred this is its documented default `mindistltr = 4000`). Protein requirements: DANTE_LTR builds elements from
   domain chains and finds none, and LTRpred needs a primer binding site or a domain.
-- With age, LTRquest loses protein-less elements much earlier than coding ones (recall halves at K2P 0.145 against
+- With age, LTR_peel loses protein-less elements much earlier than coding ones (recall halves at K2P 0.145 against
   0.332), so its tolerance of old elements rests on protein domains. HiRepEat shows the reverse (0.281 against 0.164).
-- Real genomes: in gorilla, where 6,431 of 9,346 library-supported LTR-RT loci (69%) are protein-less, LTRquest reports
+- Real genomes: in gorilla, where 6,431 of 9,346 library-supported LTR-RT loci (69%) are protein-less, LTR_peel reports
   5,803 library-supported protein-less elements (0.54 of its 10,833 protein-less calls, chance 0.02), and HiRepEat
-  1,461 of 41,821. In *A. thaliana* LTRquest's protein-less calls are supported at chance (0.10 against 0.11). Strict
+  1,461 of 41,821. In *A. thaliana* LTR_peel's protein-less calls are supported at chance (0.10 against 0.11). Strict
   tools are precise on protein-less calls but make few (rice: LTR_retriever 0.93 of 306, HiTE 0.98 of 237).
 
 ![Figure S1: protein-less elements](figures/figS1_nonauto.png)
@@ -525,12 +525,12 @@ correct in at least 80% of draws.
 **Tables.**
 [`phasing.tsv`](results/phasing.tsv), [`phasing_power.tsv`](results/phasing_power.tsv).
 
-**Rerun.** The phasing script (`ltrharvest_phasing10.py`) belongs to a separate project by LTRquest's author that is
+**Rerun.** The phasing script (`ltrharvest_phasing10.py`) belongs to a separate project by LTR_peel's author that is
 not yet released, so this test cannot be rerun from this repo until that script is released.
 
 | Tool | *A. suecica*: copies | Strength | Correct with 500 copies | Copies for 80% correct | *P. annua*: copies | Strength | Correct with 500 copies |
 |---|---|---|---|---|---|---|---|
-| LTRquest | 2,927 | **1.757** | **5 of 5** | **≤ 500** | 67,502 | 1.867 | 4 of 5 |
+| LTR_peel | 2,927 | **1.757** | **5 of 5** | **≤ 500** | 67,502 | 1.867 | 4 of 5 |
 | LTR_retriever | 1,004 | 1.149 | 0 of 5 | 1,000 | 26,780 | 1.976 | **5 of 5** |
 | LTRharvest | 4,820 | 1.249 | 0 of 5 | 1,000 | 57,157 | 1.726 | 3 of 5 |
 | LTR_Finder | 914 | 1.531 | 0 of 5 | all 914 | 31,307 | 1.990 | **5 of 5** |
@@ -541,13 +541,13 @@ not yet released, so this test cannot be rerun from this repo until that script 
 | DANTE_LTR | 835 | 1.399 | 0 of 5 | all 835 | 22,258 | **2.029** | 4 of 5 |
 
 - With all copies, every tool's elements split both species correctly.
-- In *A. suecica*, LTRquest's elements carry the strongest signal and are correct with 500 copies in 5 of 5 draws; no
+- In *A. suecica*, LTR_peel's elements carry the strongest signal and are correct with 500 copies in 5 of 5 draws; no
   other tool is correct in more than 1 of 5 at that size.
-- In *P. annua*, LTRquest is mid-ranked: DANTE_LTR, LTR_Finder, LTR_retriever and HiTE give stronger splits, and
+- In *P. annua*, LTR_peel is mid-ranked: DANTE_LTR, LTR_Finder, LTR_retriever and HiTE give stronger splits, and
   LTR_Finder, LTR_retriever and HiTE are correct with 500 copies in 5 of 5 draws.
 
 **Can and cannot say.** It measures a downstream use, not annotation accuracy. The phasing script was developed on
-LTRquest libraries.
+LTR_peel libraries.
 
 ### 8. Genotyping real insertion polymorphisms
 
@@ -576,12 +576,12 @@ control run gave every tool the same background calls plus its own calls at the 
 [`genotyping/`](results/genotyping/): `ltrkin_yield.tsv`, `ltrkin_breakdown.tsv` (by nesting and protein class),
 `ltrkin_outcomes_all.tsv`.
 
-**Rerun.** The genotyper, ltrkin, is a separate project by LTRquest's author that is not yet released, so this test
+**Rerun.** The genotyper, ltrkin, is a separate project by LTR_peel's author that is not yet released, so this test
 cannot be rerun from this repo until ltrkin is released.
 
 | Tool | Haplotype 2 (696 loci): share genotyped correctly (95% CI) | Haplotype 1 (664 loci) |
 |---|---|---|
-| LTRquest | **0.93 (0.90-0.95)** | **0.91 (0.88-0.94)** |
+| LTR_peel | **0.93 (0.90-0.95)** | **0.91 (0.88-0.94)** |
 | LTR_retriever | 0.63 (0.59-0.66) | 0.61 (0.56-0.66) |
 | LTRharvest | 0.57 (0.51-0.64) | 0.56 (0.49-0.63) |
 | LTR_Finder | 0.56 (0.53-0.60) | 0.56 (0.52-0.61) |
@@ -591,9 +591,9 @@ cannot be rerun from this repo until ltrkin is released.
 | LTRpred | 0.45 (0.39-0.51) | 0.48 (0.41-0.55) |
 | DANTE_LTR | 0.45 (0.40-0.49) | 0.47 (0.42-0.52) |
 
-- LTRquest's annotation gives the most correct genotypes on both haplotypes, then HiRepEat's.
-- The lead is largest for hosts (LTRquest 0.88 and 0.75 on haplotypes 2 and 1, other tools 0-0.53) and protein-less
-  insertions (0.83 and 0.81, other tools 0-0.51). Part of it comes from loci that only LTRquest's calls nominated: 39 of
+- LTR_peel's annotation gives the most correct genotypes on both haplotypes, then HiRepEat's.
+- The lead is largest for hosts (LTR_peel 0.88 and 0.75 on haplotypes 2 and 1, other tools 0-0.53) and protein-less
+  insertions (0.83 and 0.81, other tools 0-0.51). Part of it comes from loci that only LTR_peel's calls nominated: 39 of
   the 696 loci on haplotype 2, of which it genotyped 38 correctly.
 
 ![Figure S4: genotyping real insertion polymorphisms](figures/figS4_ltrkin.png)
@@ -605,7 +605,7 @@ loci that only that tool's calls nominated.
 
 **Can and cannot say.** It tests the young, polymorphic layer of LTR-RTs against a truth that no tool defines. Old or
 fixed elements are invisible to it. Insertions that every tool misses are absent from the pool, so recall is relative.
-The genotyper was developed with LTRquest annotations, and its rule for element ends was built around LTRquest-style
+The genotyper was developed with LTR_peel annotations, and its rule for element ends was built around LTR_peel-style
 ends (it learns its tolerance from each sample).
 
 ## Resources
@@ -617,7 +617,7 @@ user and system CPU time and the server load when each run started.
 
 | Tool | *P. annua* (1.8 Gb): CPU h / peak GB | maize (2.2 Gb): wall h / CPU h / peak GB | gorilla (3.5 Gb): wall h / CPU h / peak GB |
 |---|---|---|---|
-| LTRquest | 80.2 / 40.0 | 6.8 / 83.9 / 92.6 | 33.4 / 507.4 / 38.5 |
+| LTR_peel | 80.2 / 40.0 | 6.8 / 83.9 / 92.6 | 33.4 / 507.4 / 38.5 |
 | LTR_retriever | 195.7 / 28.5 | not finished in 36 h (our limit): 36.0 / 457.3 / 41.8 | not finished in 36 h (our limit): 36.0 / 20.6 / 89.3 |
 | LTRharvest | 2.0 / 15.3 | 4.0 / 4.0 / 18.3 | not finished in 36 h (our limit): 36.0 / 28.6 / 33.5 |
 | LTR_Finder | 10.4 / 1.3 | 0.4 / 5.6 / 1.5 | 10.1 / 127.4 / 1.9 |
@@ -632,7 +632,7 @@ user and system CPU time and the server load when each run started.
 **Figure S5.** Wall time, CPU time and peak memory of every run against genome size, one row per tool with the other
 tools in gray. Crosses mark runs that stopped at a limit or failed, drawn at the value reached when they ended.
 
-- LTRquest finished every genome. On gorilla it took 33.4 h, close to the 36 h limit, and 507 CPU hours, the most of any
+- LTR_peel finished every genome. On gorilla it took 33.4 h, close to the 36 h limit, and 507 CPU hours, the most of any
   run: its false-positive check flagged too many first-round calls, so it masked them and detected again. Its peak
   memory on maize (92.6 GB) was the highest of any finished run.
 - Look4LTRs was the fastest on five of the seven real genomes and HiRepEat finished gorilla in 0.5 h. LTR_Finder needed
@@ -672,13 +672,13 @@ calls; every other run finished.
 
 Scoring steps that did not finish, which are not the tools' fault:
 
-- maize, masking with the libraries of LTRquest, LTRharvest, LTR_Finder, Look4LTRs, HiRepEat, HiTE and DANTE_LTR:
+- maize, masking with the libraries of LTR_peel, LTRharvest, LTR_Finder, Look4LTRs, HiRepEat, HiTE and DANTE_LTR:
   projected past 36 h at 16 threads (HiTE's library about 64 h, DANTE_LTR's about 260 h, the larger libraries longer
   still);
 - zebra finch, masking with HiRepEat's library: projected at about 10 days; stock RepeatMasker was as slow on the same
   batch, so this is not specific to MaskerAide;
 - gorilla, masking with LTR_Finder's library: stopped at 36 h at batch 26,019 of 61,148;
-- gorilla, masking with LTRquest's library: stopped at 36 h at batch 55,136 of 61,148;
+- gorilla, masking with LTR_peel's library: stopped at 36 h at batch 55,136 of 61,148;
 - gorilla, HiRepEat's library: its build (removing near-identical copies among 43,620 calls with cd-hit-est) stopped at
   36 h, so it was neither masked nor scored in test 4.
 
@@ -691,16 +691,16 @@ Limits of the measuring tools, handled the same way for every tool:
   are renamed before that step.
 - Masking stalled on this server because MaskerAide's memory allocator asked for transparent huge pages and the kernel
   stalled while assembling them. Setting `MIMALLOC_ALLOW_THP=0` fixed it with identical output on a test region. The
-  stalled gorilla masks of LTRquest's library were restarted with a fresh 36 h limit; finished masks were unaffected.
+  stalled gorilla masks of LTR_peel's library were restarted with a fresh 36 h limit; finished masks were unaffected.
 
 ## Limits and conflicts of interest
 
-- **Who ran it.** LTRquest's author designed, ran and wrote up this benchmark.
-- **Shared authorship of instruments.** PrinTE, which made every simulated genome, shares an author with LTRquest, and
-  LTRquest was tuned on PrinTE simulations and on rice. Kmer2LTR (LTR divergence in tests 5-7), the phasing script
-  (test 7) and the genotyper (test 8) are also by LTRquest's author. The phasing script was developed on LTRquest
-  libraries and the genotyper with LTRquest annotations.
-- **Inputs differ by design.** LTRquest takes a related species' proteome, recommended and given in every run here (it
+- **Who ran it.** LTR_peel's author designed, ran and wrote up this benchmark.
+- **Shared authorship of instruments.** PrinTE, which made every simulated genome, shares an author with LTR_peel, and
+  LTR_peel was tuned on PrinTE simulations and on rice. Kmer2LTR (LTR divergence in tests 5-7), the phasing script
+  (test 7) and the genotyper (test 8) are also by LTR_peel's author. The phasing script was developed on LTR_peel
+  libraries and the genotyper with LTR_peel annotations.
+- **Inputs differ by design.** LTR_peel takes a related species' proteome, recommended and given in every run here (it
   masks genes with it before detection); no other tool was given evidence from a related species. Several tools use
   protein or repeat databases bundled with them, and DANTE_LTR is built on the REXdb protein database.
 - **Curated libraries.** The rice and maize libraries come from LTR_retriever's author (EDTA repository, which also
@@ -717,11 +717,11 @@ Limits of the measuring tools, handled the same way for every tool:
 - **Our limits.** The 36 h and 200 GB limits fit a shared server; with more time or memory some failed runs would have
   finished.
 - **Noisy wall times.** The server was shared, so wall times vary with load; CPU hours compare better.
-- **Tests added later.** Tests 2, 4, 5, 6 and 8 were added after the first results, including LTRquest's masking
+- **Tests added later.** Tests 2, 4, 5, 6 and 8 were added after the first results, including LTR_peel's masking
   scores, were known ([Tests](#tests)).
 - **Scope.** Five real genomes (three plants, two vertebrates), two allopolyploids, one plant for genotyping, and
   incomplete masking in maize and gorilla.
-- **Version.** The results describe LTRquest 1.0.1 at commit 5042a1e; later changes are not covered.
+- **Version.** The results describe LTR_peel 1.0.1 at commit 5042a1e; later changes are not covered.
 
 ## How to reproduce
 
@@ -740,6 +740,7 @@ each and at most 80 threads of tool runs at a time, with scoring running alongsi
 | `ltrkin_geno/` | scoring harness of test 8 |
 | `tests/` | unit tests of the scripts, with tiny fixtures |
 | `figures/` | figure scripts, images and `_numbers.tsv` files with every number on each figure and its source |
+| `figures/source_data/` | the values each figure draws, enough to redraw it without the full dataset |
 | `results/` | the result tables cited on this page |
 
 Code and result files keep the names the tests had while they were built: approach 1 is test 1, approach 1b test 2,
@@ -755,11 +756,11 @@ to it. They call `scripts/`, `workflow/` and `sims/` relative to `BENCH_ROOT`, s
 ```bash
 export BENCH_ROOT=/path/to/bench            # data, runs, scores and tables go here
 ROOT=$(dirname "$BENCH_ROOT")               # tool clones go here
-C=/path/to/LTRquest/benchmarks/comparison   # this directory
+C=/path/to/LTR_peel/benchmarks/comparison   # this directory
 mkdir -p "$BENCH_ROOT"/{build,containers,logs,tmp,libs/curated}
 cp -r "$C"/{scripts,workflow,sims,envs,experiments} "$BENCH_ROOT"/
 cd "$ROOT"
-git clone https://github.com/cwb14/LTRquest && git -C LTRquest checkout 5042a1e
+git clone https://github.com/cwb14/LTR_peel && git -C LTR_peel checkout 5042a1e
 git clone https://github.com/cwb14/PrinTE && git -C PrinTE checkout 8aa4a78
 git clone https://github.com/AnantMaheshwari/HiRepEat && git -C HiRepEat checkout ccb990c
 git clone https://github.com/CSU-KangHu/HiTE && git -C HiTE checkout f5f2c7f
@@ -771,17 +772,17 @@ git clone https://github.com/oushujun/EDTA && git -C EDTA checkout 2ad391d
 ```
 
 **2. Environments and builds.** Create each environment from its export, which pins every version
-(`mamba env create -n <name> -f envs/<name>.yml`). Remove the `pip:` lines for `ltrquest` and `kmer2ltr` first and
+(`mamba env create -n <name> -f envs/<name>.yml`). Remove the `pip:` lines for `ltr_peel` and `kmer2ltr` first and
 install those two from the clones at the commits above. `envs/create_envs.sh` records how the environments were first
 made; rerunning it resolves current versions and overwrites the exports.
 
 ```bash
 cd "$BENCH_ROOT"
-for e in bench_tools ltrquest_bench ltrr_bench printe_bench dante_bench dantel_bench hirepeat_bench hite_bench \
+for e in bench_tools ltr_peel_bench ltrr_bench printe_bench dante_bench dantel_bench hirepeat_bench hite_bench \
          maskeraide kmer2ltr longreads; do
-  mamba env create -n $e -f envs/$e.yml   # after removing the ltrquest and kmer2ltr pip lines
+  mamba env create -n $e -f envs/$e.yml   # after removing the ltr_peel and kmer2ltr pip lines
 done
-conda run -n ltrquest_bench pip install "$ROOT/LTRquest"
+conda run -n ltr_peel_bench pip install "$ROOT/LTR_peel"
 bash scripts/build_tools.sh   # builds MaskerAide, Look4LTRs and HiRepEat; pulls the LTRpred and HiTE images
 bash scripts/build_hite.sh    # HiTE's configure steps, by its README's conda route
 ```
@@ -792,8 +793,8 @@ Then, by hand:
   copy in editable mode (`conda run -n printe_bench pip install -e build/PrinTE`) so it finds its bundled data;
 - install Kmer2LTR 0.1.0 into `kmer2ltr` from a clone of [cwb14/Kmer2LTR](https://github.com/cwb14/Kmer2LTR) at
   commit 623da6b, and create a conda environment named `apptainer` that holds Apptainer;
-- build LTRquest's helper tools once into `$BENCH_ROOT/build/ltrquest_tools` with one LTRquest run on a small genome and
-  `LTRQUEST_TOOLS_DIR` pointing there;
+- build LTR_peel's helper tools once into `$BENCH_ROOT/build/ltr_peel_tools` with one LTR_peel run on a small genome and
+  `LTR_PEEL_TOOLS_DIR` pointing there;
 - if `build_hite.sh` stops when it activates its environment, run its last lines (the `chmod` and the LtrDetector
   build) by hand.
 
@@ -862,13 +863,15 @@ $P scripts/div_score.py -v      # report/tables/sim_divergence*.tsv
 Test 6 and the library-reduction check run from `experiments/nonauto/` and `experiments/libreduce/` (usage in each
 script's header). Each figure redraws with `python figures/<stem>.py -v` in the `bench_tools` environment with
 `BENCH_ROOT` set; `figS4_ltrkin.py` needs the `longreads` environment (`envs/longreads.yml`) and the test 8 outputs,
-and panel H of `fig_benchmark.py` also needs the test 8 outputs. The unit tests run from this directory with
+and panel H of `fig_benchmark.py` also needs the test 8 outputs. Each full run also writes the values the figure draws
+to `figures/source_data/<stem>/`; without the dataset, `python figures/<stem>.py --from-source-data` redraws the same
+figure from those tables alone ([`figures/source_data/README.md`](figures/source_data/README.md)). The unit tests run from this directory with
 `BENCH_ROOT` set to a directory holding `scripts/` and `experiments/` (after step 1, or `BENCH_ROOT=$PWD` here):
 `python -m pytest tests experiments/figpub/tests` (`test_ltrkin_breakdown.py` needs pysam, as in `longreads`).
 
 ## For tool authors
 
 If we ran your tool in a way that does not reflect how it should be used, such as a wrong flag, a missing step or an
-outdated version, please open an issue at [github.com/cwb14/LTRquest/issues](https://github.com/cwb14/LTRquest/issues)
+outdated version, please open an issue at [github.com/cwb14/LTR_peel/issues](https://github.com/cwb14/LTR_peel/issues)
 with the fix. We will rerun your tool with the corrected command and update this page and its tables. The command
 each tool got is in `scripts/make_jobs.py`, and the parser that reads its output is in `scripts/calls_to_bed.py`.

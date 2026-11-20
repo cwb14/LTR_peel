@@ -16,8 +16,8 @@ from pathlib import Path
 
 import pytest
 
-from ltrquest import cleanup
-from ltrquest.helper_tools import HELPERS
+from ltr_peel import cleanup
+from ltr_peel.helper_tools import HELPERS
 
 P = "Athal_tair10_chr2_LTRs"
 TOOLS = "Athal_tair10_chr2_tools"      # named after the genome, without the _LTRs
@@ -197,7 +197,7 @@ def test_nothing_is_removed_when_a_genome_has_no_results(single, capsys):
 
 def test_multi_genome_cleanup(tmp_path):
     run = tmp_path / "run"
-    inputs = make(run, ["A.fa", "A.fa.fai", "B.fa", "B.fa.fai", "memo.md", "ltrquest.log",
+    inputs = make(run, ["A.fa", "A.fa.fai", "B.fa", "B.fa.fai", "memo.md", "ltr_peel.log",
                         "ltr_biology/notes.md"])
     kept = results(run, "A_LTRs", depths=(0, 1, 2)) | results(run, "B_LTRs", depths=(0,))
     working(run, "A_LTRs", rounds=(1, 2, 3), depths=(0, 1, 2))
@@ -309,7 +309,7 @@ def test_summary_lists_each_genome_and_tegv(tmp_path):
         assert len(hits) == 1, name
         assert re.fullmatch(rf"  {re.escape(name)} +{re.escape(meaning)}", hits[0]), hits[0]
     assert "plots" not in text[text.index("Your results for B_LTRs"):]
-    assert lines[-1] == "How to read them: https://github.com/cwb14/LTRquest#outputs"
+    assert lines[-1] == "How to read them: https://github.com/cwb14/LTR_peel#outputs"
 
 
 def test_primary_outputs_in_reading_order(tmp_path):
@@ -325,7 +325,7 @@ def test_primary_outputs_in_reading_order(tmp_path):
 
 def test_runs_as_a_module(single):
     run, *_ = single
-    result = subprocess.run([sys.executable, "-m", "ltrquest.cleanup", "--indir", str(run),
+    result = subprocess.run([sys.executable, "-m", "ltr_peel.cleanup", "--indir", str(run),
                              "--prefix", P, "--run-prefix", P, "--keep"],
                             capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
@@ -366,7 +366,7 @@ def test_driver_calls_cleanup_after_plots(driver):
     # a clean-up that fails warns; the run it follows has already succeeded
     assert re.search(r'"\$\{CLEANUP\[@\]\}" "\$\{cleanup_args\[@\]\}" \\\n\s+\|\| echo "WARNING',
                      body)
-    assert re.search(r'^CLEANUP=\(\s+"\$PY" -m ltrquest\.cleanup\s+\)$', driver.read_text(),
+    assert re.search(r'^CLEANUP=\(\s+"\$PY" -m ltr_peel\.cleanup\s+\)$', driver.read_text(),
                      re.MULTILINE)
 
 
@@ -375,7 +375,7 @@ def test_a_tools_dir_named_or_already_there_is_kept(driver):
     it (the Kmer2LTR check at start-up may clone into it). One the user named, or one
     already there, is shielded at the end; only one this run made is passed for removal."""
     text = driver.read_text()
-    derived = text.index('TOOLS_DIR="${LTRQUEST_TOOLS_DIR:-./${RUN_PREFIX}_tools}"')
+    derived = text.index('TOOLS_DIR="${LTR_PEEL_TOOLS_DIR:-./${RUN_PREFIX}_tools}"')
     noted = text.index('[[ -e "$TOOLS_DIR" || -L "$TOOLS_DIR" ]] && TOOLS_DIR_PREEXISTED=true')
     assert derived < noted < text.index("kmer2ltr.api(sys.argv[1])")
     block = cleanup_block(driver)
@@ -435,7 +435,7 @@ def test_flags_parse(driver, tmp_path):
 
 
 # Both stop at the package check (no interpreter), after the tools dir is settled.
-STOP = {"PATH": "/usr/bin:/bin", "LTRQUEST_PYTHON": "/nonexistent/python"}
+STOP = {"PATH": "/usr/bin:/bin", "LTR_PEEL_PYTHON": "/nonexistent/python"}
 QUICK = ("--strand-recovery", "off", "--no-reboundary")
 
 
@@ -450,6 +450,6 @@ def test_the_orchestrator_resolves_and_creates_the_tools_dir(driver, toy_genome,
 def test_a_worker_ignores_the_tools_dir_value(driver, toy_genome, tmp_path):
     """Workers replay the argv from a staging dir; the orchestrator's export is what counts."""
     result = run_driver(driver, "--genome", str(toy_genome), *QUICK, "--tools-dir", "my_tools",
-                        env={**STOP, "_LTRQUEST_WORKER": "1"}, cwd=tmp_path)
+                        env={**STOP, "_LTR_PEEL_WORKER": "1"}, cwd=tmp_path)
     assert "Tools directory: ./toy_tools\n" in result.stdout
     assert not (tmp_path / "my_tools").exists()

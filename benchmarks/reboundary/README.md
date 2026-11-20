@@ -105,8 +105,8 @@ B1 on the truth elements it confirms.
 ## Run it
 
 ```bash
-cd <a finished LTRquest run directory>          # made with --no-reboundary
-export PATH=/path/to/ltrquest/env/bin:$PATH      # blastn and makeblastdb on it
+cd <a finished LTR_peel run directory>          # made with --no-reboundary
+export PATH=/path/to/ltr_peel/env/bin:$PATH      # blastn and makeblastdb on it
 export PYTHONPATH=<repo>/src                     # or pip install . from this checkout
 B=<repo>/benchmarks/reboundary/bench.py
 P="A_LTRs B_LTRs"; G="A.fa B.fa"; T=<directory holding a Kmer2LTR/ checkout>
@@ -118,7 +118,7 @@ python $B collect --out bench
 
 Point `--run` at a run made with `--no-reboundary` (or one put back with
 `--restore`); on re-boundaried tables, B2 would measure a second pass. `--tools-dir`
-needs a Kmer2LTR that `ltrquest-reboundary` accepts (see the CHANGELOG). Each mode
+needs a Kmer2LTR that `ltr_peel-reboundary` accepts (see the CHANGELOG). Each mode
 writes `summary.json` into its `--out`. B1 adds `b1.tsv` (one row per contig) and
 `synthetic.fa`; B2 adds the re-bounded copy under `run/` and every proposal in
 `proposals.tsv`. `collect` tabulates every `b1_*` and `b2_*` directory under its
@@ -163,4 +163,4 @@ stage taking the previous one's choice as `KNOBS`.
   TSD-backed ends; where those ends are wrong (the 9 above), a correct move counts as
   a false change.
 - **The curated check is not in the harness.** It needs a curated LTR library for the
-  genome, placed on it independently of LTRquest.
+  genome, placed on it independently of LTR_peel.

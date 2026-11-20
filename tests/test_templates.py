@@ -7,8 +7,8 @@ import os
 
 import pytest
 
-from ltrquest import templates as tp
-from ltrquest.ltr_model import Genomes, Member, rc
+from ltr_peel import templates as tp
+from ltr_peel.ltr_model import Genomes, Member, rc
 from reboundary_fixtures import build, members
 
 TRUNCATED = ("del_left", "patch_right", "ins_left", "del_left_minus", "nested_del_left",

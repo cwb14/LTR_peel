@@ -3,7 +3,7 @@
 # usage: setsid -f nohup bash build_tools.sh > ../logs/build_tools.log 2>&1 < /dev/null
 set -uo pipefail
 source "$(conda info --base)/etc/profile.d/conda.sh"
-BENCH="${BENCH_ROOT:?set BENCH_ROOT to the benchmark working directory}"; ROOT=$(dirname "$BENCH")   # tool clones (LTRquest, PrinTE, HiRepEat, HiTE, ...) sit next to the working directory
+BENCH="${BENCH_ROOT:?set BENCH_ROOT to the benchmark working directory}"; ROOT=$(dirname "$BENCH")   # tool clones (LTR_peel, PrinTE, HiRepEat, HiTE, ...) sit next to the working directory
 B=$BENCH/build
 C=$BENCH/containers
 export TMPDIR=$BENCH/tmp/build; mkdir -p "$TMPDIR" "$B" "$C"

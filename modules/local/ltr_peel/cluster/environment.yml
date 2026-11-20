@@ -1,0 +1,13 @@
+name: ltr_peel_cluster
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - mmseqs2=16.747c6
+  - mafft=7.526
+  - pyfaidx
+  - numpy
+  # `parasail` on Bioconda is the C library; `import parasail` needs this one.
+  - parasail-python
+  - pywfa

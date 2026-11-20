@@ -1,6 +1,6 @@
 """A round's per-chunk work folders are removed in the background."""
 
-from ltrquest import detect
+from ltr_peel import detect
 
 
 def _tree(root, n_dirs=20, n_files=5):

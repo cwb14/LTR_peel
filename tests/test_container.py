@@ -2,7 +2,7 @@
 
 Two bugs made the 1.0.1 image awkward to use, and both are cheap to guard:
 
-* `./ltrquest.sif --help` answered `FATAL: "--help": executable file not found
+* `./ltr_peel.sif --help` answered `FATAL: "--help": executable file not found
   in $PATH`. Apptainer builds a SIF's runscript from the image's ENTRYPOINT and
   CMD, and an image with only a CMD gets a runscript that *replaces* the command
   with the user's arguments -- so the first flag was run as a program.
@@ -26,7 +26,7 @@ import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 ENTRYPOINT = REPO_ROOT / "bin" / "entrypoint.sh"
-LAUNCHER = REPO_ROOT / "bin" / "ltrquest-container"
+LAUNCHER = REPO_ROOT / "bin" / "ltr_peel-container"
 
 SHELLS = ["/bin/sh", "/bin/bash"]
 
@@ -42,7 +42,7 @@ def echo_bin(tmp_path: Path) -> Path:
     """A directory of stub commands that print how they were called."""
     binned = tmp_path / "bin"
     binned.mkdir()
-    for name in ("ltrquest", "ltrquest-gff3", "ltrquest-plots"):
+    for name in ("ltr_peel", "ltr_peel-gff3", "ltr_peel-plots"):
         _stub(binned / name, f'#!/bin/sh\necho "{name}: $*"\n')
     return binned
 
@@ -75,33 +75,33 @@ class TestScriptsAreWellFormed:
 
 class TestEntrypointDispatch:
     """A first argument that names a command is a command; anything else is an
-    ltrquest argument. That is strictly more permissive than the empty
+    ltr_peel argument. That is strictly more permissive than the empty
     ENTRYPOINT it replaced, so no documented invocation stops working."""
 
     @pytest.mark.parametrize("shell", SHELLS)
-    def test_bare_flags_go_to_ltrquest(self, shell, echo_bin):
+    def test_bare_flags_go_to_ltr_peel(self, shell, echo_bin):
         result = run_entrypoint(shell, echo_bin, "--genome", "x.fa", "--threads", "20")
         assert result.returncode == 0, result.stderr
-        assert result.stdout.strip() == "ltrquest: --genome x.fa --threads 20"
+        assert result.stdout.strip() == "ltr_peel: --genome x.fa --threads 20"
 
     @pytest.mark.parametrize("shell", SHELLS)
-    def test_no_arguments_still_reaches_ltrquest(self, shell, echo_bin):
+    def test_no_arguments_still_reaches_ltr_peel(self, shell, echo_bin):
         # Apptainer supplies the image's CMD (`--help`) in this case; here the
         # point is only that an empty argument list is not an error.
         result = run_entrypoint(shell, echo_bin)
         assert result.returncode == 0, result.stderr
-        assert result.stdout.strip() == "ltrquest:"
+        assert result.stdout.strip() == "ltr_peel:"
 
     @pytest.mark.parametrize("shell", SHELLS)
     def test_an_explicit_command_still_works(self, shell, echo_bin):
-        # `docker run IMG ltrquest --help`, as the README has always documented.
-        result = run_entrypoint(shell, echo_bin, "ltrquest", "--help")
-        assert result.stdout.strip() == "ltrquest: --help"
+        # `docker run IMG ltr_peel --help`, as the README has always documented.
+        result = run_entrypoint(shell, echo_bin, "ltr_peel", "--help")
+        assert result.stdout.strip() == "ltr_peel: --help"
 
     @pytest.mark.parametrize("shell", SHELLS)
     def test_the_other_stages_are_reachable(self, shell, echo_bin):
-        result = run_entrypoint(shell, echo_bin, "ltrquest-gff3", "--help")
-        assert result.stdout.strip() == "ltrquest-gff3: --help"
+        result = run_entrypoint(shell, echo_bin, "ltr_peel-gff3", "--help")
+        assert result.stdout.strip() == "ltr_peel-gff3: --help"
 
     @pytest.mark.parametrize("shell", SHELLS)
     def test_an_arbitrary_command_runs(self, shell, echo_bin):
@@ -112,12 +112,12 @@ class TestEntrypointDispatch:
     @pytest.mark.parametrize("shell", SHELLS)
     def test_arguments_keep_their_spaces(self, shell, echo_bin):
         result = run_entrypoint(shell, echo_bin, "--out_prefix", "two words")
-        assert result.stdout.strip() == "ltrquest: --out_prefix two words"
+        assert result.stdout.strip() == "ltr_peel: --out_prefix two words"
 
     @pytest.mark.parametrize("shell", SHELLS)
-    def test_an_unresolvable_first_argument_is_an_ltrquest_argument(self, shell, echo_bin):
+    def test_an_unresolvable_first_argument_is_an_ltr_peel_argument(self, shell, echo_bin):
         result = run_entrypoint(shell, echo_bin, "not-a-command", "--threads", "2")
-        assert result.stdout.strip() == "ltrquest: not-a-command --threads 2"
+        assert result.stdout.strip() == "ltr_peel: not-a-command --threads 2"
 
 
 class TestLauncherMounts:
@@ -141,7 +141,7 @@ class TestLauncherMounts:
         env.pop("APPTAINER_BIND", None)
         env.pop("SINGULARITY_BIND", None)
         if image is not None:
-            env["LTRQUEST_SIF"] = str(image)
+            env["LTR_PEEL_SIF"] = str(image)
         return subprocess.run(
             [str(LAUNCHER), *args],
             capture_output=True, text=True, cwd=str(cwd), env=env,
@@ -149,7 +149,7 @@ class TestLauncherMounts:
 
     @pytest.fixture
     def image(self, tmp_path: Path) -> Path:
-        path = tmp_path / "ltrquest.sif"
+        path = tmp_path / "ltr_peel.sif"
         path.write_text("not a real image")
         return path
 
@@ -190,19 +190,19 @@ class TestLauncherMounts:
         bind = next(l for l in result.stdout.splitlines() if l.startswith("BIND="))
         assert bind == f"BIND={work.resolve()}", bind
 
-    def test_ltrquest_is_the_default_command(self, fake_apptainer, tmp_path, image):
+    def test_ltr_peel_is_the_default_command(self, fake_apptainer, tmp_path, image):
         work = tmp_path / "work"
         work.mkdir()
         result = self.launch(fake_apptainer, work, "--genome", "g.fa", image=image)
         args = next(l for l in result.stdout.splitlines() if l.startswith("ARGS="))
-        assert args.endswith("ltrquest --genome g.fa"), args
+        assert args.endswith("ltr_peel --genome g.fa"), args
 
     def test_a_named_stage_is_passed_through(self, fake_apptainer, tmp_path, image):
         work = tmp_path / "work"
         work.mkdir()
-        result = self.launch(fake_apptainer, work, "ltrquest-gff3", "--help", image=image)
+        result = self.launch(fake_apptainer, work, "ltr_peel-gff3", "--help", image=image)
         args = next(l for l in result.stdout.splitlines() if l.startswith("ARGS="))
-        assert args.endswith("ltrquest-gff3 --help"), args
+        assert args.endswith("ltr_peel-gff3 --help"), args
 
     def test_a_missing_image_is_explained_not_crashed(self, fake_apptainer, tmp_path):
         work = tmp_path / "work"
@@ -210,7 +210,7 @@ class TestLauncherMounts:
         result = self.launch(fake_apptainer, work, "--genome", "g.fa")
         assert result.returncode == 1
         assert "apptainer pull" in result.stderr
-        assert "LTRQUEST_SIF" in result.stderr
+        assert "LTR_PEEL_SIF" in result.stderr
 
 
 class TestImageWiring:
@@ -221,18 +221,18 @@ class TestImageWiring:
         return (REPO_ROOT / "Dockerfile").read_text()
 
     def test_an_entrypoint_is_declared(self, dockerfile):
-        # An image with only a CMD is what broke `./ltrquest.sif --genome x.fa`.
-        assert 'ENTRYPOINT ["/opt/ltrquest/bin/entrypoint"]' in dockerfile
+        # An image with only a CMD is what broke `./ltr_peel.sif --genome x.fa`.
+        assert 'ENTRYPOINT ["/opt/ltr_peel/bin/entrypoint"]' in dockerfile
         assert "ENTRYPOINT []" not in dockerfile
 
     def test_the_entrypoint_is_installed_where_it_is_declared(self, dockerfile):
-        assert "/opt/ltrquest/src/bin/entrypoint.sh" in dockerfile
-        assert "/opt/ltrquest/bin/entrypoint" in dockerfile
+        assert "/opt/ltr_peel/src/bin/entrypoint.sh" in dockerfile
+        assert "/opt/ltr_peel/bin/entrypoint" in dockerfile
 
     def test_the_launcher_ships_inside_the_image(self, dockerfile):
         # The README tells people to `cat` it out of the image, so it has to be
         # there, at that path.
-        assert "/opt/ltrquest/bin/ltrquest-container" in dockerfile
+        assert "/opt/ltr_peel/bin/ltr_peel-container" in dockerfile
 
     def test_bare_flags_are_the_default_command(self, dockerfile):
         assert 'CMD ["--help"]' in dockerfile
@@ -267,8 +267,8 @@ class TestKmer2LTRRuntimeDependencies:
 
     RECIPES = ["environment.yml",
                "recipe/meta.yaml",
-               "modules/local/ltrquest/detect/environment.yml",
-               "modules/local/ltrquest/cluster/environment.yml"]
+               "modules/local/ltr_peel/detect/environment.yml",
+               "modules/local/ltr_peel/cluster/environment.yml"]
 
     @pytest.mark.parametrize("recipe", RECIPES)
     def test_the_python_binding_is_what_is_named(self, recipe):
@@ -294,7 +294,7 @@ class TestMissingInputMessage:
         for key in ("APPTAINER_CONTAINER", "SINGULARITY_CONTAINER"):
             env.pop(key, None)
         if in_container:
-            env["APPTAINER_CONTAINER"] = "/fake/ltrquest.sif"
+            env["APPTAINER_CONTAINER"] = "/fake/ltr_peel.sif"
         return subprocess.run(
             ["bash", str(driver), *args],
             capture_output=True, text=True, cwd=str(tmp_path), env=env,
@@ -311,7 +311,7 @@ class TestMissingInputMessage:
         assert result.returncode == 1
         assert "Genome not found: nope.fa" in result.stderr
         assert "cd -P ." in result.stderr
-        assert "ltrquest-container" in result.stderr
+        assert "ltr_peel-container" in result.stderr
 
     def test_an_absolute_path_names_the_directory_to_mount(self, driver, tmp_path):
         result = self._run(

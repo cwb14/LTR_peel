@@ -7,8 +7,8 @@ import random
 
 import pytest
 
-from ltrquest import ends
-from ltrquest import overlaps as ov
+from ltr_peel import ends
+from ltr_peel import overlaps as ov
 
 
 def call(start, end, ltr=300, rank=(0, 0.0, 0), chrom="c"):

@@ -24,11 +24,15 @@ Drawings: sims/S2_1 (FASTA, BED; gen500000 for the example check), sims/truth/S2
 eval/adj/arab/<tool>.calls.tsv, mask/arab/curated/arab.fa.out. Imported read-only: scripts/score_elements.py,
 adj_summary.py, proxies.py, div_score.py; poafig (house library).
 Outputs (this directory): fig_benchmark.{pdf,png}, fig_benchmark_numbers.tsv; caches and checks in tmp/.
-Usage: fig_benchmark.py [-v] [--redo-prep] [--honesty] [--draft NAME]
+Source data: source_data/fig_benchmark/*.tsv, every value drawn or printed. The full mode builds them from BENCH_ROOT,
+writes them, reads them back and draws from what it read; --from-source-data draws from them alone (no BENCH_ROOT;
+the checks against raw data run in the full mode only).
+Usage: fig_benchmark.py [-v] [--redo-prep] [--honesty] [--draft NAME] [--from-source-data]
 """
 import argparse
 import csv
 import glob
+import gzip
 import inspect
 import math
 import os
@@ -46,20 +50,18 @@ sys.dont_write_bytecode = True                     # nothing written into bench/
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
-B = Path(os.environ["BENCH_ROOT"])
+B = Path(os.environ["BENCH_ROOT"]) if os.environ.get("BENCH_ROOT") else None   # full mode only
 HERE = Path(__file__).resolve().parent
 TMP = HERE / "tmp"
 STEM = "fig_benchmark"
-LK = B / "ltrkin_geno"                              # another project: read only
-FP = B / "experiments/figpub"
-NA = B / "experiments/nonauto"
-TAB = B / "report/tables"
-sys.path.insert(0, str(B / "scripts"))
+SD = HERE / "source_data" / STEM
+if B is not None:
+    LK = B / "ltrkin_geno"                          # another project: read only
+    FP = B / "experiments/figpub"
+    NA = B / "experiments/nonauto"
+    TAB = B / "report/tables"
+    RUN = B / "runs" / "S2_1"                     # the example genome's tool outputs (sequence ids c0001.. = chr1..)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # poafig.py sits beside this script
-import score_elements as se  # noqa: E402
-import adj_summary as su  # noqa: E402
-import proxies  # noqa: E402
-import div_score  # noqa: E402  (d50 rule)
 import poafig  # noqa: E402
 import matplotlib as mpl  # noqa: E402
 import matplotlib.font_manager as fm  # noqa: E402
@@ -93,11 +95,11 @@ if "kern_mode" not in inspect.signature(_text_helpers.layout).parameters:
     poafig._advance_pt = _advance_pt_mpl311
 
 # ============================================================================ constants
-TOOLS = ["ltrquest", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
+TOOLS = ["ltr_peel", "ltr_retriever", "ltrharvest", "ltr_finder", "look4ltrs", "hirepeat", "hite", "ltrpred",
          "dante_ltr"]
-NAME = dict(ltrquest="LTRquest", ltr_retriever="LTR_retriever", ltrharvest="LTRharvest", ltr_finder="LTR_Finder",
+NAME = dict(ltr_peel="LTR_peel", ltr_retriever="LTR_retriever", ltrharvest="LTRharvest", ltr_finder="LTR_Finder",
             look4ltrs="Look4LTRs", hirepeat="HiRepEat", hite="HiTE", ltrpred="LTRpred", dante_ltr="DANTE_LTR")
-COL = dict(ltrquest="#D55E00", ltr_retriever="#0072B2", ltrharvest="#56B4E9", ltr_finder="#009E73",
+COL = dict(ltr_peel="#D55E00", ltr_retriever="#0072B2", ltrharvest="#56B4E9", ltr_finder="#009E73",
            look4ltrs="#CC79A7", hirepeat="#E69F00", hite="#000000", ltrpred="#A6761D", dante_ltr="#6A3D9A")
 DS = ["arab", "rice", "finch", "maize", "gorilla"]
 DSNAME = {"arab": r"$\it{A.\ thaliana}$", "rice": "rice", "finch": "zebra finch", "maize": "maize",
@@ -106,7 +108,7 @@ S2 = ["S2_1", "S2_2", "S2_3"]
 MM = poafig.MM
 INK, MUTED = poafig.INK, poafig.MUTED
 FS = 6.0                                        # every label >= 6 pt
-LW_Q, LW_O = 1.3, 0.8                           # line weights C, D: LTRquest heavier
+LW_Q, LW_O = 1.3, 0.8                           # line weights C, D: LTR_peel heavier
 BAND_A = 0.22                                   # band alpha C, D
 CMAP = mpl.colormaps["viridis"]                 # score map B, E, F (viridis, fixed 0-1), CMAP(v)
 MISSC, HATCH, HATCHC = "#F2F2F2", "//////", "#B8B8B8"
@@ -121,7 +123,6 @@ EX = dict(ds="S2_1", chrom="chr1", host="chr1:11858003-11868332", tenant="chr1:1
           nonnested="chr1:11885081-11890067", win=(11_857_500, 11_890_600), old_gen="gen500000",
           segs=((11_857_500, 11_869_000), (11_884_600, 11_890_600)),     # A: broken axis, same bp scale
           old_host=(11_686_375, 11_691_476))
-RUN = B / "runs" / "S2_1"                         # the example genome's tool outputs (sequence ids c0001.. = chr1..)
 FAILC = "#5A5A5A"                                 # missing result, tool side: "tool failed"
 DOMC = "#2E2E2E"                                  # A: protein domains reported by a tool
 SAMTOOLS = "samtools"      # on PATH (env bench_tools)
@@ -161,6 +162,53 @@ def pct(x):
     return int(100 * float(x) + 0.5)
 
 
+def import_bench():
+    """the benchmark's own scripts (read only), needed by the full mode alone"""
+    global se, su, proxies, div_score
+    sys.path.insert(0, str(B / "scripts"))
+    import score_elements as se  # noqa: F401
+    import adj_summary as su  # noqa: F401
+    import proxies  # noqa: F401
+    import div_score  # noqa: F401  (d50 rule)
+
+
+# ============================================================================ source data (source_data/<stem>/)
+GZ_OVER = 1_000_000                                 # bytes; larger tables are written gzipped (mtime 0)
+
+
+def write_table(name, df):
+    """one TSV per table; floats at full precision (pandas default), empty cell = no value"""
+    SD.mkdir(parents=True, exist_ok=True)
+    text = df.to_csv(sep="\t", index=False, lineterminator="\n").encode()
+    p, pz = SD / f"{name}.tsv", SD / f"{name}.tsv.gz"
+    if len(text) > GZ_OVER:
+        pz.write_bytes(gzip.compress(text, mtime=0))
+        p.unlink(missing_ok=True)
+    else:
+        p.write_bytes(text)
+        pz.unlink(missing_ok=True)
+
+
+def read_table(name):
+    """every cell as text; the builders convert"""
+    p = SD / f"{name}.tsv"
+    if not p.exists():
+        p = SD / f"{name}.tsv.gz"
+    if not p.exists():
+        raise SystemExit(f"{STEM}: source-data table {name} missing in {SD}")
+    return pd.read_csv(p, sep="\t", dtype=str, keep_default_na=False)
+
+
+def f_(s):
+    """text -> float; empty -> nan"""
+    return math.nan if s == "" else float(s)
+
+
+def oi_(s):
+    """text -> int; empty -> None"""
+    return None if s == "" else int(s)
+
+
 # ============================================================================ data: A (example locus)
 def fa_path(ds, gen="gen1000000"):
     """symlink a simulated FASTA into tmp/ and index it there (nothing written next to the source)"""
@@ -197,11 +245,37 @@ def gff_rows(path, seqid, w0, w1):
     return out
 
 
+A_SRC = dict(                                     # A: where each tool's drawn features come from
+    ltr_peel=dict(strand="calls tsv strand (clean_ltr.tsv)", LTR="calls tsv lltr_end/rltr_start",
+                  TSD="clean_ltr.tsv tsd sequence, tsd_offset 0,0 (flanks drawn adjacent)",
+                  domains="S2_1_LTRs_all_depth_LTR_cleaned.gff3 protein_match (1-based)"),
+    ltr_retriever=dict(strand="pass.list Strand (calls tsv)", LTR="pass.list (calls tsv)",
+                       TSD="S2_1.fa.mod.pass.list 5_TSD / 3_TSD (1-based)", domains="none"),
+    ltrharvest=dict(strand="not reported ('?')", LTR="ltrharvest.tabout (calls tsv)",
+                    TSD="ltrharvest.gff3 target_site_duplication (1-based)", domains="none"),
+    ltr_finder=dict(strand="scn Strand", LTR="scn Location, LTR len",
+                    TSD="scn TSR sequence (flanks drawn adjacent)",
+                    domains="scn RT / IN(core) / IN(c-term) / RH columns: N-N for all three calls here"),
+    look4ltrs=dict(strand="rtr RC (calls tsv)", LTR="rtr LeftEnd / RightStart (0-based)",
+                   TSD="out/Rtr/c0001.rtr TSDStart / TSDEnd (0-based; NA for the host)", domains="none"),
+    hirepeat=dict(strand="not reported", LTR="not reported", TSD="not reported", domains="none",
+                  note="S2_1_all_rounds_original.bed: span only"),
+    hite=dict(strand="not reported ('.')", LTR="intact_LTR.list IN (calls tsv)",
+              TSD="intact_LTR.list TSD sequence (flanks drawn adjacent)", domains="none"),
+    ltrpred=dict(strand="DataSheet strand", LTR="DataSheet lLTR / rLTR (1-based)",
+                 TSD="S2_1_LTRpred_DataSheet.tsv lTSD / rTSD (1-based)",
+                 domains="S2_1_LTRdigestPrediction.gff protein_match of the element (1-based)"),
+    dante_ltr=dict(strand="dante_ltr.gff3 transposable_element", LTR="dante_ltr.gff3 long_terminal_repeat",
+                   TSD="dante_ltr.gff3 target_site_duplication (1-based)",
+                   domains="dante_ltr.gff3 protein_domain children (1-based)"),
+)
+
+
 def reported_features(calls, w0, w1):
     """per tool and call in the window: what the tool itself reports (strand, LTR bounds, TSDs, protein domains),
-    from its own output. Returns {tool: [feat]} and {tool: {feature: source}}. Coordinates 0-based half-open."""
+    from its own output (sources in A_SRC). Returns {tool: [feat]}. Coordinates 0-based half-open."""
     seq = "c0001"                                  # data/S2_1/names.tsv: c0001 = chr1, same coordinates
-    F, SRC = {}, {}
+    F = {}
     span = lambda c: (c["start"], c["end"])        # noqa: E731
     flank = lambda c, n: [(c["start"] - n, c["start"]), (c["end"], c["end"] + n)]   # noqa: E731
     for t in TOOLS:
@@ -210,20 +284,17 @@ def reported_features(calls, w0, w1):
             F[t].append(dict(s=c["start"], e=c["end"], matched=c["matched"], id=c["id"],
                              strand=c["strand"] if c["strand"] in ("+", "-") else None,
                              lltr=c["lltr"], rltr=c["rltr"], tsd=None, dom=[]))
-    # LTRquest: strand + LTRs (calls tsv <- clean_ltr.tsv); TSD sequence, offsets 0,0 (clean_ltr.tsv tsd); domains
+    # LTR_peel: strand + LTRs (calls tsv <- clean_ltr.tsv); TSD sequence, offsets 0,0 (clean_ltr.tsv tsd); domains
     # protein_match children of its LTR_retrotransposon in the GFF3
-    g = gff_rows(RUN / "ltrquest/S2_1_LTRs_all_depth_LTR_cleaned.gff3", seq, w0, w1)
+    g = gff_rows(RUN / "ltr_peel/S2_1_LTRs_all_depth_LTR_cleaned.gff3", seq, w0, w1)
     ids = {(r["s"], r["e"]): r["att"]["ID"] for r in g if r["type"] == "LTR_retrotransposon"}
-    for f in F["ltrquest"]:
-        c = next(x for x in calls["ltrquest"] if x["id"] == f["id"])
+    for f in F["ltr_peel"]:
+        c = next(x for x in calls["ltr_peel"] if x["id"] == f["id"])
         if c["tsd"] not in (".", ""):
             f["tsd"] = flank(c, len(c["tsd"]))
         pid = ids[span(c)]
         f["dom"] = [(r["s"], r["e"], r["att"]["Name"]) for r in g
                     if r["type"] == "protein_match" and r["att"].get("Parent") == pid]
-    SRC["ltrquest"] = dict(strand="calls tsv strand (clean_ltr.tsv)", LTR="calls tsv lltr_end/rltr_start",
-                           TSD="clean_ltr.tsv tsd sequence, tsd_offset 0,0 (flanks drawn adjacent)",
-                           domains="S2_1_LTRs_all_depth_LTR_cleaned.gff3 protein_match (1-based)")
     # LTR_retriever: TSD coordinates from the pass list (5_TSD, 3_TSD; 1-based closed)
     with open(RUN / "ltr_retriever/S2_1.fa.mod.pass.list") as fh:
         pl = [x.rstrip("\n").split("\t") for x in fh if not x.startswith("#")]
@@ -234,16 +305,12 @@ def reported_features(calls, w0, w1):
             if ch == seq and (a - 1, b) == (f["s"], f["e"]):
                 t5, t3 = ([int(v) for v in x.split("..")] for x in (r[4], r[5]))
                 f["tsd"] = [(t5[0] - 1, t5[1]), (t3[0] - 1, t3[1])]
-    SRC["ltr_retriever"] = dict(strand="pass.list Strand (calls tsv)", LTR="pass.list (calls tsv)",
-                                TSD="S2_1.fa.mod.pass.list 5_TSD / 3_TSD (1-based)", domains="none")
     # LTRharvest: strand '?', TSD features in its GFF3 (seq0 = first FASTA record = c0001)
     g = gff_rows(RUN / "ltrharvest/ltrharvest.gff3", "seq0", w0, w1)
     for f in F["ltrharvest"]:
         rr = next(r for r in g if r["type"] == "LTR_retrotransposon" and (r["s"], r["e"]) == (f["s"], f["e"]))
         par = rr["att"]["Parent"]
         f["tsd"] = [(r["s"], r["e"]) for r in g if r["type"] == "target_site_duplication" and r["att"]["Parent"] == par]
-    SRC["ltrharvest"] = dict(strand="not reported ('?')", LTR="ltrharvest.tabout (calls tsv)",
-                             TSD="ltrharvest.gff3 target_site_duplication (1-based)", domains="none")
     # LTR_Finder: strand, TSR sequence and domain columns (RT, IN(core), IN(c-term), RH; 1-based, N-N = none) in scn
     rows = {}
     with open(RUN / "ltr_finder/S2_1.fa.finder.combine.scn") as fh:
@@ -261,9 +328,6 @@ def reported_features(calls, w0, w1):
             if c[k] != "N-N":
                 a, b = (int(v) for v in c[k].split("-"))
                 f["dom"].append((a - 1, b, nm))
-    SRC["ltr_finder"] = dict(strand="scn Strand", LTR="scn Location, LTR len",
-                             TSD="scn TSR sequence (flanks drawn adjacent)",
-                             domains="scn RT / IN(core) / IN(c-term) / RH columns: N-N for all three calls here")
     # Look4LTRs: strand from RC (README: 1 = reverse complemented), TSD coordinates (0-based) in the rtr table
     with open(RUN / "look4ltrs/out/Rtr/c0001.rtr") as fh:
         hdr = fh.readline().rstrip("\n").split("\t")
@@ -272,17 +336,11 @@ def reported_features(calls, w0, w1):
         r = next(x for x in rt if x["RightEnd"] != "NA" and (int(x["LeftStart"]), int(x["RightEnd"])) == (f["s"], f["e"]))
         if r["TSDStart"] != "NA":
             f["tsd"] = [(int(r["TSDStart"]), f["s"]), (f["e"], int(r["TSDEnd"]))]
-    SRC["look4ltrs"] = dict(strand="rtr RC (calls tsv)", LTR="rtr LeftEnd / RightStart (0-based)",
-                            TSD="out/Rtr/c0001.rtr TSDStart / TSDEnd (0-based; NA for the host)", domains="none")
-    SRC["hirepeat"] = dict(strand="not reported", LTR="not reported", TSD="not reported", domains="none",
-                           note="S2_1_all_rounds_original.bed: span only")
     # HiTE: TSD sequence only (intact_LTR.list TSD; coordinates NA..NA), strand '.'
     for f in F["hite"]:
         c = next(x for x in calls["hite"] if x["id"] == f["id"])
         if c["tsd"] not in (".", ""):
             f["tsd"] = flank(c, len(c["tsd"]))
-    SRC["hite"] = dict(strand="not reported ('.')", LTR="intact_LTR.list IN (calls tsv)",
-                       TSD="intact_LTR.list TSD sequence (flanks drawn adjacent)", domains="none")
     # LTRpred: TSD coordinates in the DataSheet (1-based), domains = LTRdigest protein_match of the same element
     with open(RUN / "ltrpred/S2_1_ltrpred/S2_1_LTRpred_DataSheet.tsv") as fh:
         hdr = fh.readline().rstrip("\n").split("\t")
@@ -294,9 +352,6 @@ def reported_features(calls, w0, w1):
         pid = r["ID"].replace("S2_1_", "")
         f["dom"] = [(x["s"], x["e"], x["att"]["name"]) for x in g
                     if x["type"] == "protein_match" and x["att"].get("Parent") == pid]
-    SRC["ltrpred"] = dict(strand="DataSheet strand", LTR="DataSheet lLTR / rLTR (1-based)",
-                          TSD="S2_1_LTRpred_DataSheet.tsv lTSD / rTSD (1-based)",
-                          domains="S2_1_LTRdigestPrediction.gff protein_match of the element (1-based)")
     # DANTE_LTR: TSD and protein_domain children of the call in dante_ltr.gff3 (1-based)
     g = gff_rows(RUN / "dante_ltr/dante_ltr.gff3", seq, w0, w1)
     for f in F["dante_ltr"]:
@@ -304,9 +359,6 @@ def reported_features(calls, w0, w1):
                     and r["att"].get("Parent") == f["id"]]
         f["dom"] = [(r["s"], r["e"], r["att"]["Name"]) for r in g if r["type"] == "protein_domain"
                     and r["att"].get("Parent") == f["id"]]
-    SRC["dante_ltr"] = dict(strand="dante_ltr.gff3 transposable_element", LTR="dante_ltr.gff3 long_terminal_repeat",
-                            TSD="dante_ltr.gff3 target_site_duplication (1-based)",
-                            domains="dante_ltr.gff3 protein_domain children (1-based)")
     for t in TOOLS:                                # sanity: features lie on or beside their call
         for f in F[t]:
             for a, b in (f["tsd"] or []):
@@ -314,13 +366,14 @@ def reported_features(calls, w0, w1):
                 assert 2 <= b - a <= 8, (t, f["id"], a, b)
             for a, b, _ in f["dom"]:
                 assert f["s"] <= a < b <= f["e"], (t, f["id"], a, b)
-    return F, SRC
+    return F
 
 
-def load_example():
-    """A: three true elements of S2 seed 1 (host, its tenant, a non-nested element 16.7 kb away with no other truth
-    LTR-RT between), every tool's calls matched (score_elements.match, RO 0.9, one-to-one), the structural checks of
-    fig1_nested_sims extended to the non-nested element (asserted), and each tool's reported features"""
+def extract_A():
+    """A (full mode): three true elements of S2 seed 1 (host, its tenant, a non-nested element 16.7 kb away with no
+    other truth LTR-RT between), every tool's calls matched (score_elements.match, RO 0.9, one-to-one), the structural
+    checks of fig1_nested_sims extended to the non-nested element (asserted), and each tool's reported features.
+    Returns the source-data tables and scalars"""
     ds, chrom = EX["ds"], EX["chrom"]
     tr = se.read_truth(str(B / "sims/truth" / f"{ds}.truth.tsv"))
     calls, c2t, found = {}, {}, {}
@@ -377,13 +430,63 @@ def load_example():
     found_by = [t for t in TOOLS if hi in found[t]]
     tfound_by = [t for t in TOOLS if ti in found[t]]
     nfound_by = [t for t in TOOLS if ni in found[t]]
-    assert "ltrquest" in found_by and "ltrquest" in tfound_by and "ltrquest" in nfound_by, "no LTRquest miss shown"
+    assert "ltr_peel" in found_by and "ltr_peel" in tfound_by and "ltr_peel" in nfound_by, "no LTR_peel miss shown"
     # how typical: other tools finding each host / each non-nested element of this genome
     hosts = [i for i, x in enumerate(tr) if x["class"] == "host"]
     intact = [i for i, x in enumerate(tr) if x["class"] == "intact"]
     oth = lambda i: sum(i in found[t] for t in TOOLS[1:])     # noqa: E731
     med_h, med_n = float(np.median([oth(i) for i in hosts])), float(np.median([oth(i) for i in intact]))
-    F, SRC = reported_features(wc, w0, w1)
+    F = reported_features(wc, w0, w1)
+    (a1, b1), (a2, b2) = EX["segs"]
+    om = (b1, a2)                                  # omitted stretch of A's broken axis: no truth element, no call
+    assert not [x for x in tr if x["chrom"] == chrom and x["end"] > om[0] and x["start"] < om[1]]
+    assert not [(t, c["id"]) for t in TOOLS for c in wc[t] if c["end"] > om[0] and c["start"] < om[1]]
+    for x in (h, u, nn):
+        assert a1 <= x["start"] - 300 and x["end"] + 300 <= b1 or a2 <= x["start"] - 300 and x["end"] + 300 <= b2
+    # source data: the three true elements, every call in the window with what its tool reports, who finds what
+    T = {}
+    T["A_true_elements"] = pd.DataFrame(
+        [dict(role=role, id=x["id"], family=x["family"], superfamily=x["superfamily"], strand=x["strand"],
+              start=x["start"], end=x["end"], ltr_len=x["ltr_len"], tsd=x["tsd"],
+              pieces=x["pieces"] if role == "host" else "")
+         for role, x in (("host", h), ("tenant", u), ("nonnested", nn))])
+    T["A_calls"] = pd.DataFrame(
+        [dict(tool=t, call_id=f["id"], start=f["s"], end=f["e"], matched=f["matched"], strand=f["strand"] or "",
+              lltr_end=f["lltr"], rltr_start=f["rltr"]) for t in TOOLS for f in F[t]],
+        columns=["tool", "call_id", "start", "end", "matched", "strand", "lltr_end", "rltr_start"]).astype(
+        dict(lltr_end="Int64", rltr_start="Int64"))
+    T["A_call_features"] = pd.DataFrame(
+        [dict(tool=t, call_id=f["id"], feature="TSD", start=a, end=b, name="") for t in TOOLS for f in F[t]
+         for a, b in (f["tsd"] or [])]
+        + [dict(tool=t, call_id=f["id"], feature="domain", start=a, end=b, name=nm) for t in TOOLS for f in F[t]
+           for a, b, nm in f["dom"]], columns=["tool", "call_id", "feature", "start", "end", "name"])
+    T["A_found"] = pd.DataFrame([dict(tool=t, host=int(hi in found[t]), tenant=int(ti in found[t]),
+                                      nonnested=int(ni in found[t])) for t in TOOLS])
+    sc = [("A_median_other_tools_finding_a_host", med_h), ("A_median_other_tools_finding_a_nonnested", med_n)]
+    return T, sc
+
+
+def build_A(T, S):
+    """A from its source-data tables (as drawn and printed)"""
+    el = {r["role"]: dict(id=r["id"], family=r["family"], superfamily=r["superfamily"], strand=r["strand"],
+                          start=int(r["start"]), end=int(r["end"]), ltr_len=int(r["ltr_len"]), tsd=r["tsd"],
+                          pieces=r["pieces"]) for r in T["A_true_elements"].to_dict("records")}
+    h, u, nn = el["host"], el["tenant"], el["nonnested"]
+    pieces = [tuple(map(int, p.split("-"))) for p in h["pieces"].split(",")]
+    feat = defaultdict(list)
+    for r in T["A_call_features"].to_dict("records"):
+        feat[(r["tool"], r["call_id"], r["feature"])].append(r)
+    F = {t: [] for t in TOOLS}
+    for r in T["A_calls"].to_dict("records"):
+        t, cid = r["tool"], r["call_id"]
+        tsd = [(int(x["start"]), int(x["end"])) for x in feat[(t, cid, "TSD")]]
+        F[t].append(dict(s=int(r["start"]), e=int(r["end"]), matched=r["matched"], id=cid,
+                         strand=r["strand"] or None, lltr=oi_(r["lltr_end"]), rltr=oi_(r["rltr_start"]),
+                         tsd=tsd or None,
+                         dom=[(int(x["start"]), int(x["end"]), x["name"]) for x in feat[(t, cid, "domain")]]))
+    fd = {r["tool"]: r for r in T["A_found"].to_dict("records")}
+    found_by, tfound_by, nfound_by = ([t for t in TOOLS if fd[t][k] == "1"] for k in ("host", "tenant", "nonnested"))
+    med_h, med_n = float(S["A_median_other_tools_finding_a_host"]), float(S["A_median_other_tools_finding_a_nonnested"])
     num("A", "example host (S2 seed 1, 0-based half-open)", f"{h['id']} {h['family']} {h['superfamily']} "
         f"{h['strand']}", "sims/truth/S2_1.truth.tsv")
     num("A", "example tenant", f"{u['id']} {u['family']} {u['superfamily']} {u['strand']}", "sims/truth/S2_1.truth.tsv")
@@ -396,21 +499,17 @@ def load_example():
     num("A", "other tools finding the host / non-nested element here; median over all S2_1 hosts / non-nested",
         f"{len(found_by) - 1} / {len(nfound_by) - 1}; {med_h:g} / {med_n:g}", "score_elements.match RO 0.9")
     for t in TOOLS:
-        num("A", f"{NAME[t]} reported features (source)", "; ".join(f"{k}: {v}" for k, v in SRC[t].items()),
+        num("A", f"{NAME[t]} reported features (source)", "; ".join(f"{k}: {v}" for k, v in A_SRC[t].items()),
             f"runs/S2_1/{t}/ and calls/S2_1/{t}.tsv")
         for f in F[t]:
             num("A", f"{NAME[t]} call {f['s']}-{f['e']} (0-based): strand / LTR ends / TSDs / domains",
                 f"{f['strand'] or 'not reported'} / {f['lltr']},{f['rltr']} / {f['tsd'] or 'not reported'} / "
                 f"{', '.join(f'{d[2]} {d[0]}-{d[1]}' for d in f['dom']) or 'none'}", f"runs/S2_1/{t}/")
     (a1, b1), (a2, b2) = EX["segs"]
-    om = (b1, a2)                                  # omitted stretch of A's broken axis: no truth element, no call
-    assert not [x for x in tr if x["chrom"] == chrom and x["end"] > om[0] and x["start"] < om[1]]
-    assert not [(t, c["id"]) for t in TOOLS for c in wc[t] if c["end"] > om[0] and c["start"] < om[1]]
-    for x in (h, u, nn):
-        assert a1 <= x["start"] - 300 and x["end"] + 300 <= b1 or a2 <= x["start"] - 300 and x["end"] + 300 <= b2
+    om = (b1, a2)
     num("A", "broken axis: segments drawn (0-based) and omitted stretch (no truth element, no call of any tool)",
         f"chr1:{a1}-{b1} | chr1:{a2}-{b2}; omitted {om[1] - om[0]} bp", "this script (asserted)")
-    return dict(h=h, u=u, nn=nn, pieces=pieces, calls=wc, F=F, SRC=SRC, found_by=found_by, tfound_by=tfound_by,
+    return dict(h=h, u=u, nn=nn, pieces=pieces, F=F, found_by=found_by, tfound_by=tfound_by,
                 nfound_by=nfound_by, med_h=med_h, med_n=med_n)
 
 
@@ -421,48 +520,62 @@ BCLS = [(s, c, lab) for s, _, cl in BSYS for c, lab in cl]
 CMET = [("precision", "prec."), ("recall", "rec."), ("f1", "F1")]
 
 
-def load_B():
-    """S2 (3 deeply nested genomes), mean of 3 genomes: precision, recall, F1 per class of both class systems on one
-    basis (experiments/figpub/sim_class_prf_joint_summary.tsv, ext truth = every truth.tsv element,
+def extract_B():
+    """B (full mode): S2 (3 deeply nested genomes), mean of 3 genomes: precision, recall, F1 per class of both class
+    systems on one basis (experiments/figpub/sim_class_prf_joint_summary.tsv, ext truth = every truth.tsv element,
     one-to-one RO >= 0.9; nesting classes as sim_class_prf; protein class of a true element = its library entry's
     class, of a call = the domains inside it). NA = the caller makes no call of that class (precision, F1 undefined;
     drawn "–"). Checks: nesting rows equal sim_class_prf_summary.tsv (printed strings); every finite value comes from
-    3 genomes; NA only for precision / F1 with 0 genomes; n_truth per class equal for every tool."""
+    3 genomes; NA only for precision / F1 with 0 genomes; n_truth per class equal for every tool. Returns the table
+    of the drawn rows (values as printed in the source)."""
     want = {(s, c) for s, c, _ in BCLS}
     rows = [r for r in read_tsv(FP / "sim_class_prf_joint_summary.tsv")
             if r["set"] == "S2" and r["tool"] in TOOLS and (r["system"], r["cls"]) in want]
     assert len(rows) == len(TOOLS) * len(want), len(rows)
     old = {(r["tool"], r["cls"]): r for r in read_tsv(FP / "sim_class_prf_summary.tsv") if r["set"] == "S2"}
-    src = "experiments/figpub/sim_class_prf_joint_summary.tsv set=S2"
-    V, SD, n = {}, {}, {}
+    n = {}
     for r in rows:
         t, c = r["tool"], r["cls"]
         for m, _ in CMET:
-            v = r[f"{m}_mean"]
-            if v == "NA":
+            if r[f"{m}_mean"] == "NA":
                 assert m != "recall" and r[f"{m}_n_genomes"] == "0" and int(r["n_calls"]) == 0, (t, c, m)
-                V[(c, m, t)] = None
-                num("B", f"S2 {NAME[t]} {c} {m}", "NA (no calls of this class; drawn '–')",
-                    f"{src} tool={t} cls={c} {m}_mean (n_calls 0)")
-                continue
-            assert r[f"{m}_n_genomes"] == "3", (t, c, m)
-            V[(c, m, t)], SD[(c, m, t)] = float(v), float(r[f"{m}_sd"])
-            num("B", f"S2 {NAME[t]} {c} {m} (mean of 3 genomes; SD {float(r[m + '_sd']):.4f})", f"{float(v):.4f}",
-                f"{src} tool={t} system={r['system']} cls={c} {m}_mean, {m}_sd")
+            else:
+                assert r[f"{m}_n_genomes"] == "3", (t, c, m)
         if r["system"] == "nesting":                 # the nesting half = as in sim_class_prf
             o = old[(t, c)]
             for m, _ in CMET:
                 assert (r[f"{m}_mean"], r[f"{m}_sd"]) == (o[f"{m}_mean"], o[f"{m}_sd"]), (t, c, m)
         assert n.setdefault(c, int(r["n_truth"])) == int(r["n_truth"]), (t, c)
+    cols = ["tool", "system", "cls", "n_truth"] + [f"{m}_{k}" for m, _ in CMET for k in ("mean", "sd")]
+    return pd.DataFrame([{k: r[k] for k in cols} for r in rows], columns=cols)
+
+
+def build_B(T):
+    """B from its source-data table"""
+    src = "experiments/figpub/sim_class_prf_joint_summary.tsv set=S2"
+    V, SD_, n = {}, {}, {}
+    for r in T["B_scorecard"].to_dict("records"):
+        t, c = r["tool"], r["cls"]
+        for m, _ in CMET:
+            v = r[f"{m}_mean"]
+            if v == "NA":
+                V[(c, m, t)] = None
+                num("B", f"S2 {NAME[t]} {c} {m}", "NA (no calls of this class; drawn '–')",
+                    f"{src} tool={t} cls={c} {m}_mean (n_calls 0)")
+                continue
+            V[(c, m, t)], SD_[(c, m, t)] = float(v), float(r[f"{m}_sd"])
+            num("B", f"S2 {NAME[t]} {c} {m} (mean of 3 genomes; SD {float(r[m + '_sd']):.4f})", f"{float(v):.4f}",
+                f"{src} tool={t} system={r['system']} cls={c} {m}_mean, {m}_sd")
+        n.setdefault(c, int(r["n_truth"]))
     for s, c, lab in BCLS:
         num("B", f"true elements in class {lab} (S2, 3 genomes summed; header n)", n[c],
             f"{src} n_truth (system {s}, cls {c})")
     # spread across the three genomes (one legend clause): largest SD per tool over the drawn classes and metrics
-    sd_max = {t: max(v for (c, m, tt), v in SD.items() if tt == t) for t in TOOLS}
+    sd_max = {t: max(v for (c, m, tt), v in SD_.items() if tt == t) for t in TOOLS}
     for t in TOOLS:
         num("B", f"S2 {NAME[t]} largest across-genome SD over the drawn classes and metrics", f"{sd_max[t]:.4f}",
             f"{src} *_sd")
-    return dict(V=V, SD=SD, n=n, sd_max=sd_max)
+    return dict(V=V, SD=SD_, n=n, sd_max=sd_max)
 
 # ============================================================================ data: C, D (aging series)
 def k2p_of_identity(p100):
@@ -472,7 +585,7 @@ def k2p_of_identity(p100):
     return -0.5 * math.log(1 - 2 * P - Q) - 0.25 * math.log(1 - 2 * Q)
 
 
-FLOOR = {"ltrquest": None, "ltr_retriever": 85, "ltrharvest": 85, "ltr_finder": 85, "look4ltrs": None,
+FLOOR = {"ltr_peel": None, "ltr_retriever": 85, "ltrharvest": 85, "ltr_finder": 85, "look4ltrs": None,
          "hirepeat": None, "hite": 85, "ltrpred": 70, "dante_ltr": 70}
 
 
@@ -482,14 +595,15 @@ def pooled_d50(xs, rs):
     return div_score.d50([(t, float(x), float(r)) for t, (x, r) in enumerate(zip(xs, rs))])
 
 
-def load_curve(cls, panel):
-    """one protein class of the aging series (C: coding, D: protein-less), 3 genomes pooled: experiments/figpub/
-    div_all_ci.py's procedure on one class (as for the protein-less panel). Per tool x timepoint recall over the
-    pooled elements of the class; 95% CI from 1,000 resamples of their library families (numpy default_rng(1), every
-    copy of a drawn family carried along, percentiles 2.5 / 97.5 as nonauto_stats.ci); x = median K2P of the pooled
-    elements of the class at the timepoint (each element once); one dot at the pooled recall-halved point
-    (scripts/div_score.d50, linear between timepoints). Checks: pooled n / tp = div_class.tsv sums over seeds; the
-    pooled d50 agrees with div_d50.tsv (same pool, x = class median over seeds) within 0.002 and lies inside its CI."""
+def extract_curve(cls, panel):
+    """one protein class of the aging series (full mode; C: coding, D: protein-less), 3 genomes pooled:
+    experiments/figpub/div_all_ci.py's procedure on one class (as for the protein-less panel). Per tool x timepoint
+    recall over the pooled elements of the class; 95% CI from 1,000 resamples of their library families (numpy
+    default_rng(1), every copy of a drawn family carried along, percentiles 2.5 / 97.5 as nonauto_stats.ci); x = median
+    K2P of the pooled elements of the class at the timepoint (each element once); one dot at the pooled recall-halved
+    point (scripts/div_score.d50, linear between timepoints). Checks: pooled n / tp = div_class.tsv sums over seeds;
+    the pooled d50 agrees with div_d50.tsv (same pool, x = class median over seeds) within 0.002 and lies inside its
+    CI. Returns the curve table, the recall-halved table and scalars."""
     de = pd.read_csv(NA / "div_elements.tsv", sep="\t",
                      usecols=["ds", "timepoint", "tool", "element", "family", "cls", "k2p", "hit"])
     s_ = de[(de.cls == cls) & de.tool.isin(TOOLS)]
@@ -503,8 +617,7 @@ def load_curve(cls, panel):
     nF = len(fams)
     draws = np.random.default_rng(1).integers(0, nF, size=(1000, nF))
     M = np.stack([np.bincount(z, minlength=nF) for z in draws]).astype(float)
-    lab = {"coding": "coding", "proteinless": "protein-less"}[cls]
-    S = {}
+    curve, half = [], []
     for t in TOOLS:
         st = s_[s_.tool == t]
         N, Hh = np.zeros((nF, 11)), np.zeros((nF, 11))
@@ -524,24 +637,47 @@ def load_curve(cls, panel):
         if v[0].isdigit() and rr.d50[:1].isdigit():
             assert abs(float(v) - float(rr.d50)) <= 0.002, (t, cls, v, rr.d50)
             assert float(rr.d50_lo) <= float(v) <= float(rr.d50_hi), (t, cls, v, rr.d50_lo, rr.d50_hi)
-        S[t] = dict(x=x, r=r, lo=lo, hi=hi, d50=v, r0=r[0], ref=rr.d50, ref_lo=rr.d50_lo, ref_hi=rr.d50_hi)
+        for tt in range(11):
+            curve.append(dict(tool=t, timepoint=tt, median_k2p=x[tt], recall=r[tt], ci_lo=lo[tt], ci_hi=hi[tt],
+                              n_elements=int(n[tt])))
+        half.append(dict(tool=t, d50=v, d50_table=rr.d50, d50_table_lo=rr.d50_lo, d50_table_hi=rr.d50_hi))
+    n_el = int(s_[(s_.tool == TOOLS[0]) & (s_.timepoint == 0)].shape[0])
+    return pd.DataFrame(curve), pd.DataFrame(half), [(f"{panel}_families", nF), (f"{panel}_elements_per_timepoint",
+                                                                                  n_el)]
+
+
+def build_curve(T, S, cls, panel, name):
+    """C or D from its source-data tables"""
+    lab = {"coding": "coding", "proteinless": "protein-less"}[cls]
+    cv = T[f"{panel}_{name}_recall"]
+    half = {r["tool"]: r for r in T[f"{panel}_{name}_recall_halved"].to_dict("records")}
+    nF = int(S[f"{panel}_families"])
+    out = {}
+    for t in TOOLS:
+        c = cv[cv.tool == t]
+        assert c.timepoint.tolist() == [str(i) for i in range(11)], (panel, t)
+        x, r, lo, hi = (np.array([f_(v) for v in c[k]]) for k in ("median_k2p", "recall", "ci_lo", "ci_hi"))
+        n = [int(v) for v in c.n_elements]
+        hr = half[t]
+        v = hr["d50"]
+        out[t] = dict(x=x, r=r, lo=lo, hi=hi, d50=v, r0=r[0], ref=hr["d50_table"], ref_lo=hr["d50_table_lo"],
+                      ref_hi=hr["d50_table_hi"])
         num(panel, f"{NAME[t]} {lab} pooled d50 (K2P at which pooled recall halves; dot)", v,
             f"computed: scripts/div_score.d50 on pooled {cls} counts (experiments/nonauto/div_elements.tsv)")
         num(panel, f"{NAME[t]} {lab} d50 in div_d50.tsv [95% CI] (x = class median over seeds), for comparison",
-            f"{rr.d50} [{rr.d50_lo}, {rr.d50_hi}]", "experiments/nonauto/div_d50.tsv")
+            f"{hr['d50_table']} [{hr['d50_table_lo']}, {hr['d50_table_hi']}]", "experiments/nonauto/div_d50.tsv")
         for tt in range(11):
             num(panel, f"{NAME[t]} timepoint {tt} {lab} pooled recall [95% CI] at median K2P {x[tt]:.4f}",
-                f"{r[tt]:.4f} [{lo[tt]:.4f}, {hi[tt]:.4f}] (n {int(n[tt])})",
+                f"{r[tt]:.4f} [{lo[tt]:.4f}, {hi[tt]:.4f}] (n {n[tt]})",
                 f"computed from experiments/nonauto/div_elements.tsv cls={cls} (= div_class.tsv sums)")
     num(panel, f"{lab} element families (unit of the resampling)", nF, "experiments/nonauto/div_elements.tsv")
-    num(panel, f"{lab} elements per timepoint (3 genomes pooled)", int(s_[(s_.tool == TOOLS[0]) &
-                                                                           (s_.timepoint == 0)].shape[0]),
+    num(panel, f"{lab} elements per timepoint (3 genomes pooled)", int(S[f"{panel}_elements_per_timepoint"]),
         "experiments/nonauto/div_elements.tsv")
     if panel == "C":
         for fl in (85, 70):
             num("C", f"documented identity floor {fl}% as K2P (simulation model)", f"{k2p_of_identity(fl):.3f}",
                 "computed (substitutions only, transitions = transversions); fig2_divergence memo")
-    return dict(S=S, n_fam=nF)
+    return dict(S=out, n_fam=nF)
 
 
 # ============================================================================ data: E, F (real genomes)
@@ -599,24 +735,39 @@ def check_missing(panel, dss, have, reasons, expected):
                 "tool failed" if kind == "failed" else "not evaluated", reasons[(ds, t)][1])
 
 
-def load_EF():
-    """E: masking precision, recall (lib-test sensitivity), F1 of each tool's intact library against curated
-    annotation (report/tables/masking.tsv role primary, <tool>.intact: prec, sens, F1) for A. thaliana, rice, zebra
-    finch. F: share of curated LTR entries each library recovers perfect or good (report/tables/bm_rm2.tsv), 5
-    genomes. Missing cells classed and asserted per panel."""
+def extract_EF():
+    """E (full mode): masking precision, recall (lib-test sensitivity), F1 of each tool's intact library against
+    curated annotation (report/tables/masking.tsv role primary, <tool>.intact: prec, sens, F1) for A. thaliana, rice,
+    zebra finch. F: share of curated LTR entries each library recovers perfect or good (report/tables/bm_rm2.tsv), 5
+    genomes. Missing cells classed (missing_reasons). Returns the tables and scalars."""
     m = pd.read_csv(TAB / "masking.tsv", sep="\t")
     m = m[(m.role == "primary") & (m.F1 != ".")].copy()
     m["tool"] = m.lib.str.replace(".intact", "", regex=False)
     m = m[m.tool.isin(TOOLS)]
-    mk = {(r.ds, r.tool): dict(precision=float(r.prec), recall=float(r.sens), f1=float(r.F1), f1_lo=r.F1_lo,
-                               f1_hi=r.F1_hi) for r in m.itertuples() if r.ds in E_DS}
+    E = pd.DataFrame([dict(ds=r.ds, tool=r.tool, precision=float(r.prec), recall=float(r.sens), f1=float(r.F1),
+                           f1_ci_lo=f"{r.F1_lo}", f1_ci_hi=f"{r.F1_hi}") for r in m.itertuples() if r.ds in E_DS])
+    fpq = float(m[(m.ds == "arab") & (m.tool == "ltr_peel")].FP_mb.iloc[0])
     r = pd.read_csv(TAB / "bm_rm2.tsv", sep="\t")
     r = r[(r.role == "primary") & r.lib.str.endswith(".intact")].copy()
     r["tool"] = r.lib.str.replace(".intact", "", regex=False)
     r = r[r.tool.isin(TOOLS)]
-    pg = {(x.ds, x.tool): float(x.frac_perfect_or_good) for x in r.itertuples()}
+    F = pd.DataFrame([dict(ds=x.ds, tool=x.tool, share_perfect_or_good=float(x.frac_perfect_or_good))
+                      for x in r.itertuples()])
     ncur = r.groupby("ds").n_curated_LTR.first().to_dict()
+    Fn = pd.DataFrame([dict(ds=ds, n_curated_ltr=int(ncur[ds])) for ds in DS])
     reasons = missing_reasons()
+    Mi = pd.DataFrame([dict(ds=ds, tool=t, kind=k, reason=why) for (ds, t), (k, why) in reasons.items()])
+    return dict(E_masking=E, F_families=F, F_curated_n=Fn, EF_missing=Mi), [("E_arab_ltr_peel_fp_mb", fpq)]
+
+
+def build_EF(T, S):
+    """E and F from their source-data tables; missing cells checked per panel"""
+    mk = {(r["ds"], r["tool"]): dict(precision=float(r["precision"]), recall=float(r["recall"]), f1=float(r["f1"]),
+                                     f1_lo=r["f1_ci_lo"], f1_hi=r["f1_ci_hi"])
+          for r in T["E_masking"].to_dict("records")}
+    pg = {(r["ds"], r["tool"]): float(r["share_perfect_or_good"]) for r in T["F_families"].to_dict("records")}
+    ncur = {r["ds"]: int(r["n_curated_ltr"]) for r in T["F_curated_n"].to_dict("records")}
+    reasons = {(r["ds"], r["tool"]): (r["kind"], r["reason"]) for r in T["EF_missing"].to_dict("records")}
     check_missing("E", E_DS, mk, reasons, E_MISSING)
     check_missing("F", DS, pg, reasons, F_MISSING)
     for (ds, t), v in sorted(mk.items()):
@@ -629,7 +780,7 @@ def load_EF():
             "report/tables/bm_rm2.tsv frac_perfect_or_good")
     for ds in DS:
         num("F", f"{ds} curated LTR entries (n)", int(ncur[ds]), "report/tables/bm_rm2.tsv n_curated_LTR")
-    return dict(mk=mk, pg=pg, ncur=ncur, reasons=reasons, m=m)
+    return dict(mk=mk, pg=pg, ncur=ncur, reasons=reasons, fp_mb_arab_ltr_peel=float(S["E_arab_ltr_peel_fp_mb"]))
 
 
 # ============================================================================ data: G (A. thaliana loci)
@@ -715,7 +866,13 @@ def prep_G(ds="arab"):
                         prof=np.array(prof, np.float32), nprof=np.array(nprof, np.float32))
 
 
-def load_G(redo=False, ds="arab"):
+GBINC = [f"bin{i:02d}" for i in range(1, NBIN + 1)]     # G coverage columns: 5' LTR, internal, 3' LTR bins
+
+
+def extract_G(redo=False, ds="arab"):
+    """G (full mode): the cached loci and profiles (tmp/), checked against library_age_bias.tsv. Returns the drawn
+    rows (loci with a measured K2P: curated coverage per bin along the locus and along its moved span), the four
+    K2P classes as printed, and scalars."""
     if redo or not (TMP / f"prep_{ds}.npz").exists():
         log("G: building A. thaliana loci and coverage profiles (cached in tmp/)", True)
         prep_G(ds)
@@ -729,10 +886,37 @@ def load_G(redo=False, ds="arab"):
         if int(t["n_loci"]) != int(m.sum()) or abs(float(t["supported_share"]) - sup[m].mean()) > 5e-4:
             raise SystemExit(f"{STEM}: G {BINS[i]}: {m.sum()} / {sup[m].mean():.4f} do not reproduce "
                              f"library_age_bias.tsv ({t['n_loci']} / {t['supported_share']})")
-        num("G", f"A. thaliana protein-confirmed loci, K2P {BINS[i]}: n, library-supported share",
-            f"{t['n_loci']}, {t['supported_share']} [{t['wilson95']}]", "report/tables/library_age_bias.tsv")
     gap = {(r["ds"], r["set"]): r for r in read_tsv(B / "experiments/a4_diagnostics/annotation_gap.tsv")}
-    d["gap_mb"] = float(gap[(ds, "all")]["gap_mb"])
+    ok = ~np.isnan(k2p)
+    loc = np.flatnonzero(ok)
+    parts = []
+    for span, M in (("locus", d["prof"]), ("moved", d["nprof"])):
+        p = pd.DataFrame(M[ok], columns=GBINC)
+        p.insert(0, "span", span)
+        p.insert(0, "k2p", k2p[ok])
+        p.insert(0, "locus", loc + 1)
+        parts.append(p)
+    cov = pd.concat(parts, ignore_index=True)
+    ab = pd.DataFrame([dict(k2p_class=b, n_loci=tab[b]["n_loci"], supported_share=tab[b]["supported_share"],
+                            wilson95=tab[b]["wilson95"]) for b in BINS])
+    return dict(G_coverage=cov, G_k2p_classes=ab), [("G_gap_mb", float(gap[(ds, "all")]["gap_mb"]))]
+
+
+def build_G(T, S):
+    """G from its source-data tables (profiles back to float32, as cached)"""
+    cov = T["G_coverage"]
+    lc, mv = cov[cov.span == "locus"], cov[cov.span == "moved"]
+    assert lc.locus.tolist() == mv.locus.tolist()
+    d = dict(k2p=np.array([float(v) for v in lc.k2p]),
+             prof=np.array([[f_(v) for v in row] for row in lc[GBINC].to_numpy()]).astype(np.float32),
+             nprof=np.array([[f_(v) for v in row] for row in mv[GBINC].to_numpy()]).astype(np.float32))
+    tab = {r["k2p_class"]: dict(age_bin=r["k2p_class"], n_loci=r["n_loci"], supported_share=r["supported_share"],
+                                wilson95=r["wilson95"]) for r in T["G_k2p_classes"].to_dict("records")}
+    for b in BINS:
+        t = tab[b]
+        num("G", f"A. thaliana protein-confirmed loci, K2P {b}: n, library-supported share",
+            f"{t['n_loci']}, {t['supported_share']} [{t['wilson95']}]", "report/tables/library_age_bias.tsv")
+    d["gap_mb"] = float(S["G_gap_mb"])
     num("G", "moved spans: each locus shifted 20-200 kb (chance)", "20-200 kb",
         "eval/adj/arab/<tool>.calls.tsv null_shift (approach 4 null; figS3_library_age memo)")
     d["tab"] = tab
@@ -750,59 +934,92 @@ HCOLS = [("all", None, None, "all"),
          ("protein", "protein_class", "coding", "coding"), ("protein", "protein_class", "proteinless", "protein-less")]
 
 
-def load_H():
-    """ltrkin, real insertion polymorphisms of the two Cardamine amara haplotypes. All loci: share genotyped correctly
-    and its block-bootstrap 95% CI (experiments/figpub/ltrkin_outcomes_all.tsv; = ltrkin_yield.tsv yield, asserted).
-    Per class (non-nested, tenants, hosts | coding, protein-less; partly coding loci only in Fig. S4) and caller, from
-    the per-locus table experiments/figpub/ltrkin_locus_class.tsv: n loci, genotyped correctly (out_<tool> = correct)
-    split into loci also nominated by another caller (solid) and loci this caller alone nominated (nominators = this
-    caller only; hatched). Checks: per caller the locus table's all-loci n and correct = ltrkin_outcomes_all.tsv;
-    LTRquest's alone-nominated loci and their correct calls = n_ltrquest_only_loci / n_correct_ltrquest_only (and the
-    table's ltrquest_only flag); a caller that did not finish has '.' at every locus. Also every caller's share on the
-    loci two or more callers nominated (legend)."""
+def extract_H():
+    """H (full mode): ltrkin, real insertion polymorphisms of the two Cardamine amara haplotypes. All loci: share
+    genotyped correctly and its block-bootstrap 95% CI (experiments/figpub/ltrkin_outcomes_all.tsv; = ltrkin_yield.tsv
+    yield, asserted). Per class (non-nested, tenants, hosts | coding, protein-less; partly coding loci only in Fig. S4)
+    and caller, from the per-locus table experiments/figpub/ltrkin_locus_class.tsv: n loci, genotyped correctly
+    (out_<tool> = correct) split into loci also nominated by another caller (solid) and loci this caller alone
+    nominated (nominators = this caller only; hatched). Checks: per caller the locus table's all-loci n and correct =
+    ltrkin_outcomes_all.tsv; LTR_peel's alone-nominated loci and their correct calls = n_ltr_peel_only_loci /
+    n_correct_ltr_peel_only (and the table's ltr_peel_only flag); a caller that did not finish has '.' at every locus.
+    Also every caller's share on the loci two or more callers nominated (legend). Returns the tables and scalars."""
     rows = {(r["ds"], r["tool"]): r for r in read_tsv(FP / "ltrkin_outcomes_all.tsv")
             if r["role"] == "primary" and r["tool"] in TOOLS}
     Y = {(r["ds"], r["tool"]): r for r in read_tsv(LK / "report/tables/ltrkin_yield.tsv") if r["run"] == "e2e"}
     d = pd.read_csv(FP / "ltrkin_locus_class.tsv", sep="\t", dtype=str, keep_default_na=False)
-    src = "experiments/figpub/ltrkin_locus_class.tsv"
-    out, ncls, core = {}, {}, {}
+    callers, classes, cls_n, sc = [], [], [], []
     for ds in HDS:
         g = d[d.ds == ds].reset_index(drop=True)
         noms = g.nominators.str.split(",")
         nnom = noms.str.len()
-        assert ((noms.apply(lambda z: z == ["ltrquest"])) == (g.ltrquest_only == "1")).all(), ds
+        assert ((noms.apply(lambda z: z == ["ltr_peel"])) == (g.ltr_peel_only == "1")).all(), ds
         masks = {lab: (g.index >= 0) if col is None else (g[col] == val) for _, col, val, lab in HCOLS}
         for _, _, _, lab in HCOLS:
-            ncls[(ds, lab)] = int(masks[lab].sum())
-        core[ds] = dict(n=int((nnom >= 2).sum()), n_single=int((nnom == 1).sum()))
-        num("H", f"{ds} loci nominated by two or more callers / by one caller only",
-            f"{core[ds]['n']} / {core[ds]['n_single']}", f"{src} nominators")
+            cls_n.append(dict(ds=ds, cls=lab, n_loci=int(masks[lab].sum())))
+        sc += [(f"H_{ds}_loci_two_or_more_callers", int((nnom >= 2).sum())),
+               (f"H_{ds}_loci_one_caller", int((nnom == 1).sum()))]
         for t in TOOLS:
             r = rows[(ds, t)]
             o = g[f"out_{t}"]
             if r["status"] != "ok":
                 assert r["status"].startswith("DNF") and (o == ".").all(), (ds, t, r["status"])
-                out[(ds, t)] = dict(status=r["status"])
-                num("H", f"{ds} {NAME[t]} status", r["status"], "experiments/figpub/ltrkin_outcomes_all.tsv")
+                callers.append(dict(ds=ds, tool=t, status=r["status"]))
                 continue
             n, nc = int(r["n_loci"]), int(r["n_correct"])
             assert abs(float(r["share_correct"]) - float(Y[(ds, t)]["yield"])) < 1e-9, (ds, t)   # = ltrkin_yield
             corr = (o == "correct").to_numpy()
             alone = noms.apply(lambda z, t=t: z == [t]).to_numpy()
             assert len(g) == n and int(corr.sum()) == nc, (ds, t, len(g), n, int(corr.sum()), nc)
-            if t == "ltrquest":
-                assert int(alone.sum()) == int(r["n_ltrquest_only_loci"]), ds
-                assert int((alone & corr).sum()) == int(r["n_correct_ltrquest_only"]), ds
-            cls = {}
+            if t == "ltr_peel":
+                assert int(alone.sum()) == int(r["n_ltr_peel_only_loci"]), ds
+                assert int((alone & corr).sum()) == int(r["n_correct_ltr_peel_only"]), ds
             for _, _, _, lab in HCOLS:
                 mk = masks[lab].to_numpy() if hasattr(masks[lab], "to_numpy") else masks[lab]
-                cls[lab] = dict(n=int(mk.sum()), solid=int((mk & corr & ~alone).sum()),
-                                alone=int((mk & corr & alone).sum()))
+                classes.append(dict(ds=ds, tool=t, cls=lab, correct_shared=int((mk & corr & ~alone).sum()),
+                                    correct_alone=int((mk & corr & alone).sum())))
             cc = (nnom >= 2).to_numpy()
+            callers.append(dict(ds=ds, tool=t, status="ok", n_loci=n, n_correct=nc, share_correct=r["share_correct"],
+                                correct_lo=r["correct_lo"], correct_hi=r["correct_hi"],
+                                n_nominated_alone=int(alone.sum()), n_nominated_alone_correct=int((alone & corr).sum()),
+                                n_loci_two_or_more=int(cc.sum()), n_correct_two_or_more=int((corr & cc).sum())))
+    ccols = ["ds", "tool", "status", "n_loci", "n_correct", "share_correct", "correct_lo", "correct_hi",
+             "n_nominated_alone", "n_nominated_alone_correct", "n_loci_two_or_more", "n_correct_two_or_more"]
+    C = pd.DataFrame(callers, columns=ccols)
+    for c in ccols[3:]:
+        if c not in ("share_correct", "correct_lo", "correct_hi"):
+            C[c] = C[c].astype("Int64")
+    return dict(H_callers=C, H_classes=pd.DataFrame(classes), H_class_n=pd.DataFrame(cls_n)), sc
+
+
+def build_H(T, S):
+    """H from its source-data tables"""
+    src = "experiments/figpub/ltrkin_locus_class.tsv"
+    ncls = {(r["ds"], r["cls"]): int(r["n_loci"]) for r in T["H_class_n"].to_dict("records")}
+    crow = {(r["ds"], r["tool"]): r for r in T["H_callers"].to_dict("records")}
+    clrow = {(r["ds"], r["tool"], r["cls"]): r for r in T["H_classes"].to_dict("records")}
+    out, core = {}, {}
+    for ds in HDS:
+        core[ds] = dict(n=int(S[f"H_{ds}_loci_two_or_more_callers"]), n_single=int(S[f"H_{ds}_loci_one_caller"]))
+        num("H", f"{ds} loci nominated by two or more callers / by one caller only",
+            f"{core[ds]['n']} / {core[ds]['n_single']}", f"{src} nominators")
+        for t in TOOLS:
+            r = crow[(ds, t)]
+            if r["status"] != "ok":
+                out[(ds, t)] = dict(status=r["status"])
+                num("H", f"{ds} {NAME[t]} status", r["status"], "experiments/figpub/ltrkin_outcomes_all.tsv")
+                continue
+            n, nc = int(r["n_loci"]), int(r["n_correct"])
+            cls = {}
+            for _, _, _, lab in HCOLS:
+                c = clrow[(ds, t, lab)]
+                cls[lab] = dict(n=ncls[(ds, lab)], solid=int(c["correct_shared"]),
+                                alone=int(c["correct_alone"]))
+            n_alone, alone_corr = int(r["n_nominated_alone"]), int(r["n_nominated_alone_correct"])
+            ncc, ncorr_cc = int(r["n_loci_two_or_more"]), int(r["n_correct_two_or_more"])
             out[(ds, t)] = dict(status="ok", n=n, correct=nc, share=float(r["share_correct"]),
                                 lo=float(r["correct_lo"]), hi=float(r["correct_hi"]), cls=cls,
-                                n_alone=int(alone.sum()), alone_correct=int((alone & corr).sum()),
-                                core_share=float((corr & cc).sum() / cc.sum()))
+                                n_alone=n_alone, alone_correct=alone_corr, core_share=float(ncorr_cc / ncc))
             num("H", f"{ds} {NAME[t]} all loci genotyped correctly [95% CI] (n of {n})",
                 f"{float(r['share_correct']):.4f} [{float(r['correct_lo']):.4f}, {float(r['correct_hi']):.4f}] ({nc})",
                 "experiments/figpub/ltrkin_outcomes_all.tsv share_correct, correct_lo, correct_hi (= ltrkin_yield.tsv)")
@@ -812,13 +1029,20 @@ def load_H():
                     f"{(c['solid'] + c['alone']) / c['n']:.4f}: {c['solid'] + c['alone']}, {c['alone']} "
                     f"(n {c['n']})", f"{src} out_{t} = correct; nominators = {t} only")
             num("H", f"{ds} {NAME[t]} loci nominated by this caller alone (genotyped correctly)",
-                f"{int(alone.sum())} ({int((alone & corr).sum())})", f"{src} nominators")
+                f"{n_alone} ({alone_corr})", f"{src} nominators")
             num("H", f"{ds} {NAME[t]} share genotyped correctly on loci two or more callers nominated",
-                f"{float((corr & cc).sum() / cc.sum()):.4f} ({int((corr & cc).sum())} of {int(cc.sum())})",
-                f"{src} nominators, out_{t}")
+                f"{float(ncorr_cc / ncc):.4f} ({ncorr_cc} of {ncc})", f"{src} nominators, out_{t}")
         for _, _, _, lab in HCOLS:
             num("H", f"{ds} loci in class {lab} (header n)", ncls[(ds, lab)], f"{src} nesting / protein_class")
     return dict(o=out, n=ncls, core=core)
+
+
+# ============================================================================ source-data tables (one TSV each)
+CD_SETS = (("coding", "C", "coding"), ("proteinless", "D", "proteinless"))
+TABLES = ["A_true_elements", "A_calls", "A_call_features", "A_found", "B_scorecard",
+          "C_coding_recall", "C_coding_recall_halved", "D_proteinless_recall", "D_proteinless_recall_halved",
+          "E_masking", "F_families", "F_curated_n", "EF_missing", "G_coverage", "G_k2p_classes",
+          "H_callers", "H_classes", "H_class_n"]
 
 
 # ============================================================================ drawing helpers
@@ -857,10 +1081,10 @@ def best_set(vals):
 
 
 def names(ax, x_right, ys, rows=TOOLS, fs=6.5):
-    """tool names (LTRquest bold) and a square of the tool color, right-aligned to x_right (page mm)"""
+    """tool names (LTR_peel bold) and a square of the tool color, right-aligned to x_right (page mm)"""
     for y, t in zip(ys, rows):
         ax.text(x_right - 2.1, y, NAME[t], ha="right", va="center", fontsize=fs,
-                fontweight="bold" if t == "ltrquest" else "normal")
+                fontweight="bold" if t == "ltr_peel" else "normal")
         ax.add_patch(Rectangle((x_right - 1.5, y - 0.65), 1.3, 1.3, fc=COL[t], ec="none"))
 
 
@@ -1091,7 +1315,7 @@ def recall_plot(fig, x0, x1, y0, h, S, ylab):
     for t in TOOLS[::-1]:
         v = S[t]
         ax.fill_between(v["x"], v["lo"], v["hi"], color=COL[t], alpha=BAND_A, lw=0, zorder=2)
-        ax.plot(v["x"], v["r"], color=COL[t], lw=LW_Q if t == "ltrquest" else LW_O, zorder=3 + (t == "ltrquest"),
+        ax.plot(v["x"], v["r"], color=COL[t], lw=LW_Q if t == "ltr_peel" else LW_O, zorder=3 + (t == "ltr_peel"),
                 solid_capstyle="round")
         if v["d50"] not in ("NA", "incomplete") and not v["d50"].startswith(">"):
             ax.plot(float(v["d50"]), v["r0"] / 2, "o", ms=2.6, mfc=COL[t], mec="white", mew=0.4, zorder=7)
@@ -1117,10 +1341,10 @@ def key_CD(fig, can):
     dy = 2.7
     for i, t in enumerate(TOOLS):
         yy = y + i * dy
-        can.plot([x0, x0 + 3.4], [yy, yy], color=COL[t], lw=LW_Q if t == "ltrquest" else LW_O,
+        can.plot([x0, x0 + 3.4], [yy, yy], color=COL[t], lw=LW_Q if t == "ltr_peel" else LW_O,
                  solid_capstyle="butt")
         can.text(x0 + 4.1, yy, NAME[t], ha="left", va="center", fontsize=FS,
-                 fontweight="bold" if t == "ltrquest" else "normal")
+                 fontweight="bold" if t == "ltr_peel" else "normal")
     yy = y + 9 * dy + 1.2
     can.add_patch(Rectangle((x0, yy - 0.7), 3.4, 1.4, fc="#8C8C8C", alpha=BAND_A * 1.6, ec="none"))
     can.text(x0 + 4.1, yy, "95% CI", ha="left", va="center", fontsize=FS)
@@ -1371,7 +1595,7 @@ def panel_H(fig, can, Hd):
                 c = o["cls"][lab]
                 fill_bar(can, x, yc, w, hb, c["n"], c["solid"], c["alone"], t)
             can.text(X1 + 1.2, yc, f"{pct(o['share'])}% ({pct(o['lo'])}–{pct(o['hi'])})", ha="left", va="center",
-                     fontsize=FS, fontweight="bold" if t == "ltrquest" else "normal")
+                     fontsize=FS, fontweight="bold" if t == "ltr_peel" else "normal")
     yax = yR + 9 * RH + 0.4
     for i, (x, w) in enumerate(zip(xs, ws)):
         can.plot([x, x + w], [yax, yax], color=INK, lw=0.5)
@@ -1393,7 +1617,7 @@ def panel_H(fig, can, Hd):
     inv = can.transData.inverted()
     for st, lab in items:
         if st in ("strip", "strip_hatch"):
-            for i_, t in enumerate(("ltrquest", "ltr_retriever", "dante_ltr")):
+            for i_, t in enumerate(("ltr_peel", "ltr_retriever", "dante_ltr")):
                 can.add_patch(Rectangle((x + i_ * 1.0, ky - 0.75), 1.0, 1.5, fc=COL[t], ec="none", lw=0))
             if st == "strip_hatch":
                 hatch_rect(can, x, ky - 0.75, 3.0, 1.5, None)
@@ -1410,7 +1634,7 @@ def panel_H(fig, can, Hd):
 
 # ============================================================================ legend
 def legend_text(ex, Bd, Cd, Dd, Fd, Gd, Hd):
-    found_o = [NAME[t] for t in ex["found_by"] if t != "ltrquest"]
+    found_o = [NAME[t] for t in ex["found_by"] if t != "ltr_peel"]
     miss_t = [NAME[t] for t in TOOLS if t not in ex["tfound_by"]]
     assert len(found_o) == 3 and len(miss_t) == 1 and len(ex["nfound_by"]) == len(TOOLS)
     # B claims
@@ -1418,18 +1642,18 @@ def legend_text(ex, Bd, Cd, Dd, Fd, Gd, Hd):
     val = lambda c, m, ts: [V[(c, m, t)] for t in ts if V[(c, m, t)] is not None]     # noqa: E731
     for _, c, _ in BCLS:
         for m in ("recall", "f1"):
-            assert V[(c, m, "ltrquest")] > max(val(c, m, TOOLS[1:])), (c, m)
-        assert V[(c, "precision", "ltrquest")] < max(val(c, "precision", TOOLS[1:])), c
+            assert V[(c, m, "ltr_peel")] > max(val(c, m, TOOLS[1:])), (c, m)
+        assert V[(c, "precision", "ltr_peel")] < max(val(c, "precision", TOOLS[1:])), c
         assert V[(c, "precision", "hite")] >= max(val(c, "precision", TOOLS)), c
-    rh_q, rp_q = V[("host", "recall", "ltrquest")], V[("proteinless", "recall", "ltrquest")]
+    rh_q, rp_q = V[("host", "recall", "ltr_peel")], V[("proteinless", "recall", "ltr_peel")]
     rh_o, rp_o = val("host", "recall", TOOLS[1:]), val("proteinless", "recall", TOOLS[1:])
     nocall = sorted({(c, t) for (c, m, t), v in V.items() if v is None})
     assert nocall == [("proteinless", "dante_ltr")], nocall
     sd = Bd["sd_max"]
     sd_o = max(v for t, v in sd.items() if t != "ltrpred")
     assert sd_o <= 0.023 and sd["ltrpred"] == max(sd.values()) and sd["ltrpred"] > 0.05, sd
-    num("memo", "B: LTRquest host / protein-less recall; other tools' ranges (printed in B's cells; legend says only "
-        "that LTRquest leads on recall and F1 in every class)",
+    num("memo", "B: LTR_peel host / protein-less recall; other tools' ranges (printed in B's cells; legend says only "
+        "that LTR_peel leads on recall and F1 in every class)",
         f"{rh_q:.4f} / {rp_q:.4f}; {min(rh_o):.4f}-{max(rh_o):.4f} / {min(rp_o):.4f}-{max(rp_o):.4f}",
         "experiments/figpub/sim_class_prf_joint_summary.tsv set=S2 recall_mean")
     num("legend", "B: largest across-genome SD, every tool but LTRpred / LTRpred (drawn classes, P/R/F1)",
@@ -1439,9 +1663,9 @@ def legend_text(ex, Bd, Cd, Dd, Fd, Gd, Hd):
     # C claims (coding, pooled recall-halved points)
     CS = Cd["S"]
     d50c = {t: float(CS[t]["d50"]) for t in TOOLS if CS[t]["d50"][0].isdigit()}
-    seven = [t for t in TOOLS if t not in ("ltrquest", "dante_ltr")]
+    seven = [t for t in TOOLS if t not in ("ltr_peel", "dante_ltr")]
     lo7, hi7 = min(d50c[t] for t in seven), max(d50c[t] for t in seven)
-    q50 = d50c["ltrquest"]
+    q50 = d50c["ltr_peel"]
     assert q50 > 0.3 and hi7 < 0.2 and CS["dante_ltr"]["d50"].startswith(">"), (q50, hi7)
     for t in seven:
         if FLOOR[t] is not None:
@@ -1452,35 +1676,35 @@ def legend_text(ex, Bd, Cd, Dd, Fd, Gd, Hd):
         "computed (C)")
     # D claims (protein-less)
     DS_ = Dd["S"]
-    eq, eh = float(DS_["ltrquest"]["d50"]), float(DS_["hirepeat"]["d50"])
+    eq, eh = float(DS_["ltr_peel"]["d50"]), float(DS_["hirepeat"]["d50"])
     dh = d50c["hirepeat"]
     assert eq < q50 and eh > dh
     assert DS_["dante_ltr"]["r"].max() == 0
     lp0 = DS_["ltrpred"]["r0"]
     assert lp0 < 0.25
-    num("legend", "C/D: pooled d50 LTRquest coding / protein-less; HiRepEat coding / protein-less",
+    num("legend", "C/D: pooled d50 LTR_peel coding / protein-less; HiRepEat coding / protein-less",
         f"{q50:.4f} / {eq:.4f}; {dh:.4f} / {eh:.4f}", "computed (C and D dots)")
     num("legend", "D: LTRpred protein-less pooled recall at timepoint 0", f"{lp0:.4f}", "computed (D)")
     # E claims
     mk = Fd["mk"]
     rec = [v["recall"] for v in mk.values()]
     prc = [v["precision"] for v in mk.values()]
-    aq, ar, ah = (mk[("arab", t)]["f1"] for t in ("ltrquest", "ltr_retriever", "hite"))
+    aq, ar, ah = (mk[("arab", t)]["f1"] for t in ("ltr_peel", "ltr_retriever", "hite"))
     assert aq < min(ar, ah)
-    for ds in E_DS:                                 # "LTRquest trails the strictest in F1", every E genome
-        assert mk[(ds, "ltrquest")]["f1"] < max(v["f1"] for (d, t), v in mk.items() if d == ds), ds
-    sq = [mk[(ds, "ltrquest")]["recall"] for ds in E_DS]
-    pq = [mk[(ds, "ltrquest")]["precision"] for ds in E_DS]
+    for ds in E_DS:                                 # "LTR_peel trails the strictest in F1", every E genome
+        assert mk[(ds, "ltr_peel")]["f1"] < max(v["f1"] for (d, t), v in mk.items() if d == ds), ds
+    sq = [mk[(ds, "ltr_peel")]["recall"] for ds in E_DS]
+    pq = [mk[(ds, "ltr_peel")]["precision"] for ds in E_DS]
     assert min(sq) >= 0.985 and min(rec) > max(prc) - 0.1 and min(rec) >= 0.75, (sq, min(rec))
     num("legend", "E: recall range / precision range over the drawn cells (3 genomes)",
         f"{min(rec):.4f}-{max(rec):.4f} / {min(prc):.4f}-{max(prc):.4f}", "report/tables/masking.tsv sens, prec")
-    num("legend", "E: LTRquest recall / precision (A. thaliana, rice, zebra finch)",
+    num("legend", "E: LTR_peel recall / precision (A. thaliana, rice, zebra finch)",
         " / ".join(f"{a:.4f}" for a in sq) + "; " + " / ".join(f"{a:.4f}" for a in pq), "report/tables/masking.tsv")
-    num("legend", "E: 'LTRquest trails the strictest in F1', A. thaliana F1 LTRquest / LTR_retriever / HiTE (also in "
+    num("legend", "E: 'LTR_peel trails the strictest in F1', A. thaliana F1 LTR_peel / LTR_retriever / HiTE (also in "
         "E's cells)", f"{aq:.4f} / {ar:.4f} / {ah:.4f}", "report/tables/masking.tsv F1")
     # F claims
     pg = Fd["pg"]
-    lead_pg = [ds for ds in DS if max(v for (d, t), v in pg.items() if d == ds) == pg.get((ds, "ltrquest"), -1)]
+    lead_pg = [ds for ds in DS if max(v for (d, t), v in pg.items() if d == ds) == pg.get((ds, "ltr_peel"), -1)]
     assert lead_pg == ["arab", "rice", "maize", "gorilla"], lead_pg
     fin = {t: v for (d, t), v in pg.items() if d == "finch"}
     assert max(fin, key=fin.get) == "look4ltrs"
@@ -1488,43 +1712,43 @@ def legend_text(ex, Bd, Cd, Dd, Fd, Gd, Hd):
     # G claims
     ht = Gd["tab"]
     s_y, s_o = float(ht["<0.01"]["supported_share"]), float(ht[">=0.1"]["supported_share"])
-    fpq = float(Fd["m"][(Fd["m"].ds == "arab") & (Fd["m"].tool == "ltrquest")].FP_mb.iloc[0])
+    fpq = Fd["fp_mb_arab_ltr_peel"]
     frac = Gd["gap_mb"] / fpq
     assert frac <= 0.205
     num("legend", "G: A. thaliana library-supported share K2P < 0.01 / >= 0.1", f"{s_y} / {s_o}",
         "report/tables/library_age_bias.tsv supported_share")
-    num("legend", "G: protein-confirmed bases outside curated annotation / LTRquest masking false-positive bases",
+    num("legend", "G: protein-confirmed bases outside curated annotation / LTR_peel masking false-positive bases",
         f"{Gd['gap_mb']} / {fpq} Mb = {frac:.3f}", "annotation_gap.tsv gap_mb / masking.tsv FP_mb (arab)")
     # H claims
     o = Hd["o"]
     okt = {ds: [t for t in TOOLS if o[(ds, t)]["status"] == "ok"] for ds in HDS}
     for ds in HDS:
         srt = sorted(okt[ds], key=lambda t: -o[(ds, t)]["share"])
-        assert srt[:2] == ["ltrquest", "hirepeat"], (ds, srt)
+        assert srt[:2] == ["ltr_peel", "hirepeat"], (ds, srt)
         srt = sorted(okt[ds], key=lambda t: -o[(ds, t)]["core_share"])
-        assert srt[:2] == ["ltrquest", "hirepeat"], (ds, srt)
+        assert srt[:2] == ["ltr_peel", "hirepeat"], (ds, srt)
     assert o[("camara_hap2", "look4ltrs")]["status"].startswith("DNF") and okt["camara_hap1"] == TOOLS
 
     def csh(ds, t, lab):
         c = o[(ds, t)]["cls"][lab]
         return (c["solid"] + c["alone"]) / c["n"]
-    hq = [csh(ds, "ltrquest", "hosts") for ds in HDS]
-    pq_ = [csh(ds, "ltrquest", "protein-less") for ds in HDS]
-    ho = [csh(ds, t, "hosts") for ds in HDS for t in okt[ds] if t != "ltrquest"]
-    po = [csh(ds, t, "protein-less") for ds in HDS for t in okt[ds] if t != "ltrquest"]
+    hq = [csh(ds, "ltr_peel", "hosts") for ds in HDS]
+    pq_ = [csh(ds, "ltr_peel", "protein-less") for ds in HDS]
+    ho = [csh(ds, t, "hosts") for ds in HDS for t in okt[ds] if t != "ltr_peel"]
+    po = [csh(ds, t, "protein-less") for ds in HDS for t in okt[ds] if t != "ltr_peel"]
     assert min(hq) > max(ho) and min(pq_) > max(po) and min(ho) == 0 and min(po) == 0
-    # "partly on loci only its calls nominated": LTRquest's hatched part in hosts and protein-less loci, both haplotypes
+    # "partly on loci only its calls nominated": LTR_peel's hatched part in hosts and protein-less loci, both haplotypes
     for lab in ("hosts", "protein-less"):
-        c = [o[(ds, "ltrquest")]["cls"][lab] for ds in HDS]
+        c = [o[(ds, "ltr_peel")]["cls"][lab] for ds in HDS]
         assert all(x["alone"] > 0 for x in c), lab
-        oth = [csh(ds, t, lab) for ds in HDS for t in okt[ds] if t != "ltrquest"]
-        num("memo", f"H: LTRquest {lab} correct share without the loci only its calls nominated (hap2, hap1) / "
+        oth = [csh(ds, t, lab) for ds in HDS for t in okt[ds] if t != "ltr_peel"]
+        num("memo", f"H: LTR_peel {lab} correct share without the loci only its calls nominated (hap2, hap1) / "
             f"best other caller", f"{c[0]['solid'] / c[0]['n']:.4f}, {c[1]['solid'] / c[1]['n']:.4f} / "
-            + ", ".join(f"{max(csh(ds, t, lab) for t in okt[ds] if t != 'ltrquest'):.4f}" for ds in HDS),
+            + ", ".join(f"{max(csh(ds, t, lab) for t in okt[ds] if t != 'ltr_peel'):.4f}" for ds in HDS),
             "experiments/figpub/ltrkin_locus_class.tsv (solid part of the bar)")
         assert min(oth) == 0
     alone = {(ds, t): (o[(ds, t)]["n_alone"], o[(ds, t)]["alone_correct"]) for ds in HDS for t in okt[ds]}
-    exp_alone = {("camara_hap2", "ltrquest"): (39, 38), ("camara_hap1", "ltrquest"): (26, 23),
+    exp_alone = {("camara_hap2", "ltr_peel"): (39, 38), ("camara_hap1", "ltr_peel"): (26, 23),
                  ("camara_hap2", "hirepeat"): (5, 3), ("camara_hap1", "hirepeat"): (4, 1),
                  ("camara_hap2", "ltrharvest"): (2, 1), ("camara_hap2", "ltr_finder"): (1, 1),
                  ("camara_hap2", "hite"): (1, 1), ("camara_hap1", "look4ltrs"): (1, 0)}
@@ -1534,14 +1758,14 @@ def legend_text(ex, Bd, Cd, Dd, Fd, Gd, Hd):
         "; ".join(f"{NAME[t]} {alone.get(('camara_hap2', t), ('failed',))[0]} / {alone[('camara_hap1', t)][0]}"
                   for t in TOOLS[1:] if any(alone.get((ds, t), (0,))[0] for ds in HDS)),
         "experiments/figpub/ltrkin_locus_class.tsv nominators")
-    cq = [o[(ds, "ltrquest")]["core_share"] for ds in HDS]
+    cq = [o[(ds, "ltr_peel")]["core_share"] for ds in HDS]
     ch = [o[(ds, "hirepeat")]["core_share"] for ds in HDS]
     lead = [100 * (a - b) for a, b in zip(cq, ch)]
-    num("legend", "H: LTRquest correct share of hosts (hap2, hap1) / other finished callers' range",
+    num("legend", "H: LTR_peel correct share of hosts (hap2, hap1) / other finished callers' range",
         f"{hq[0]:.4f}, {hq[1]:.4f} / {min(ho):.4f}-{max(ho):.4f}", "experiments/figpub/ltrkin_locus_class.tsv")
-    num("legend", "H: LTRquest correct share of protein-less loci (hap2, hap1) / other finished callers' range",
+    num("legend", "H: LTR_peel correct share of protein-less loci (hap2, hap1) / other finished callers' range",
         f"{pq_[0]:.4f}, {pq_[1]:.4f} / {min(po):.4f}-{max(po):.4f}", "experiments/figpub/ltrkin_locus_class.tsv")
-    num("legend", "H: on loci two or more callers nominated, LTRquest / HiRepEat correct share (hap2, hap1; shares "
+    num("legend", "H: on loci two or more callers nominated, LTR_peel / HiRepEat correct share (hap2, hap1; shares "
         "memo only); lead (points, legend)",
         f"{cq[0]:.4f} / {ch[0]:.4f}, {cq[1]:.4f} / {ch[1]:.4f}; {lead[0]:.1f}, {lead[1]:.1f}",
         "experiments/figpub/ltrkin_locus_class.tsv nominators, out_<tool>")
@@ -1549,53 +1773,53 @@ def legend_text(ex, Bd, Cd, Dd, Fd, Gd, Hd):
     txt = (
         f"**Fig. 1. Where LTR retrotransposon callers lose elements, and what recovering them costs.** Callers lose "
         f"elements split by a later insertion, old copies and protein-less elements, which carry no LTR "
-        f"retrotransposon protein domain and so cannot transpose on their own. LTRquest recovers most and genotypes "
+        f"retrotransposon protein domain and so cannot transpose on their own. LTR_peel recovers most and genotypes "
         f"the most real polymorphisms but masks much sequence curated libraries leave unannotated. Panels A–D use "
-        f"genomes simulated with PrinTE, which shares an author with LTRquest, and LTRquest was tuned on PrinTE "
+        f"genomes simulated with PrinTE, which shares an author with LTR_peel, and LTR_peel was tuned on PrinTE "
         f"simulations and on rice.\n\n"
         f"**A**, A host, its tenant and a non-nested element in a simulated genome (broken axis). A host is an element "
         f"split in two by a later insertion, its tenant, and may itself be a tenant. A non-nested element is neither. Each "
-        f"tool's calls follow to scale with the features it reports (TSDs enlarged). LTRquest, {found_o[0]}, "
+        f"tool's calls follow to scale with the features it reports (TSDs enlarged). LTR_peel, {found_o[0]}, "
         f"{found_o[1]} and {found_o[2]} rebuild the host, all but {miss_t[0]} the tenant, and every tool the "
         f"non-nested element.\n\n"
         f"**B**, Precision, recall and F1 by class, averaged over three deeply nested simulated genomes. Bold marks "
         f"each column's best, n the true elements, and a dash a class the caller never calls. Coding elements carry "
         f"at least two kinds of LTR retrotransposon domain from one superfamily (partly coding ones in Figs. S1 and "
         f"S4). Recall counts true elements by their family's class, precision counts calls by their own domains. "
-        f"LTRquest leads on recall and F1 in every class, HiTE on precision. The genomes agree (SD at most "
+        f"LTR_peel leads on recall and F1 in every class, HiTE on precision. The genomes agree (SD at most "
         f"{sd_o:.2f}) except for LTRpred, one of whose runs lost calls to a pipeline error. Precision runs higher in "
         f"simulations than on real genomes, which carry tandem duplicated genes and incomplete curated "
         f"libraries.\n\n"
         f"**C**, Recall of coding elements as one simulated burst's LTRs diverge, three genomes pooled (bands, 95% "
         f"intervals over families). Seven tools lose half (dots) by a divergence of {lo7:.2f}–{hi7:.2f}, those with a "
-        f"documented identity floor (dashed) well before it. LTRquest keeps half to {q50:.2f}, and DANTE_LTR, which "
+        f"documented identity floor (dashed) well before it. LTR_peel keeps half to {q50:.2f}, and DANTE_LTR, which "
         f"reads proteins, never halves.\n\n"
-        f"**D**, Protein-less elements of the same series. LTRquest loses half by {eq:.2f}, while HiRepEat keeps them "
+        f"**D**, Protein-less elements of the same series. LTR_peel loses half by {eq:.2f}, while HiRepEat keeps them "
         f"longer than its coding elements ({eh:.2f} against {dh:.2f}). DANTE_LTR finds none and LTRpred few. Details "
         f"in Fig. S1.\n\n"
         f"**E**, Masking of three real genomes by each tool's library, against curated annotation. Recall is high "
-        f"for every tool ({min(rec):.2f}–{max(rec):.2f}), so tools differ in precision, and LTRquest trails the "
+        f"for every tool ({min(rec):.2f}–{max(rec):.2f}), so tools differ in precision, and LTR_peel trails the "
         f"strictest in F1. Maize and gorilla are in Fig. S2C. Dark gray marks tools that failed (no result within 36 h or "
         f"200 GB of memory, or a crash without calls), and hatching marks libraries whose masking or building would have run far past 36 h or was "
         f"stopped there.\n\n"
         f"**F**, Share of curated LTR families each library recovers perfectly or well (n, curated families). "
-        f"LTRquest leads in four genomes and Look4LTRs in zebra finch, though every finished library recovers few "
+        f"LTR_peel leads in four genomes and Look4LTRs in zebra finch, though every finished library recovers few "
         f"gorilla families. Missing cells as in E.\n\n"
         f"**G**, Every protein-confirmed *A. thaliana* locus any tool called, sorted by LTR divergence and shaded by "
         f"curated annotation, beside the same spans moved 20–200 kb (chance). Curated libraries support fewer old "
-        f"loci ({s_o:.2f} against {s_y:.2f} for young), but such sequence is at most {pct(frac)}% of LTRquest's "
+        f"loci ({s_o:.2f} against {s_y:.2f} for young), but such sequence is at most {pct(frac)}% of LTR_peel's "
         f"false-positive masking. Fig. S3 shows four more genomes.\n\n"
         f"**H**, Real insertion polymorphisms of a *Cardamine amara* plant's two haplotypes, genotyped from each "
         f"caller's annotation (haplotype 2 first). Color marks the share genotyped correctly, with a 95% interval "
         f"for all loci (per class in Fig. S4). True loci pool all callers' nominations, each confirmed by an empty "
-        f"site on the other haplotype, and hatching marks those only that caller nominated. LTRquest genotypes "
+        f"site on the other haplotype, and hatching marks those only that caller nominated. LTR_peel genotypes "
         f"{hq[0]:.2f} and {hq[1]:.2f} of hosts and {pq_[0]:.2f} and {pq_[1]:.2f} of protein-less loci, partly its "
         f"own, against {min(ho):.0f}–{max(ho):.2f} and {min(po):.0f}–{max(po):.2f} for the others. Other callers' "
         f"hatching is too thin to see (HiRepEat {alone[('camara_hap2', 'hirepeat')][0]} and "
         f"{alone[('camara_hap1', 'hirepeat')][0]} loci, LTRharvest {alone[('camara_hap2', 'ltrharvest')][0]}, "
         f"LTR_Finder and HiTE {alone[('camara_hap2', 'ltr_finder')][0]} each on haplotype 2, Look4LTRs "
-        f"{alone[('camara_hap1', 'look4ltrs')][0]} on haplotype 1). On loci two or more callers nominated, LTRquest "
-        f"still leads HiRepEat by {lead[0]:.1f} and {lead[1]:.1f} points. The genotyper was developed with LTRquest "
+        f"{alone[('camara_hap1', 'look4ltrs')][0]} on haplotype 1). On loci two or more callers nominated, LTR_peel "
+        f"still leads HiRepEat by {lead[0]:.1f} and {lead[1]:.1f} points. The genotyper was developed with LTR_peel "
         f"annotations, and Look4LTRs failed on haplotype 2.")
     for bad in (":", ";", "—"):                    # house style: no colons, semicolons or dash asides
         assert bad not in txt, bad
@@ -1658,20 +1882,48 @@ def main(argv=None):
     ap.add_argument("--redo-prep", action="store_true", help="rebuild the A. thaliana locus cache (panel G)")
     ap.add_argument("--honesty", action="store_true", help="also write plain bar charts of B, E, H to tmp/")
     ap.add_argument("--draft", default=None, help="write only a PNG draft to this name inside tmp/")
+    ap.add_argument("--from-source-data", action="store_true",
+                    help=f"draw from source_data/{STEM}/ alone (no BENCH_ROOT; skips the checks against raw data)")
     a = ap.parse_args(argv)
     VERBOSE = a.verbose
-    TMP.mkdir(exist_ok=True)
     log("start", True)
-    ex = load_example()
-    log("A: example loaded and checked")
-    Bd = load_B()
-    Cd, Dd = load_curve("coding", "C"), load_curve("proteinless", "D")
-    log("B-D: tables loaded and checked")
-    Fd = load_EF()
-    Gd = load_G(a.redo_prep)
-    Hd = load_H()
-    log("E-H: tables loaded and checked")
+    if not a.from_source_data:
+        if B is None:
+            raise SystemExit(f"{STEM}: set BENCH_ROOT to the benchmark directory, or use --from-source-data")
+        TMP.mkdir(exist_ok=True)
+        import_bench()
+        T, sc = {}, []
+        A_T, s_ = extract_A()
+        T.update(A_T)
+        sc += s_
+        log("A: example loaded and checked")
+        T["B_scorecard"] = extract_B()
+        for cls, panel, name in CD_SETS:
+            T[f"{panel}_{name}_recall"], T[f"{panel}_{name}_recall_halved"], s_ = extract_curve(cls, panel)
+            sc += s_
+        log("B-D: tables loaded and checked")
+        for f in (extract_EF, lambda: extract_G(a.redo_prep), extract_H):
+            t_, s_ = f()
+            T.update(t_)
+            sc += s_
+        log("E-H: tables loaded and checked")
+        assert sorted(T) == sorted(TABLES), sorted(T)
+        for k in TABLES:
+            write_table(k, T[k])
+        write_table("scalars", pd.DataFrame([dict(name=k, value=repr(v) if isinstance(v, float) else str(v))
+                                             for k, v in sc]))
+        log(f"source data written to {SD}")
+    T = {k: read_table(k) for k in TABLES}
+    S = {r["name"]: r["value"] for r in read_table("scalars").to_dict("records")}
+    ex = build_A(T, S)
+    Bd = build_B(T)
+    Cd, Dd = (build_curve(T, S, cls, panel, name) for cls, panel, name in CD_SETS)
+    Fd = build_EF(T, S)
+    Gd = build_G(T, S)
+    Hd = build_H(T, S)
+    log(f"source data read from {SD}")
     if a.honesty:
+        TMP.mkdir(exist_ok=True)
         honesty_plots(Bd, Fd, Hd)
         log(f"honesty plots: {TMP / 'honesty_plain_bars.png'}", True)
 
@@ -1699,12 +1951,14 @@ def main(argv=None):
                     (0, G["Y4"], "G"), (G["XH"], G["Y4"], "H")):
         poafig.panel_letter(fig, x, y, L)
     if a.draft:
+        TMP.mkdir(exist_ok=True)
         p = (TMP / Path(a.draft).name)
         fig.savefig(p, dpi=300)
         log(f"draft {p}", True)
         return
     txt = legend_text(ex, Bd, Cd, Dd, Fd, Gd, Hd)
-    out = poafig.write_figure(STEM, fig, txt, None, HERE, str(B), str(HERE / f"{STEM}.py"))
+    out = poafig.write_figure(STEM, fig, txt, None, HERE, str(SD if a.from_source_data else B),
+                              str(HERE / f"{STEM}.py"))
     pd.DataFrame(NUM).to_csv(HERE / f"{STEM}_numbers.tsv", sep="\t", index=False)
     log(f"done {out['pdf']} fig {out['fig_mm']} legend {out['short_mm']} mm, {out['short_words']} words "
         f"{out['short_par_words']}; {len(NUM)} numbers", True)

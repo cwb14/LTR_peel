@@ -27,8 +27,8 @@ from score_elements import match, read_calls  # noqa: E402
 from div_score import element_stats, status, d50, snap, wilson, tsd_adjusted  # noqa: E402
 from evidence import dante_domains, coding_unit  # noqa: E402
 
-TOOLS = ["ltrquest", "ltrharvest", "ltr_finder", "ltr_retriever", "look4ltrs", "hirepeat", "hite", "ltrpred",
-         "dante_ltr", "ltrquest_hc"]
+TOOLS = ["ltr_peel", "ltrharvest", "ltr_finder", "ltr_retriever", "look4ltrs", "hirepeat", "hite", "ltrpred",
+         "dante_ltr", "ltr_peel_hc"]
 CLS = ["coding", "partial", "proteinless"]
 LBINS = [0, 2000, 3000, 4000, 5000, 6000, 8000, 10 ** 9]
 KBINW = 0.02

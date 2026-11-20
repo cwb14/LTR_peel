@@ -1,0 +1,9 @@
+caller	status	outcome	genotype	end_err_left	end_err_right
+ltr_peel	found	correct	F/E	0	0
+ltr_retriever	found	correct	F/E	0	0
+ltrharvest	found	correct	F/E	-1	0
+ltr_finder	found	correct	F/E	0	0
+hirepeat	found	correct	F/E	3	0
+hite	found	correct	F/E	-14	12
+ltrpred	missed	missed	missed		
+dante_ltr	missed	missed	missed		

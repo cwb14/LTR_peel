@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pytest
 
-from ltrquest.reconcile import (
+from ltr_peel.reconcile import (
     IUPAC_DEPTH_SEQ,
     apply_depth_masking,
     build_direct_children,
@@ -17,7 +17,7 @@ from ltrquest.reconcile import (
     compute_chain_inward,
     parse_tsv,
 )
-from ltrquest.table import Columns
+from ltr_peel.table import Columns
 
 
 def rec(key: str, chrom: str, start: int, end: int) -> dict:
@@ -266,7 +266,7 @@ class TestIupacInvariants:
         assert len(set(IUPAC_DEPTH_SEQ)) == len(IUPAC_DEPTH_SEQ)
 
     def test_letters_match_the_drivers_iupac_seq(self, driver_iupac_seq):
-        # ltrquest.sh paints round N's hits with IUPAC_SEQ[N-1]; the reconciler
+        # ltr_peel.sh paints round N's hits with IUPAC_SEQ[N-1]; the reconciler
         # reads that letter back as a depth. If the two lists ever drift, nesting
         # is silently misattributed, so the coupling is asserted rather than
         # merely commented.
@@ -278,7 +278,7 @@ class TestParseTsv:
     does not crash -- it just picks the wrong survivor."""
 
     def test_reads_the_ranking_columns_by_name(self, tmp_path):
-        from ltrquest.detect import DETECT_COLUMNS
+        from ltr_peel.detect import DETECT_COLUMNS
 
         header = "#" + "\t".join(DETECT_COLUMNS)
         row = ["."] * len(DETECT_COLUMNS)
@@ -336,21 +336,21 @@ class TestResolveConflicts:
         return {"key": key, "chrom": chrom, "s": s, "e": e, "round": rnd, "rank": rank}
 
     def test_a_cross_round_crossing_keeps_the_stronger(self):
-        from ltrquest.reconcile import resolve_conflicts
+        from ltr_peel.reconcile import resolve_conflicts
         a = self.rec("c:1000-6000", 1, (1, 900.0, 0))
         b = self.rec("c:4500-9500", 2, (3, 300.0, 0))
         survivors, n = resolve_conflicts([a, b], {})
         assert survivors == [b] and n == 1
 
     def test_a_cross_round_nest_keeps_both(self):
-        from ltrquest.reconcile import resolve_conflicts
+        from ltr_peel.reconcile import resolve_conflicts
         inner = self.rec("c:3000-6000", 1, (3, 300.0, 0))
         outer = self.rec("c:1000-9000", 2, (0, 100.0, 0))
         bounds = {"c:3000-6000": (3000, 3299, 5701, 6000), "c:1000-9000": (1000, 1299, 8701, 9000)}
         assert resolve_conflicts([inner, outer], bounds) == ([inner, outer], 0)
 
     def test_two_inners_of_one_host_still_compete_across_rounds(self):
-        from ltrquest.reconcile import resolve_conflicts
+        from ltr_peel.reconcile import resolve_conflicts
         first = self.rec("c:3000-6000", 1, (3, 300.0, 0))
         host = self.rec("c:1000-20000", 2, (0, 100.0, 0))
         other = self.rec("c:4500-8000", 2, (1, 900.0, 0))     # crosses the first inner

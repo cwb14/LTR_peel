@@ -1,4 +1,4 @@
-# LTRquest output reference
+# LTR_peel output reference
 
 What a run does by default, what it keeps, and the full format of every file it
 writes. For what the tool is and how to run it, see the [README](../README.md);
@@ -17,7 +17,7 @@ to install it, [install.md](install.md); for the Nextflow pipeline,
 10. [Benchmarks](#10-benchmarks)
 11. [Settings not in the short help](#11-settings-not-in-the-short-help)
 
-Every flag below is listed by `ltrquest --help-all`.
+Every flag below is listed by `ltr_peel --help-all`.
 
 ---
 
@@ -93,9 +93,9 @@ files, directly inside the run folder, are touched; your inputs never are.
 
 - **adding a genome to this run later** ([section 5](#5-multiple-genomes-shared-family-names)),
   which reuses the detection records of the genomes already done;
-- **re-plotting** with `ltrquest-plots`, whose per-family summary pages and TEGV
+- **re-plotting** with `ltr_peel-plots`, whose per-family summary pages and TEGV
   gene track read the cluster files and gene tracks in the work directories;
-- **`ltrquest-reboundary --posthoc`** on a finished run;
+- **`ltr_peel-reboundary --posthoc`** on a finished run;
 - **inspecting a step**: the per-round work directories hold every caller's
   candidates and the tables of what each filter dropped.
 
@@ -105,7 +105,7 @@ when a genome has no GFF3 or `_clean_` tables (when the false-positive step
 never ran on degenerate input), since its unfiltered tables are then all it has.
 
 The helper tools (TEsorter2, TRF-mod, sdust, FASTAN/FastLTR, Kmer2LTR) are fetched
-into a tools folder. One you name with `--tools-dir DIR` (or `LTRQUEST_TOOLS_DIR`)
+into a tools folder. One you name with `--tools-dir DIR` (or `LTR_PEEL_TOOLS_DIR`)
 is reused by later runs and never removed. The default, a `*_tools` folder in the
 run folder (`<genome>_tools`, as in `Athal_tair10_chr2_tools`; `merged_tools` for
 several genomes; `NAME_tools` with `--out_prefix NAME`), is removed at the end only
@@ -114,7 +114,7 @@ existed when the run started, or that holds anything else, is kept. For machines
 without internet, fill a named folder once online
 ([install.md](install.md#offline-clusters)).
 
-Nothing is written beside your genome: LTRquest's own indexes and scratch files live
+Nothing is written beside your genome: LTR_peel's own indexes and scratch files live
 in the run folder and go with the clean-up. Helper tools may still put small
 temporary files in the system temp folder (`$TMPDIR`, usually `/tmp`).
 
@@ -122,7 +122,7 @@ temporary files in the system temp folder (`$TMPDIR`, usually `/tmp`).
 
 Each round cuts the genome into 500 kb chunks and runs LTRharvest and LTR_FINDER
 on every chunk, plus, where `--fastltr` says so, a third caller: FastLTR
-(LTRquest's adaptation of Gene Myers' FastLTR, from
+(LTR_peel's adaptation of Gene Myers' FastLTR, from
 [FASTAN](https://github.com/thegenemyers/FASTAN), the detector behind
 [HiRepEat](https://github.com/AnantMaheshwari/HiRepEat)). Their candidates are
 pooled before Kmer2LTR, and every later stage treats them alike.
@@ -136,7 +136,7 @@ can be capped on a loaded machine and not on an idle one.
 
 FastLTR crosses an array in seconds, so it still searches those chunks. It counts
 8-mer matches along the diagonals of 32 kb windows and aligns only the promising
-ones; LTRquest's version marks each tandem alignment so it crosses an array once
+ones; LTR_peel's version marks each tandem alignment so it crosses an array once
 instead of once per spacing, and it searches LTR spacings of 100-20,000 bp.
 `--fastltr rescue` (the default) runs it only on chunks a cap fired on; `all` runs
 it on every chunk (more elements, lower precision); `off` never (`--no-fastltr` is
@@ -144,7 +144,7 @@ the same). `--fastltr-args` (default `-d100 -D20000 -w8`) passes options to it.
 Cap and FastLTR together:
 
 ```bash
-ltrquest --genome t2t.fa --proteins prot.fa --threads 20 --ltr-timeout 30
+ltr_peel --genome t2t.fa --proteins prot.fa --threads 20 --ltr-timeout 30
 ```
 
 The detector log names each capped chunk (`[WARN] ltrharvest timeout ...`) and
@@ -206,14 +206,14 @@ Tab-separated, one row per element, 34 named columns (`#`-prefixed header
 line). Columns 1–29 are Kmer2LTR's own output: Kmer2LTR runs ahead of
 classification, so its boundary calls, divergence figures and TSDs are the
 round's single source of truth, with one correction (see *Canonical ends*
-below). LTRquest appends the last five — `strand`, `family`, `confidence`,
+below). LTR_peel appends the last five — `strand`, `family`, `confidence`,
 `domains`, `nest_status` — once classification and clustering have run.
 
 | # | Column | Meaning |
 |---|---|---|
 | 1 | `seq_id` | Element id: `chrom:start-end#Order/Superfamily/Clade`, e.g. `Chr2:102001-110500#LTR/Gypsy/Reina` |
 | 2 | `seq_len` | Length of the record as supplied |
-| 3 | `status` | `pass`, `weak_pair`, `k2p_undefined`, `no_pair`, `too_short`, or `all_ambiguous`. Only `pass` rows reach LTRquest's output |
+| 3 | `status` | `pass`, `weak_pair`, `k2p_undefined`, `no_pair`, `too_short`, or `all_ambiguous`. Only `pass` rows reach LTR_peel's output |
 | 4 | `ltr5_start` | 1-based inclusive, relative to the record. Always `1` here — see below |
 | 5 | `ltr5_end` | 1-based inclusive, relative to the record: last bp of the 5′ LTR |
 | 6 | `ltr3_start` | 1-based inclusive, relative to the record: first bp of the 3′ LTR |
@@ -240,7 +240,7 @@ below). LTRquest appends the last five — `strand`, `family`, `confidence`,
 | 27 | `tsd` | Target-site duplication at the called boundary. `.` = searched and absent; `NA` = could not be searched. On TG..CA ends it is the exact 4–6 bp duplication at those ends |
 | 28 | `tsd_offset` | `d5,d3` — how far each boundary had to move for `tsd` to appear, positive meaning *into* the element. `0,0` on canonical ends. `NA` whenever `tsd` carries no sequence, whether that is `.` or `NA` |
 | 29 | `tsd_input` | The same measurement at the record's termini as originally supplied, before re-bounding |
-| 30 | `strand` | The element's biological orientation, resolved by LTRquest from classification, domain order and pass-2 homology (similarity to an already classified element), and from strand recovery when it is on: `+`, `-`, or `.` if none of those resolved it |
+| 30 | `strand` | The element's biological orientation, resolved by LTR_peel from classification, domain order and pass-2 homology (similarity to an already classified element), and from strand recovery when it is on: `+`, `-`, or `.` if none of those resolved it |
 | 31 | `family` | Family id from the pooled consensus-LTR clustering, `<prefix>_fam00001` … — see [section 5](#5-multiple-genomes-shared-family-names) |
 | 32 | `confidence` | Hallmarks of an insertion at the reported ends: `high` = TG..CA termini and an exact TSD (`tsd` with `tsd_offset` `0,0`), `medium` = one of the two, `low` = neither — see below |
 | 33 | `domains` | Protein domains with genomic coordinates: `GENE\|clade@start-end;...`, or `.` |
@@ -299,7 +299,7 @@ Three things this table will burn you on if you skim it:
   complement of its own header interval (`-`) or reads that interval forward
   off the genome (`+`) — the call the library-writing step makes so that
   family clustering sees one orientation per family. `strand` is a biological
-  claim: which way the element is transcribed, decided later by LTRquest from
+  claim: which way the element is transcribed, decided later by LTR_peel from
   classification, domain order and pass-2 homology. The two are independent —
   an element stored forward (`orientation=+`) can carry either strand, and
   vice versa. `strand` can land on `.` when none of those sources resolve
@@ -357,7 +357,7 @@ An element that inserts into another element's LTR splits it: `[1..p] TENANT
 [p+1..L]`. LTRharvest and LTR_FINDER pair the two near-side fragments, so on
 their own they report the host cut short at the tenant, with no TSD, and the
 tenant as a free element beside it. When two calls abut (within 20 bp),
-`ltrquest.reconcile` asks whether the bases beyond one continue the other's own
+`ltr_peel.reconcile` asks whether the bases beyond one continue the other's own
 LTR from the junction on: identity ≥ 0.70, E ≤ 1e-5, the alignment starting at
 both junctions. Where one side and only one does, the host is rebuilt to the end
 of that continuation, and the tenant becomes its `nest-inner`. Such a host's row
@@ -396,7 +396,7 @@ Pass several genomes to give closely-related species **one family vocabulary**,
 which is what makes between-species family comparisons meaningful:
 
 ```bash
-ltrquest \
+ltr_peel \
   --genome   ../tests/data/Athal_tair10_chr2.fa.gz Alyrata_chr2.fa \
   --proteins ../tests/data/Athal.pep.gz \
   --threads  40
@@ -461,13 +461,13 @@ stage never ran):
 Each element is one block:
 
 ```
-chr  LTRquest  LTR_retrotransposon   13031  17307  .  -  .  ID=…_LTRRT_00001;Name=chr:13031-17307;
+chr  LTR_peel  LTR_retrotransposon   13031  17307  .  -  .  ID=…_LTRRT_00001;Name=chr:13031-17307;
                                                             classification=LTR/Gypsy/Tekay;superfamily=Gypsy;clade=Tekay;
                                                             family=…_fam00001;family_size=5;depth=0;
                                                             K2P_d=0.026305;K2P_T=438418;strand_source=tesorter
-chr  LTRquest  long_terminal_repeat  13031  14048  .  -  .  ID=…_LTRRT_00001.lLTR;Parent=…_LTRRT_00001
-chr  LTRquest  long_terminal_repeat  16290  17307  .  -  .  ID=…_LTRRT_00001.rLTR;Parent=…_LTRRT_00001
-chr  LTRquest  protein_match         14482  14712  .  -  .  ID=…_LTRRT_00001.CHD.1;Parent=…;Name=CHD;clade=Tekay
+chr  LTR_peel  long_terminal_repeat  13031  14048  .  -  .  ID=…_LTRRT_00001.lLTR;Parent=…_LTRRT_00001
+chr  LTR_peel  long_terminal_repeat  16290  17307  .  -  .  ID=…_LTRRT_00001.rLTR;Parent=…_LTRRT_00001
+chr  LTR_peel  protein_match         14482  14712  .  -  .  ID=…_LTRRT_00001.CHD.1;Parent=…;Name=CHD;clade=Tekay
 ###
 ```
 
@@ -486,14 +486,14 @@ Notes:
   working unmodified.
 - **Column 9 is meant to be read, not just parsed**, so it carries no
   percent-escapes. GFF3 reserves `;` `=` `&` `,` inside an attribute value,
-  and the two LTRquest attributes that are *lists* — `tsd_offset` (`d5,d3`)
+  and the two LTR_peel attributes that are *lists* — `tsd_offset` (`d5,d3`)
   and `nest_status` — would otherwise arrive as `0%2C0` and
   `nest-outer:…%3Bnest-inner:…`. Both are instead written with `,`, which is
   GFF3's own separator for multiple values within one attribute: `tsd_offset=0,0`,
   `nest_status=nest-outer:chr1:200-300,nest-inner:chr1:50-900`. Spec-legal and
   legible. Note this differs from the element table, where `nest_status` joins
   on `;` (section 4.1).
-- Escaping is still applied as a backstop to text LTRquest does not control —
+- Escaping is still applied as a backstop to text LTR_peel does not control —
   a sequence named `scaf;1` cannot be written literally without corrupting the
   file. If that ever happens the run says so on stderr rather than letting you
   discover a `%3B` by eye.
@@ -529,9 +529,9 @@ needs:
 | `balanced` | all four | 2 | 0.79 | 0.70% |
 | `sensitive` | all four | 1, unless another contradicts | 0.84 | 1.06% |
 
-Measured by leave-one-out against LTRquest's own tesorter strand, pooled over
+Measured by leave-one-out against LTR_peel's own tesorter strand, pooled over
 five Brassicaceae genomes and 3616 labeled elements. Disagreement tracks how
-well LTRquest could label the element in the first place: 0.37% where five or
+well LTR_peel could label the element in the first place: 0.37% where five or
 more protein domains support the label, 2.54% where only one does.
 
 The polypurine-tract fallback, on whenever strand recovery runs (`--no-strand-recovery-ppt` turns it
@@ -577,7 +577,7 @@ only trim. Such calls end short of the element and have no TSD (target-site
 duplication, the short direct repeat an insertion leaves on both sides) at their
 called ends. A few calls run a few bases long, with the same result.
 
-Re-boundarying is on by default (`--no-reboundary` turns it off; `--reboundary` is still accepted). It, or `ltrquest-reboundary --posthoc` on a finished run, moves the ends
+Re-boundarying is on by default (`--no-reboundary` turns it off; `--reboundary` is still accepted). It, or `ltr_peel-reboundary --posthoc` on a finished run, moves the ends
 of every call whose `tsd` is `.` or `NA`. A call with any TSD, including one Kmer2LTR
 found only 1 bp off (`tsd_offset` other than `0,0`), is never moved.
 
@@ -636,8 +636,8 @@ How the new ends are chosen:
 
 The stage runs once, by design. On rice, a second pass over its own output changed
 112 more elements, and a curated LTR library agreed with only 88% of those ends,
-against 99.5% for the first pass. `ltrquest` uses the defaults; to try
-other settings, run `ltrquest-reboundary --posthoc` (see `--help`) on a run made
+against 99.5% for the first pass. `ltr_peel` uses the defaults; to try
+other settings, run `ltr_peel-reboundary --posthoc` (see `--help`) on a run made
 with `--no-reboundary --keep-intermediates`.
 
 **What changes:** the `_clean_` depth tables and FASTAs (a host's masked region is
@@ -650,8 +650,8 @@ clustering files describe the calls before re-boundarying. A genome with no
 
 **Requirements:** BLAST+ (`blastn` from `PATH` or `--blastn`, with `makeblastdb`
 beside it or on `PATH`) and a Kmer2LTR with the homology-paired credit. An older
-Kmer2LTR is refused before anything changes: `ltrquest-reboundary` exits 3 and
-`ltrquest` stops.
+Kmer2LTR is refused before anything changes: `ltr_peel-reboundary` exits 3 and
+`ltr_peel` stops.
 
 > When run through the Nextflow pipeline (on by default there too; `--reboundary false`
 > skips it), the task that writes the re-bounded `_clean_` depth tables and
@@ -713,15 +713,15 @@ still load.
 `--posthoc` needs the intermediates, so the run must have used `--keep-intermediates`.
 
 ```bash
-ltrquest-reboundary --posthoc --indir RUN --prefix P1 P2 ... --genome G1 G2 ... --threads 32
-ltrquest-reboundary --restore --indir RUN --prefix P1 P2 ...     # undo
+ltr_peel-reboundary --posthoc --indir RUN --prefix P1 P2 ... --genome G1 G2 ... --threads 32
+ltr_peel-reboundary --restore --indir RUN --prefix P1 P2 ...     # undo
 ```
 
 `--posthoc` moves the originals (clean tables and FASTAs, GFF3s, plots) into
 `<prefix>_pre_reboundary/` once, re-bounds, then rewrites the GFF3s and plots
 (`--no-plots` skips the plots). A second `--posthoc` run starts again from that
 backup, so trying other settings never stacks on an earlier result. It refuses a run
-that `ltrquest` already re-boundaried in place (a `_reboundary.tsv` and no backup):
+that `ltr_peel` already re-boundaried in place (a `_reboundary.tsv` and no backup):
 that would be a second pass. Benchmarks: `benchmarks/reboundary/README.md`.
 
 ## 9. Plots (`<prefix>_plots/`)
@@ -734,16 +734,16 @@ that would be a second pass. Benchmarks: `benchmarks/reboundary/README.md`.
 | `<prefix>_summary.pdf` | Multi-page summary |
 | `<prefix>_TEGV.html` | Self-contained interactive genome browser (open in web browser) |
 
-Re-plotting a finished run with `ltrquest-plots` needs `--keep-intermediates`: the summary PDF's per-family pages and TEGV's gene track read files a default run removes.
+Re-plotting a finished run with `ltr_peel-plots` needs `--keep-intermediates`: the summary PDF's per-family pages and TEGV's gene track read files a default run removes.
 
 ## 10. Benchmarks
 
-How accurate LTRquest is, how long it takes, and how it compares with other
+How accurate LTR_peel is, how long it takes, and how it compares with other
 callers: [benchmarks/README.md](../benchmarks/README.md).
 
 ## 11. Settings not in the short help
 
-`ltrquest --help` lists the few flags most runs need; `--help-all` lists the rest.
+`ltr_peel --help` lists the few flags most runs need; `--help-all` lists the rest.
 Detail on the ones that need explaining:
 
 - **`--mutation-rate R`** (default `3e-8`, a plant-generic rate in substitutions per
@@ -762,7 +762,7 @@ Detail on the ones that need explaining:
   (default `minimap2`). The second TEsorter2 pass assigns a clade to elements the
   first pass left unclassified; by default a pass-2 match whose target has protein
   hits but no clade is dropped.
-- **`--detect-args "KEY=VALUE ..."`** passes options to `ltrquest.detect` in every
+- **`--detect-args "KEY=VALUE ..."`** passes options to `ltr_peel.detect` in every
   round, for example `--detect-args "tesorter-rule=70-70-80"`;
   **`--detect-args-from-round N "..."`** does the same from round N on. Detection
   settings are recorded per genome, so changing them needs `--redetect` on an

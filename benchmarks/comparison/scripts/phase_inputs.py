@@ -71,7 +71,7 @@ def main(argv=None):
         with open(os.path.join(a.outdir, "elements.k.fa"), "w") as f:
             for n, s in keep:
                 f.write(f">{n}\n{s}\n")
-        for ext in ("tsv", "gff3"):                      # uniform path: Kmer2LTR TSV; LTRquest native: GFF3
+        for ext in ("tsv", "gff3"):                      # uniform path: Kmer2LTR TSV; LTR_peel native: GFF3
             src = os.path.join(a.subsample_from, f"annot.{ext}")
             dst = os.path.join(a.outdir, f"annot.{ext}")
             if os.path.exists(src) and not os.path.lexists(dst):

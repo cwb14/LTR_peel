@@ -15,10 +15,10 @@ import sys
 B = os.environ["BENCH_ROOT"]
 CONDA = 'source "$(conda info --base)/etc/profile.d/conda.sh"'
 T = 16
-TOOLS = ["ltrquest", "ltrharvest", "ltr_finder", "ltr_retriever", "look4ltrs", "hirepeat", "hite", "ltrpred", "dante_ltr"]
+TOOLS = ["ltr_peel", "ltrharvest", "ltr_finder", "ltr_retriever", "look4ltrs", "hirepeat", "hite", "ltrpred", "dante_ltr"]
 # threads a tool actually uses (for the queue's budget); LTRharvest is single-threaded
 USES = {"ltrharvest": 1}
-PROT = {  # LTRquest --proteins: closest RefSeq relative, never the target (sims: PrinTE's TAIR10.pep, the sims' genes)
+PROT = {  # LTR_peel --proteins: closest RefSeq relative, never the target (sims: PrinTE's TAIR10.pep, the sims' genes)
     "rice": "proteins/GCF_000231095.2_ObraRS2_protein.faa.gz",
     "arab": "proteins/GCF_000004255.2_v.1.0_protein.faa.gz",
     "maize": "proteins/GCF_000003195.3_Sorghum_bicolor_NCBIv3_protein.faa.gz",
@@ -44,10 +44,10 @@ def step(name, body):
 def tool_body(tool, ds, rundir):
     g = f"{ds}.fa"
     data = f"{B}/data/{ds}"
-    if tool == "ltrquest":
+    if tool == "ltr_peel":
         prot = f"{B}/data/{SIM_PROT if ds.startswith('S') else PROT[ds]}"
-        return step("ltrquest", f"conda activate ltrquest_bench\nexport LTRQUEST_TOOLS_DIR={B}/build/ltrquest_tools\n"
-                    f"ltrquest --genome {g} --proteins {prot} --threads {T} --detect-args \"ltr-timeout=300\" "
+        return step("ltr_peel", f"conda activate ltr_peel_bench\nexport LTR_PEEL_TOOLS_DIR={B}/build/ltr_peel_tools\n"
+                    f"ltr_peel --genome {g} --proteins {prot} --threads {T} --detect-args \"ltr-timeout=300\" "
                     f"--run-sdust --no-plots --reboundary")
     if tool == "ltrharvest":
         return ("conda activate ltrr_bench\n"

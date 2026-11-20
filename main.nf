@@ -1,15 +1,15 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    cwb14/LTRquest
+    cwb14/LTR_peel
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/cwb14/LTRquest
+    Github : https://github.com/cwb14/LTR_peel
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
 nextflow.enable.dsl = 2
 
-include { LTRQUEST } from './workflows/ltrquest'
+include { LTR_PEEL } from './workflows/ltr_peel'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,10 +19,10 @@ include { LTRQUEST } from './workflows/ltrquest'
 
 def helpMessage() {
     log.info """
-    LTRquest ${workflow.manifest.version}
+    LTR_peel ${workflow.manifest.version}
 
     Usage:
-      nextflow run cwb14/LTRquest --input samplesheet.csv --outdir results -profile docker
+      nextflow run cwb14/LTR_peel --input samplesheet.csv --outdir results -profile docker
 
     Required:
       --input                 CSV samplesheet: sample,genome,proteins
@@ -105,5 +105,5 @@ workflow {
               row.proteins ? resolveInput(row.proteins, sheet.parent) : [] ]
         }
 
-    LTRQUEST(ch_samples)
+    LTR_PEEL(ch_samples)
 }

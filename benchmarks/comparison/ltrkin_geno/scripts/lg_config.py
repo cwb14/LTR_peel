@@ -19,9 +19,9 @@ DATASETS = {
                         role="replicate"),
 }
 
-TOOLS = ["ltrquest", "ltrharvest", "ltr_finder", "ltr_retriever", "look4ltrs",
+TOOLS = ["ltr_peel", "ltrharvest", "ltr_finder", "ltr_retriever", "look4ltrs",
          "hirepeat", "hite", "ltrpred", "dante_ltr"]
-SECONDARY = ["ltrquest_hc"]
+SECONDARY = ["ltr_peel_hc"]
 ALL_TOOLS = TOOLS + SECONDARY
 
 PROT = "proteins/GCF_000004255.2_v.1.0_protein.faa.gz"

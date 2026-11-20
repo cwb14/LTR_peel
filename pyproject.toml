@@ -3,7 +3,7 @@ requires = ["hatchling>=1.21"]
 build-backend = "hatchling.build"
 
 [project]
-name = "ltrquest"
+name = "ltr_peel"
 version = "1.0.1"
 description = "Iterative detection of nested LTR retrotransposons"
 readme = "README.md"
@@ -28,9 +28,9 @@ classifiers = [
 # Detection, masking, reconciliation and annotation need nothing beyond the
 # standard library. numpy and matplotlib are here because the plotting stage runs
 # by default; disable it with --no-plots and they go unused. pyfaidx is what
-# ltrquest-flagfp pulls the flagged LTRs out of --ltr-fasta with, and that write
+# ltr_peel-flagfp pulls the flagged LTRs out of --ltr-fasta with, and that write
 # is unconditional -- no flag turns it off -- so it is a hard dependency of the
-# entry point, not an extra. parasail is hard for the same reason: ltrquest-gff3
+# entry point, not an extra. parasail is hard for the same reason: ltr_peel-gff3
 # imports the re-boundarying modules (to follow renamed elements), and they import
 # it. The conda environment.yml files have always carried both -- parasail as
 # `parasail-python`, which installs this same `parasail` distribution -- so this
@@ -48,26 +48,26 @@ bam = ["pysam>=0.22"]
 dev = ["pytest>=7.0", "ruff>=0.5"]
 
 [project.urls]
-Homepage = "https://github.com/cwb14/LTRquest"
-Source = "https://github.com/cwb14/LTRquest"
-Issues = "https://github.com/cwb14/LTRquest/issues"
+Homepage = "https://github.com/cwb14/LTR_peel"
+Source = "https://github.com/cwb14/LTR_peel"
+Issues = "https://github.com/cwb14/LTR_peel/issues"
 
 [project.scripts]
-ltrquest = "ltrquest.cli:main"
-ltrquest-plots = "ltrquest.cli:plots"
+ltr_peel = "ltr_peel.cli:main"
+ltr_peel-plots = "ltr_peel.cli:plots"
 # Individual stages, so the Nextflow modules and ad-hoc reruns do not have to
 # reach into the package with `python -m`.
-ltrquest-detect = "ltrquest.detect:main"
-ltrquest-mask = "ltrquest.mask:main"
-ltrquest-reconcile = "ltrquest.reconcile:main"
-ltrquest-annotate = "ltrquest.annotate:main"
-ltrquest-gff3 = "ltrquest.gff3:main"
-ltrquest-flagfp = "ltrquest.flag_fp:main"
-ltrquest-recover-strand = "ltrquest.recover_strand:main"
-ltrquest-reboundary = "ltrquest.reboundary:main"
+ltr_peel-detect = "ltr_peel.detect:main"
+ltr_peel-mask = "ltr_peel.mask:main"
+ltr_peel-reconcile = "ltr_peel.reconcile:main"
+ltr_peel-annotate = "ltr_peel.annotate:main"
+ltr_peel-gff3 = "ltr_peel.gff3:main"
+ltr_peel-flagfp = "ltr_peel.flag_fp:main"
+ltr_peel-recover-strand = "ltr_peel.recover_strand:main"
+ltr_peel-reboundary = "ltr_peel.reboundary:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/ltrquest"]
+packages = ["src/ltr_peel"]
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -116,8 +116,8 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 # Loop variables kept for documentation value in the plotting code.
-"src/ltrquest/plot_struct.py" = ["B007"]
+"src/ltr_peel/plot_struct.py" = ["B007"]
 # B023: the flagged closures (a defaultdict factory, a page-writing nested def)
 # are called within the same loop iteration that defines them, so the late-
 # binding B023 warns about cannot happen here.
-"src/ltrquest/plot_summary.py" = ["B007", "B023"]
+"src/ltr_peel/plot_summary.py" = ["B007", "B023"]

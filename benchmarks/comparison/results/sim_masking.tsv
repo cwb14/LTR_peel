@@ -1,5 +1,5 @@
 set	lib	role	n_seeds	F1	F1_sd	sens	sens_sd	prec	prec_sd	masked_mb
-S1	ltrquest.intact	primary	3	0.9583	0.0033	0.9391	0.0041	0.9783	0.0026	25.1
+S1	ltr_peel.intact	primary	3	0.9583	0.0033	0.9391	0.0041	0.9783	0.0026	25.1
 S1	ltr_retriever.intact	primary	3	0.9398	0.0101	0.8928	0.0169	0.9921	0.0023	23.5
 S1	ltr_retriever.native	secondary	3	0.9402	0.0098	0.8932	0.0165	0.9926	0.0020	23.5
 S1	ltrharvest.intact	primary	3	0.9425	0.0065	0.9079	0.0089	0.9798	0.0043	24.2
@@ -12,8 +12,8 @@ S1	hite.native	secondary	3	0.9297	0.0031	0.8723	0.0047	0.9951	0.0025	22.9
 S1	ltrpred.intact	primary	3	0.9108	0.0051	0.8525	0.0069	0.9776	0.0028	22.8
 S1	dante_ltr.intact	primary	3	0.8229	0.0040	0.7031	0.0060	0.9919	0.0026	18.5
 S1	dante_ltr.native	secondary	3	0.7965	0.0013	0.6632	0.0023	0.9968	0.0012	17.4
-S1	ltrquest_hc.intact	post_hoc	3	0.9247	0.0086	0.8682	0.0151	0.9892	0.0012	23.0
-S2	ltrquest.intact	primary	3	0.9547	0.0013	0.9969	0.0010	0.9159	0.0018	156.2
+S1	ltr_peel_hc.intact	post_hoc	3	0.9247	0.0086	0.8682	0.0151	0.9892	0.0012	23.0
+S2	ltr_peel.intact	primary	3	0.9547	0.0013	0.9969	0.0010	0.9159	0.0018	156.2
 S2	ltr_retriever.intact	primary	3	0.9761	0.0015	0.9731	0.0020	0.9792	0.0011	142.6
 S2	ltr_retriever.native	secondary	3	0.9756	0.0014	0.9737	0.0016	0.9775	0.0013	142.9
 S2	ltrharvest.intact	primary	3	0.9587	0.0017	0.9918	0.0018	0.9278	0.0016	153.4
@@ -26,4 +26,4 @@ S2	hite.native	secondary	3	0.9776	0.0004	0.9722	0.0012	0.9831	0.0013	141.9
 S2	ltrpred.intact	primary	3	0.9509	0.0027	0.9805	0.0069	0.9231	0.0112	152.4
 S2	dante_ltr.intact	primary	3	0.8959	0.0134	0.8280	0.0232	0.9763	0.0006	121.6
 S2	dante_ltr.native	secondary	3	0.8868	0.0008	0.8026	0.0019	0.9907	0.0010	116.2
-S2	ltrquest_hc.intact	post_hoc	3	0.9679	0.0011	0.9726	0.0030	0.9633	0.0007	144.8
+S2	ltr_peel_hc.intact	post_hoc	3	0.9679	0.0011	0.9726	0.0030	0.9633	0.0007	144.8

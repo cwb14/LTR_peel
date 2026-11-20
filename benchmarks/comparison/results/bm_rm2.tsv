@@ -1,5 +1,5 @@
 ds	lib	role	n_curated_LTR	perfect	good	perfect_or_good	present	frac_perfect_or_good	frac_present
-arab	ltrquest.intact	primary	291	5	254	259	272	0.8900	0.9347
+arab	ltr_peel.intact	primary	291	5	254	259	272	0.8900	0.9347
 arab	ltr_retriever.intact	primary	291	1	130	131	153	0.4502	0.5258
 arab	ltr_retriever.native	secondary	291	123	6	129	155	0.4433	0.5326
 arab	ltrharvest.intact	primary	291	4	242	246	265	0.8454	0.9107
@@ -12,8 +12,8 @@ arab	hite.native	secondary	291	135	7	142	163	0.4880	0.5601
 arab	ltrpred.intact	primary	291	2	166	168	192	0.5773	0.6598
 arab	dante_ltr.intact	primary	291	3	180	183	201	0.6289	0.6907
 arab	dante_ltr.native	secondary	291	1	20	21	45	0.0722	0.1546
-arab	ltrquest_hc.intact	post_hoc	291	1	92	93	118	0.3196	0.4055
-finch	ltrquest.intact	primary	292	0	149	149	259	0.5103	0.8870
+arab	ltr_peel_hc.intact	post_hoc	291	1	92	93	118	0.3196	0.4055
+finch	ltr_peel.intact	primary	292	0	149	149	259	0.5103	0.8870
 finch	ltrharvest.intact	primary	292	0	150	150	272	0.5137	0.9315
 finch	ltr_finder.intact	primary	292	0	105	105	175	0.3596	0.5993
 finch	look4ltrs.intact	primary	292	0	174	174	276	0.5959	0.9452
@@ -22,14 +22,14 @@ finch	hirepeat.native	secondary	292	0	62	62	76	0.2123	0.2603
 finch	hite.intact	primary	292	0	82	82	121	0.2808	0.4144
 finch	hite.native	secondary	292	46	8	54	86	0.1849	0.2945
 finch	ltrpred.intact	primary	292	0	128	128	257	0.4384	0.8801
-finch	ltrquest_hc.intact	post_hoc	292	0	115	115	189	0.3938	0.6473
-gorilla	ltrquest.intact	primary	620	0	46	46	338	0.0742	0.5452
+finch	ltr_peel_hc.intact	post_hoc	292	0	115	115	189	0.3938	0.6473
+gorilla	ltr_peel.intact	primary	620	0	46	46	338	0.0742	0.5452
 gorilla	ltr_finder.intact	primary	620	0	25	25	124	0.0403	0.2000
 gorilla	hirepeat.native	secondary	620	0	33	33	36	0.0532	0.0581
 gorilla	hite.intact	primary	620	0	30	30	110	0.0484	0.1774
 gorilla	hite.native	secondary	620	54	1	55	105	0.0887	0.1694
-gorilla	ltrquest_hc.intact	post_hoc	620	0	28	28	150	0.0452	0.2419
-maize	ltrquest.intact	primary	572	323	136	459	499	0.8024	0.8724
+gorilla	ltr_peel_hc.intact	post_hoc	620	0	28	28	150	0.0452	0.2419
+maize	ltr_peel.intact	primary	572	323	136	459	499	0.8024	0.8724
 maize	ltrharvest.intact	primary	572	312	102	414	499	0.7238	0.8724
 maize	ltr_finder.intact	primary	572	309	68	377	452	0.6591	0.7902
 maize	look4ltrs.intact	primary	572	208	166	374	432	0.6538	0.7552
@@ -40,8 +40,8 @@ maize	hite.native	secondary	572	1	49	50	302	0.0874	0.5280
 maize	ltrpred.intact	primary	572	225	34	259	380	0.4528	0.6643
 maize	dante_ltr.intact	primary	572	247	30	277	365	0.4843	0.6381
 maize	dante_ltr.native	secondary	572	0	16	16	145	0.0280	0.2535
-maize	ltrquest_hc.intact	post_hoc	572	315	97	412	467	0.7203	0.8164
-rice	ltrquest.intact	primary	897	4	729	733	820	0.8172	0.9142
+maize	ltr_peel_hc.intact	post_hoc	572	315	97	412	467	0.7203	0.8164
+rice	ltr_peel.intact	primary	897	4	729	733	820	0.8172	0.9142
 rice	ltr_retriever.intact	primary	897	3	540	543	645	0.6054	0.7191
 rice	ltr_retriever.native	secondary	897	403	40	443	611	0.4939	0.6812
 rice	ltrharvest.intact	primary	897	4	702	706	805	0.7871	0.8974
@@ -54,4 +54,4 @@ rice	hite.native	secondary	897	331	20	351	454	0.3913	0.5061
 rice	ltrpred.intact	primary	897	3	436	439	559	0.4894	0.6232
 rice	dante_ltr.intact	primary	897	2	444	446	529	0.4972	0.5897
 rice	dante_ltr.native	secondary	897	0	66	66	145	0.0736	0.1616
-rice	ltrquest_hc.intact	post_hoc	897	2	580	582	679	0.6488	0.7570
+rice	ltr_peel_hc.intact	post_hoc	897	2	580	582	679	0.6488	0.7570

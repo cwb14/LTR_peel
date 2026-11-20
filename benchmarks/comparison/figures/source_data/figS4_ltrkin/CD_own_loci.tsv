@@ -1,0 +1,127 @@
+dataset	caller	class_column	class	n_own	n_own_correct
+camara_hap2	ltr_peel			39	38
+camara_hap2	ltr_peel	nesting	unnested	30	30
+camara_hap2	ltr_peel	nesting	tenant	2	2
+camara_hap2	ltr_peel	nesting	host	7	6
+camara_hap2	ltr_peel	protein_class	coding	11	11
+camara_hap2	ltr_peel	protein_class	partial	1	0
+camara_hap2	ltr_peel	protein_class	proteinless	27	27
+camara_hap2	ltr_retriever			0	0
+camara_hap2	ltr_retriever	nesting	unnested	0	0
+camara_hap2	ltr_retriever	nesting	tenant	0	0
+camara_hap2	ltr_retriever	nesting	host	0	0
+camara_hap2	ltr_retriever	protein_class	coding	0	0
+camara_hap2	ltr_retriever	protein_class	partial	0	0
+camara_hap2	ltr_retriever	protein_class	proteinless	0	0
+camara_hap2	ltrharvest			2	1
+camara_hap2	ltrharvest	nesting	unnested	2	1
+camara_hap2	ltrharvest	nesting	tenant	0	0
+camara_hap2	ltrharvest	nesting	host	0	0
+camara_hap2	ltrharvest	protein_class	coding	0	0
+camara_hap2	ltrharvest	protein_class	partial	0	0
+camara_hap2	ltrharvest	protein_class	proteinless	2	1
+camara_hap2	ltr_finder			1	1
+camara_hap2	ltr_finder	nesting	unnested	1	1
+camara_hap2	ltr_finder	nesting	tenant	0	0
+camara_hap2	ltr_finder	nesting	host	0	0
+camara_hap2	ltr_finder	protein_class	coding	1	1
+camara_hap2	ltr_finder	protein_class	partial	0	0
+camara_hap2	ltr_finder	protein_class	proteinless	0	0
+camara_hap2	look4ltrs			0	0
+camara_hap2	look4ltrs	nesting	unnested	0	0
+camara_hap2	look4ltrs	nesting	tenant	0	0
+camara_hap2	look4ltrs	nesting	host	0	0
+camara_hap2	look4ltrs	protein_class	coding	0	0
+camara_hap2	look4ltrs	protein_class	partial	0	0
+camara_hap2	look4ltrs	protein_class	proteinless	0	0
+camara_hap2	hirepeat			5	3
+camara_hap2	hirepeat	nesting	unnested	3	1
+camara_hap2	hirepeat	nesting	tenant	1	1
+camara_hap2	hirepeat	nesting	host	1	1
+camara_hap2	hirepeat	protein_class	coding	2	2
+camara_hap2	hirepeat	protein_class	partial	1	1
+camara_hap2	hirepeat	protein_class	proteinless	2	0
+camara_hap2	hite			1	1
+camara_hap2	hite	nesting	unnested	0	0
+camara_hap2	hite	nesting	tenant	0	0
+camara_hap2	hite	nesting	host	1	1
+camara_hap2	hite	protein_class	coding	1	1
+camara_hap2	hite	protein_class	partial	0	0
+camara_hap2	hite	protein_class	proteinless	0	0
+camara_hap2	ltrpred			0	0
+camara_hap2	ltrpred	nesting	unnested	0	0
+camara_hap2	ltrpred	nesting	tenant	0	0
+camara_hap2	ltrpred	nesting	host	0	0
+camara_hap2	ltrpred	protein_class	coding	0	0
+camara_hap2	ltrpred	protein_class	partial	0	0
+camara_hap2	ltrpred	protein_class	proteinless	0	0
+camara_hap2	dante_ltr			0	0
+camara_hap2	dante_ltr	nesting	unnested	0	0
+camara_hap2	dante_ltr	nesting	tenant	0	0
+camara_hap2	dante_ltr	nesting	host	0	0
+camara_hap2	dante_ltr	protein_class	coding	0	0
+camara_hap2	dante_ltr	protein_class	partial	0	0
+camara_hap2	dante_ltr	protein_class	proteinless	0	0
+camara_hap1	ltr_peel			26	23
+camara_hap1	ltr_peel	nesting	unnested	19	18
+camara_hap1	ltr_peel	nesting	tenant	2	2
+camara_hap1	ltr_peel	nesting	host	5	3
+camara_hap1	ltr_peel	protein_class	coding	9	6
+camara_hap1	ltr_peel	protein_class	partial	3	3
+camara_hap1	ltr_peel	protein_class	proteinless	14	14
+camara_hap1	ltr_retriever			0	0
+camara_hap1	ltr_retriever	nesting	unnested	0	0
+camara_hap1	ltr_retriever	nesting	tenant	0	0
+camara_hap1	ltr_retriever	nesting	host	0	0
+camara_hap1	ltr_retriever	protein_class	coding	0	0
+camara_hap1	ltr_retriever	protein_class	partial	0	0
+camara_hap1	ltr_retriever	protein_class	proteinless	0	0
+camara_hap1	ltrharvest			0	0
+camara_hap1	ltrharvest	nesting	unnested	0	0
+camara_hap1	ltrharvest	nesting	tenant	0	0
+camara_hap1	ltrharvest	nesting	host	0	0
+camara_hap1	ltrharvest	protein_class	coding	0	0
+camara_hap1	ltrharvest	protein_class	partial	0	0
+camara_hap1	ltrharvest	protein_class	proteinless	0	0
+camara_hap1	ltr_finder			0	0
+camara_hap1	ltr_finder	nesting	unnested	0	0
+camara_hap1	ltr_finder	nesting	tenant	0	0
+camara_hap1	ltr_finder	nesting	host	0	0
+camara_hap1	ltr_finder	protein_class	coding	0	0
+camara_hap1	ltr_finder	protein_class	partial	0	0
+camara_hap1	ltr_finder	protein_class	proteinless	0	0
+camara_hap1	look4ltrs			1	0
+camara_hap1	look4ltrs	nesting	unnested	0	0
+camara_hap1	look4ltrs	nesting	tenant	0	0
+camara_hap1	look4ltrs	nesting	host	1	0
+camara_hap1	look4ltrs	protein_class	coding	1	0
+camara_hap1	look4ltrs	protein_class	partial	0	0
+camara_hap1	look4ltrs	protein_class	proteinless	0	0
+camara_hap1	hirepeat			4	1
+camara_hap1	hirepeat	nesting	unnested	3	1
+camara_hap1	hirepeat	nesting	tenant	1	0
+camara_hap1	hirepeat	nesting	host	0	0
+camara_hap1	hirepeat	protein_class	coding	0	0
+camara_hap1	hirepeat	protein_class	partial	0	0
+camara_hap1	hirepeat	protein_class	proteinless	4	1
+camara_hap1	hite			0	0
+camara_hap1	hite	nesting	unnested	0	0
+camara_hap1	hite	nesting	tenant	0	0
+camara_hap1	hite	nesting	host	0	0
+camara_hap1	hite	protein_class	coding	0	0
+camara_hap1	hite	protein_class	partial	0	0
+camara_hap1	hite	protein_class	proteinless	0	0
+camara_hap1	ltrpred			0	0
+camara_hap1	ltrpred	nesting	unnested	0	0
+camara_hap1	ltrpred	nesting	tenant	0	0
+camara_hap1	ltrpred	nesting	host	0	0
+camara_hap1	ltrpred	protein_class	coding	0	0
+camara_hap1	ltrpred	protein_class	partial	0	0
+camara_hap1	ltrpred	protein_class	proteinless	0	0
+camara_hap1	dante_ltr			0	0
+camara_hap1	dante_ltr	nesting	unnested	0	0
+camara_hap1	dante_ltr	nesting	tenant	0	0
+camara_hap1	dante_ltr	nesting	host	0	0
+camara_hap1	dante_ltr	protein_class	coding	0	0
+camara_hap1	dante_ltr	protein_class	partial	0	0
+camara_hap1	dante_ltr	protein_class	proteinless	0	0

@@ -8,4 +8,4 @@ figures/*.pdf
 # inside the repo. Here they are the benchmark's result tables and two small test
 # fixtures, which the page cites and the tests read, so they are tracked.
 !results/
-!tests/fixtures/calls/ltrquest/*_clean_ltr.tsv
+!tests/fixtures/calls/ltr_peel/*_clean_ltr.tsv

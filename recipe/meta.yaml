@@ -1,4 +1,4 @@
-{% set name = "ltrquest" %}
+{% set name = "ltr_peel" %}
 {% set version = "1.0.1" %}
 
 package:
@@ -6,7 +6,7 @@ package:
   version: {{ version }}
 
 source:
-  url: https://github.com/cwb14/LTRquest/archive/refs/tags/v{{ version }}.tar.gz
+  url: https://github.com/cwb14/LTR_peel/archive/refs/tags/v{{ version }}.tar.gz
   # Replace with the sha256 of the release tarball before submitting:
   #   curl -sL <url> | sha256sum
   sha256: 0000000000000000000000000000000000000000000000000000000000000000
@@ -18,15 +18,15 @@ build:
   run_exports:
     - {{ pin_subpackage(name, max_pin="x") }}
   entry_points:
-    - ltrquest = ltrquest.cli:main
-    - ltrquest-plots = ltrquest.cli:plots
-    - ltrquest-detect = ltrquest.detect:main
-    - ltrquest-mask = ltrquest.mask:main
-    - ltrquest-reconcile = ltrquest.reconcile:main
-    - ltrquest-annotate = ltrquest.annotate:main
-    - ltrquest-gff3 = ltrquest.gff3:main
-    - ltrquest-flagfp = ltrquest.flag_fp:main
-    - ltrquest-recover-strand = ltrquest.recover_strand:main
+    - ltr_peel = ltr_peel.cli:main
+    - ltr_peel-plots = ltr_peel.cli:plots
+    - ltr_peel-detect = ltr_peel.detect:main
+    - ltr_peel-mask = ltr_peel.mask:main
+    - ltr_peel-reconcile = ltr_peel.reconcile:main
+    - ltr_peel-annotate = ltr_peel.annotate:main
+    - ltr_peel-gff3 = ltr_peel.gff3:main
+    - ltr_peel-flagfp = ltr_peel.flag_fp:main
+    - ltr_peel-recover-strand = ltr_peel.recover_strand:main
 
 requirements:
   host:
@@ -53,7 +53,7 @@ requirements:
     # Resolved from PATH before any source build is attempted. TRF-mod (on by
     # default) and FastLTR (built the first time a run caps its LTR callers or
     # asks for `--fastltr all`) have no conda package and are compiled on first
-    # use, FastLTR from a pinned FASTAN clone plus LTRquest's own FastLTR.c --
+    # use, FastLTR from a pinned FASTAN clone plus LTR_peel's own FastLTR.c --
     # so a conda install also wants git, make, a compiler and zlib present, or
     # `--no-trf` / `--no-fastltr`.
     - sdust
@@ -67,53 +67,53 @@ requirements:
 
 test:
   imports:
-    - ltrquest
-    - ltrquest.detect
-    - ltrquest.mask
-    - ltrquest.reconcile
-    - ltrquest.annotate
-    - ltrquest.gff3
-    - ltrquest.recover_strand
+    - ltr_peel
+    - ltr_peel.detect
+    - ltr_peel.mask
+    - ltr_peel.reconcile
+    - ltr_peel.annotate
+    - ltr_peel.gff3
+    - ltr_peel.recover_strand
   commands:
-    - ltrquest --help
-    - ltrquest-detect --help
-    - ltrquest-mask --help
-    - ltrquest-reconcile --help
-    - ltrquest-annotate --help
-    - ltrquest-gff3 --help
-    - ltrquest-flagfp --help
-    - ltrquest-recover-strand --help
-    - ltrquest-plots --help
+    - ltr_peel --help
+    - ltr_peel-detect --help
+    - ltr_peel-mask --help
+    - ltr_peel-reconcile --help
+    - ltr_peel-annotate --help
+    - ltr_peel-gff3 --help
+    - ltr_peel-flagfp --help
+    - ltr_peel-recover-strand --help
+    - ltr_peel-plots --help
     # The driver is a shell script shipped as package data; a packaging mistake
     # would leave it out without breaking the imports above.
-    - test -f $PREFIX/lib/python*/site-packages/ltrquest/scripts/ltrquest.sh
+    - test -f $PREFIX/lib/python*/site-packages/ltr_peel/scripts/ltr_peel.sh
     - gt --version
     - ltr_finder -h 2>&1 | head -n1
 
 about:
-  home: https://github.com/cwb14/LTRquest
+  home: https://github.com/cwb14/LTR_peel
   license: GPL-3.0-or-later
   license_family: GPL3
   license_file: LICENSE
   summary: Iterative detection of nested LTR retrotransposons
   description: |
-    LTRquest finds full-length LTR retrotransposons, including elements nested
+    LTR_peel finds full-length LTR retrotransposons, including elements nested
     inside other elements. An element with another element inserted into it no
     longer matches the LTR-internal-LTR structure a single-pass scanner looks
-    for, so both the insertion and its host are missed. LTRquest scans, masks
+    for, so both the insertion and its host are missed. LTR_peel scans, masks
     what it found, and scans again; each round exposes the next layer out. The
     rounds are then reconciled into nesting-depth buckets and annotated with
     family, strand, protein domains and insertion age.
-  dev_url: https://github.com/cwb14/LTRquest
-  doc_url: https://github.com/cwb14/LTRquest#readme
+  dev_url: https://github.com/cwb14/LTR_peel
+  doc_url: https://github.com/cwb14/LTR_peel#readme
 
 extra:
   recipe-maintainers:
     - cwb14
   notes: |
-    TEsorter2 (classification) is not on Bioconda. LTRquest clones it into
+    TEsorter2 (classification) is not on Bioconda. LTR_peel clones it into
     `--tools-dir` on first use, or reads a pre-built copy from
-    $LTRQUEST_TOOLS_DIR. Kmer2LTR (LTR divergence, boundary calls and family
+    $LTR_PEEL_TOOLS_DIR. Kmer2LTR (LTR divergence, boundary calls and family
     clustering) is an ordinary Python package: resolved from `PATH` if it is
     already installed, and cloned the same way as TEsorter2 only as a
     fallback. Its own runtime dependencies (`parasail-python`, `pywfa`) are

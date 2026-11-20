@@ -1,0 +1,17 @@
+name	value
+example_locus	camara_hap2_L00918
+chrom	CM152281.1
+true_start	22127471
+true_end	22133727
+tsd_seq	ATTTT
+tsd_len	5
+ltr_identity	0.9812206572769953
+ltr5_len	213
+ltr3_len	213
+strand	-
+classification	LTR/Copia/Bianca
+window_start	22123971
+window_end	22137227
+hap1_chrom	CM152323.1
+hap1_tsd_start	24535568
+median_locus_len	6225.0

@@ -1,0 +1,10 @@
+tool	d50	d50_table	d50_table_lo	d50_table_hi
+ltr_peel	0.1453	0.1454	0.1249	0.1659
+ltr_retriever	0.0450	0.0452	0.0393	0.0517
+ltrharvest	0.1259	0.1258	0.1190	0.1331
+ltr_finder	0.0397	0.0401	0.0354	0.0450
+look4ltrs	0.1402	0.1402	0.1335	0.1458
+hirepeat	0.2804	0.2812	0.2619	0.3037
+hite	0.1321	0.1321	0.1239	0.1389
+ltrpred	0.1237	0.1236	0.0867	0.1542
+dante_ltr	NA	NA	NA	NA

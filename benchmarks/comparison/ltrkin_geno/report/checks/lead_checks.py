@@ -7,15 +7,15 @@ Written after the per-tool numbers were seen. It changes no scoring rule: it reu
 Subsets of pooled loci (every table below is given per subset where it has a `subset` column):
   all          every pooled locus;
   true_ends    loci pooled through their true element (basis true_confirmed): membership depends on no call's ends;
-  not_lq_only  loci that some tool other than LTRquest nominated (drops the LTRquest-only loci).
+  not_lq_only  loci that some tool other than LTR_peel nominated (drops the LTR_peel-only loci).
 
   subsets.tsv  per subset, metric and tool: n (loci with a hit), value = n / n_loci with its 95% CI, and the paired
-               difference d = value(tool) - value(LTRquest) with its CI (same draws). Metrics:
+               difference d = value(tool) - value(LTR_peel) with its CI (same draws). Metrics:
                  yield         genotyped F/E;
                  recall        found (matched at RO >= 0.9);
-                 found_not_fe  found but not genotyped F/E. Its d is the part of LTRquest's yield lead over the tool
+                 found_not_fe  found but not genotyped F/E. Its d is the part of LTR_peel's yield lead over the tool
                                that arises at genotyping (yield lead - recall lead); `share` = that part / yield lead.
-  gap.tsv      per subset and tool: loci where LTRquest's matched call is genotyped F/E and the tool's is not, split
+  gap.tsv      per subset and tool: loci where LTR_peel's matched call is genotyped F/E and the tool's is not, split
                by the tool's outcome (missed, partial, found with another genotype), and the reverse count.
   ends.tsv     all loci, per tool: found loci by the larger end error of the matched call (score.end_errors): exact
                (both ends in the microhomology window), le5, le20, gt20 bp, or no_true_ends; n_found and n_fe; a last
@@ -77,7 +77,7 @@ import score  # noqa: E402
 from lg_config import ALL_TOOLS, BLOCK, DATASETS, SECONDARY  # noqa: E402
 from lg_io import die, final_calls_path, read_calls  # noqa: E402
 
-REF = "ltrquest"
+REF = "ltr_peel"
 SUBSETS = ["all", "true_ends", "not_lq_only"]
 METRICS = {"yield": lambda st, cls: cls == "F/E",
            "recall": lambda st, cls: st == "found",
@@ -560,7 +560,7 @@ def main():
         ds, sep, t = x.partition(":")
         if not sep or ds not in a.ds or t not in ALL_TOOLS:
             die(f"--running expects DS:TOOL with DS among --ds and a known tool, got {x!r}")
-        running.add((ds, REF if t == "ltrquest_hc" else t))
+        running.add((ds, REF if t == "ltr_peel_hc" else t))
     gaps, subs_rows, ends, lengths, counts, tsd, loci = [], [], [], [], {}, {}, {}
     for ds in a.ds:
         if ds not in DATASETS:

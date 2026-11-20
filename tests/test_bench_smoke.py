@@ -29,7 +29,7 @@ def test_b1_b2_and_collect_run_on_the_synthetic_run(tmp_path, k2l_api, blastn, m
     bench = load()
     fx = build(tmp_path / "syn")
     common = ["--run", str(fx.indir), "--prefix", fx.prefix, "--genome", str(fx.genome),
-              "--tools-dir", os.environ.get("LTRQUEST_TOOLS_DIR", "."), "--threads", "2"]
+              "--tools-dir", os.environ.get("LTR_PEEL_TOOLS_DIR", "."), "--threads", "2"]
     monkeypatch.setattr(sys, "argv", ["bench.py", "b1", *common, "--out",
                                       str(tmp_path / "t" / "b1_x"), "--n", "3"])
     bench.main()
